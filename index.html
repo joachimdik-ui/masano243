@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masano243</title>
+  <meta name="description" content="Masano243, la vitrine de l'actualité sportive en RDC." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  
+  <div class="page-shell">
+    
+    <!-- EN-TÊTE -->
+    <header class="masthead">
+      <div class="brand-search-row">
+        <div class="logo-wrap">
+          <a class="brand" href="#" id="homeLogoLink" aria-label="Masano243 accueil">
+            <img class="brand-logo" src=https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak>
+          </a>
+        </div>
+        <div class="social-search-row">
+          <nav class="social-links" aria-label="Réseaux sociaux Masano243">
+            <a href="#" class="social-link" aria-label="Facebook Masano243 — lien à ajouter" title="Facebook — lien à ajouter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v2.1H6.8v3.2h2.9V21h3.7z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="X Masano243 — lien à ajouter" title="X — lien à ajouter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.6 22H2.4l7.3-8.4L1.9 2h6.5l4.5 6.8L18.9 2zm-1.1 17.8h1.7L7.4 4.1H5.6l12.2 15.7z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube Masano243 — lien à ajouter" title="YouTube — lien à ajouter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram Masano243 — lien à ajouter" title="Instagram — lien à ajouter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.25"/></svg>
+            </a>
+          </nav>
+          <div class="top-search-wrap">
+            <input type="search" id="siteSearch" placeholder="Recherche par mot-clé..." aria-label="Recherche" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="nav-row">
+      <nav class="nav-left" aria-label="Navigation principale">
+        <a href="#linafoot">LINAFOOT</a>
+        <a href="#leopards">LÉOPARDS</a>
+        <a href="#football">FOOTBALL</a>
+        <a href="#basket-ball">BASKET-BALL</a>
+        <a href="#boxe">BOXE</a>
+        <a href="#judo">JUDO</a>
+        <a href="#omnisports">OMNISPORTS</a>
+        <a href="/resultats">RÉSULTATS</a>
+        <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer" class="nav-external">SCOOP243</a>
+      </nav>
+    </div>
+
+    <section class="flash-ticker" aria-label="Articles éclair">
+      <div class="flash-ticker-label">Flash info</div>
+      <div class="flash-ticker-window">
+        <div class="flash-ticker-track" id="flashTickerTrack">
+          <span>Chargement des dernières dépêches...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="container">
+      
+      <!-- Colonne de Gauche Principale -->
+      <section class="main-column">
+        
+        <!-- ZONE VUE ACCUEIL / LISTE (Conteneur global de la liste) -->
+        <div id="listViewContainer">
+          <h2 class="section-title" id="pageSectionTitle">A la une</h2>
+
+          <!-- Article Principal -->
+          <div id="heroContainer">
+            <a href="#read" id="heroClickable" class="hero hero-link">
+              <div class="hero-img-container">
+                <img class="hero-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='360'%3E%3Crect width='900' height='360' fill='%23e9e9e9'/%3E%3C/svg%3E" alt="Masano Choc">
+              </div>
+              <div class="hero-body">
+                <h3 class="hero-title lead-title">Chargement...</h3>
+                <p class="hero-excerpt lead-summary">En attente des actualités du sport.</p>
+                <div class="hero-meta article-meta">Par...</div>
+                <div class="carousel-controls" aria-label="Navigation de la une">
+                  <button type="button" class="carousel-button" id="carouselPrevious" aria-label="Article précédent">&#8592;</button>
+                  <span class="carousel-position" id="carouselPosition">1 / 1</span>
+                  <button type="button" class="carousel-button" id="carouselNext" aria-label="Article suivant">&#8594;</button>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Grille d'articles secondaires -->
+          <div class="posts-grid" id="postsGrid" role="list">
+            <!-- Injecté par JavaScript -->
+          </div>
+
+          <section id="resultsView" class="results-view" hidden aria-labelledby="resultsTitle">
+            <header class="live-center-header">
+              <div>
+                <p class="live-center-eyebrow">TOTAL SPORTIF · CENTRE DE MATCHS</p>
+                <h1 id="resultsTitle">LIVE CENTER</h1>
+                <p class="live-center-subtitle">Résultats, directs et classements en un seul endroit.</p>
+              </div>
+              <div class="live-count" aria-live="polite">
+                <span class="live-pulse" aria-hidden="true"></span>
+                <strong id="liveMatchCount">0</strong>
+                <span>matchs en direct</span>
+              </div>
+            </header>
+
+            <div id="resultsNotice" class="results-notice" role="status" hidden></div>
+
+            <div class="results-toolbar">
+              <div class="results-view-tabs" role="tablist" aria-label="Vue des résultats">
+                <button type="button" class="results-tab is-active" id="matchesTab" role="tab" aria-selected="true" aria-controls="matchesPanel">Résultats &amp; Directs</button>
+                <button type="button" class="results-tab" id="standingsTab" role="tab" aria-selected="false" aria-controls="standingsPanel">Classements</button>
+              </div>
+              <div class="competition-filters" role="group" aria-label="Filtrer par compétition">
+                <button type="button" class="competition-filter is-active" data-competition="linafoot_l1" aria-pressed="true">Linafoot L1</button>
+                <button type="button" class="competition-filter" data-competition="linafoot_l2" aria-pressed="false">Linafoot L2</button>
+                <button type="button" class="competition-filter" data-competition="epf_kin" aria-pressed="false">EPF-KIN</button>
+                <button type="button" class="competition-filter" data-competition="leopards" aria-pressed="false">Léopards</button>
+                <button type="button" class="competition-filter" data-competition="international" aria-pressed="false">International</button>
+              </div>
+              <div class="linafoot-controls" role="group" aria-label="Filtrer par ligue Linafoot et groupe">
+                <label for="linafootLeague">Ligue</label>
+                <select id="linafootLeague">
+                  <option value="L1">Linafoot Ligue 1</option>
+                  <option value="L2">Linafoot Ligue 2</option>
+                </select>
+                <label for="linafootGroup">Groupe</label>
+                <select id="linafootGroup">
+                  <option value="A">Groupe A</option>
+                  <option value="B">Groupe B</option>
+                </select>
+              </div>
+              <div class="linafoot-controls" id="epfKinControls" role="group" aria-label="Filtrer par série EPF-KIN" hidden>
+                <label for="epfKinSeries">Série</label>
+                <select id="epfKinSeries">
+                  <option value="A">Série A</option>
+                  <option value="B">Série B</option>
+                  <option value="C">Série C</option>
+                </select>
+              </div>
+            </div>
+
+            <section id="matchesPanel" class="results-panel" role="tabpanel" aria-labelledby="matchesTab">
+              <div class="match-status-filters" role="group" aria-label="Filtrer les matchs par statut">
+                <button type="button" class="status-filter is-active" data-status="all" aria-pressed="true">Tous</button>
+                <button type="button" class="status-filter" data-status="live" aria-pressed="false">🔴 En direct</button>
+                <button type="button" class="status-filter" data-status="finished" aria-pressed="false">Terminés</button>
+                <button type="button" class="status-filter" data-status="upcoming" aria-pressed="false">À venir</button>
+              </div>
+              <div id="matchList" class="match-list" aria-live="polite">
+                <div class="match-skeleton" aria-hidden="true"></div>
+                <div class="match-skeleton" aria-hidden="true"></div>
+                <div class="match-skeleton" aria-hidden="true"></div>
+              </div>
+            </section>
+
+            <section id="standingsPanel" class="results-panel standings-panel" role="tabpanel" aria-labelledby="standingsTab" hidden>
+              <div class="standings-view-tabs" role="group" aria-label="Type de classement">
+                <button type="button" class="standings-view-tab is-active" id="teamStandingsView" aria-pressed="true">Classement des équipes</button>
+                <button type="button" class="standings-view-tab" id="topScorersView" aria-pressed="false">Meilleur buteur (L1)</button>
+              </div>
+              <div class="standings-toolbar">
+                <label for="standingsCompetition">Compétition</label>
+                <select id="standingsCompetition">
+                  <option value="">Toutes les compétitions</option>
+                </select>
+                <label for="standingsGroup">Groupe</label>
+                <select id="standingsGroup">
+                  <option value="">Tous les groupes</option>
+                </select>
+              </div>
+              <div id="standingsContainer" class="standings-container">
+                <div class="match-skeleton" aria-hidden="true"></div>
+              </div>
+              <div id="topScorersContainer" class="standings-container" aria-live="polite" hidden>
+                <div class="match-skeleton" aria-hidden="true"></div>
+              </div>
+            </section>
+          </section>
+
+          <section class="photo-reportage" aria-labelledby="photoReportageTitle">
+            <h2 class="section-title" id="photoReportageTitle">Reportages Photo</h2>
+            <div class="photo-reportage-grid" id="photoReportageGrid">
+              <p class="data-status">Chargement des reportages...</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- ZONE VUE LECTURE D'ARTICLE (Cachée par défaut) -->
+        <article id="articleView" class="article-view" style="display: none;">
+          <div class="breadcrumb">
+            <a href="#" class="back-to-home">Accueil</a> &gt; <span id="artBreadcrumbCat">Sport</span>
+          </div>
+
+          <h1 class="article-main-title" id="artTitle">Titre de l'article</h1>
+          
+          <div class="article-full-meta">
+            <div class="meta-author-info">
+              <span class="author-name">Par <strong id="artAuthor">Rédaction</strong></span>
+              <span class="meta-separator">•</span>
+              <span class="publish-date" id="artDate">Publié récemment</span>
+            </div>
+            <div class="share-buttons">
+              <button onclick="window.print()" class="btn-share"> Imprimer</button>
+            </div>
+          </div>
+
+          <div class="article-main-img-wrap">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='450'%3E%3Crect width='900' height='450' fill='%23e9e9e9'/%3E%3C/svg%3E" alt="Illustration" class="article-main-img">
+          </div>
+
+          <div class="article-content">
+            <p class="article-lead" id="artLead">Chapeau de l'article...</p>
+            <div id="artBody">
+              <!-- Le reste du texte sera généré ici -->
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Colonne de Droite (Widgets) -->
+      <aside class="sidebar-column">
+        <div class="ad-space" aria-label="Espace publicitaire">
+          <div class="widget-header">Publicité</div>
+          <div class="ad-space-body">
+            <span class="ad-space-label">Votre marque ici</span>
+            <span class="ad-space-copy">Un espace visible pour vos annonces sportives.</span>
+          </div>
+        </div>
+        <!-- Widget Scoop243 -->
+        <div class="scoop-widget">
+          <div class="widget-header">Dernier article sur Scoop243.net</div>
+          <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer" class="widget-body" id="scoop-latest-link">
+            <div class="widget-img-container">
+              <img id="scoop-widget-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='180'%3E%3Crect width='300' height='180' fill='%23e9e9e9'/%3E%3C/svg%3E" alt="Actu Scoop243">
+            </div>
+            <h4 id="scoop-widget-title">Chargement...</h4>
+            <p id="scoop-widget-excerpt">Connexion en cours...</p>
+          </a>
+        </div>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-columns">
+        <section class="footer-column footer-about" aria-labelledby="footerAboutTitle">
+          <h2 id="footerAboutTitle">Qui sommes-nous</h2>
+          <p>Masano243 est un média dédié à l’actualité sportive en République démocratique du Congo : Linafoot, Léopards, football, basketball et autres disciplines.</p>
+          <a class="footer-more-link" href="/resultats">Suivre les résultats <span aria-hidden="true">→</span></a>
+        </section>
+
+        <nav class="footer-column" aria-labelledby="footerSectionsTitle">
+          <h2 id="footerSectionsTitle">Rubriques</h2>
+          <ul>
+            <li><a href="#linafoot">Linafoot</a></li>
+            <li><a href="#leopards">Léopards</a></li>
+            <li><a href="#football">Football</a></li>
+            <li><a href="#basket-ball">Basket-ball</a></li>
+            <li><a href="#boxe">Boxe</a></li>
+            <li><a href="#judo">Judo</a></li>
+            <li><a href="#omnisports">Omnisports</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-column" aria-labelledby="footerPagesTitle">
+          <h2 id="footerPagesTitle">Pages</h2>
+          <ul>
+            <li><a href="#" id="footerHomeLink">Accueil</a></li>
+            <li><a href="/resultats">Résultats &amp; directs</a></li>
+            <li><a href="https://scoop243.net" target="_blank" rel="noopener noreferrer">Scoop243</a></li>
+          </ul>
+        </nav>
+
+        <section class="footer-column" aria-labelledby="footerSocialTitle">
+          <h2 id="footerSocialTitle">Suivez-nous</h2>
+          <p class="footer-social-note">Retrouvez Masano243 sur Facebook, X, YouTube et Instagram.</p>
+          <div class="footer-social-list" aria-label="Réseaux sociaux">
+            <span>Facebook</span><span>X</span><span>YouTube</span><span>Instagram</span>
+          </div>
+        </section>
+
+        <section class="footer-column" aria-labelledby="footerContactTitle">
+          <h2 id="footerContactTitle">Contact</h2>
+          <p>Pour l’actualité générale en RDC, retrouvez notre média partenaire.</p>
+          <a class="footer-contact-link" href="https://scoop243.net/contact.html" target="_blank" rel="noopener noreferrer">Contacter Scoop243 <span aria-hidden="true">↗</span></a>
+        </section>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Masano243 — Tous droits réservés.</p>
+        <a href="https://scoop243.net/conditions.html" target="_blank" rel="noopener noreferrer">Conditions d’utilisation</a>
+        <a href="https://scoop243.net/privacy.html" target="_blank" rel="noopener noreferrer">Politique de confidentialité</a>
+      </div>
+    </div>
+  </footer>
+
+    <div id="matchDetailPage" class="match-detail-page" hidden>
+      <section class="match-detail-page-content" aria-labelledby="matchDetailTitle" tabindex="-1">
+        <header class="match-detail-header">
+          <h2 class="match-detail-competition" id="matchDetailTitle"></h2>
+          <button type="button" class="match-detail-close" data-match-detail-close aria-label="Retour aux matchs"><span aria-hidden="true">←</span> Retour aux matchs</button>
+        </header>
+
+        <div class="match-detail-scoreboard">
+          <div class="match-detail-team">
+            <span class="match-detail-logo" id="matchDetailHomeLogo"></span>
+            <h2 id="matchDetailHomeName"></h2>
+            <span class="match-rank-badge" id="matchDetailHomeRank"></span>
+          </div>
+          <div class="match-detail-result">
+            <strong id="matchDetailScore"></strong>
+            <span id="matchDetailStatus" class="match-detail-status"></span>
+            <time id="matchDetailDate"></time>
+          </div>
+          <div class="match-detail-team">
+            <span class="match-detail-logo" id="matchDetailAwayLogo"></span>
+            <h2 id="matchDetailAwayName"></h2>
+            <span class="match-rank-badge" id="matchDetailAwayRank"></span>
+          </div>
+        </div>
+
+        <div class="match-detail-scorers" id="matchDetailScorers">
+          <p class="match-detail-scorer-names is-home" id="matchDetailHomeScorers" aria-label="Buteurs de l’équipe à domicile"></p>
+          <span aria-hidden="true">⚽</span>
+          <p class="match-detail-scorer-names is-away" id="matchDetailAwayScorers" aria-label="Buteurs de l’équipe visiteuse"></p>
+          <p class="match-detail-scorer-status" id="matchDetailScorerText"></p>
+        </div>
+
+        <section class="match-detail-overview" aria-labelledby="matchDetailOverviewTitle">
+          <h3 id="matchDetailOverviewTitle">Chronologie du match</h3>
+          <ol class="match-detail-timeline" id="matchDetailTimeline"></ol>
+          <div class="match-detail-facts">
+            <p><strong>Lieu</strong><span id="matchDetailVenue"></span></p>
+            <p><strong>Arbitre</strong><span id="matchDetailReferee"></span></p>
+          </div>
+        </section>
+
+        <div class="match-detail-tabs" role="tablist" aria-label="Détails du match">
+          <button type="button" class="match-detail-tab is-active" id="matchTabLineup" role="tab" aria-selected="true" aria-controls="matchPanelLineup" data-match-tab="lineup">Composition</button>
+          <button type="button" class="match-detail-tab" id="matchTabHistory" role="tab" aria-selected="false" aria-controls="matchPanelHistory" data-match-tab="history">Confrontations</button>
+          <button type="button" class="match-detail-tab" id="matchTabStandings" role="tab" aria-selected="false" aria-controls="matchPanelStandings" data-match-tab="standings" hidden>Classement</button>
+          <button type="button" class="match-detail-tab" id="matchTabHighlights" role="tab" aria-selected="false" aria-controls="matchPanelHighlights" data-match-tab="highlights">Temps forts</button>
+        </div>
+
+        <div class="match-detail-panels">
+          <p id="matchDetailApiNotice" class="match-detail-api-notice" role="status" hidden></p>
+          <section id="matchPanelLineup" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabLineup" data-match-panel="lineup">
+            <h3>Formations et joueurs</h3>
+            <div class="match-detail-lineups">
+              <article>
+                <h4 id="matchDetailHomeLineupName"></h4>
+                <div id="matchDetailHomeLineup" class="match-detail-lineup"></div>
+              </article>
+              <article>
+                <h4 id="matchDetailAwayLineupName"></h4>
+                <div id="matchDetailAwayLineup" class="match-detail-lineup"></div>
+              </article>
+            </div>
+          </section>
+          <section id="matchPanelHistory" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabHistory" data-match-panel="history" hidden>
+            <h3>Confrontations directes</h3>
+            <ol class="match-detail-history" id="matchDetailHistory">
+              <li class="match-detail-empty">L’historique des confrontations n’est pas disponible pour ces équipes.</li>
+            </ol>
+          </section>
+          <section id="matchPanelStandings" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabStandings" data-match-panel="standings" hidden>
+            <h3 id="matchDetailStandingsTitle">Classement de la compétition</h3>
+            <div id="matchDetailStandings" aria-live="polite">
+              <p class="match-detail-empty">Chargement du classement…</p>
+            </div>
+          </section>
+          <section id="matchPanelHighlights" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabHighlights" data-match-panel="highlights" hidden>
+            <p class="match-detail-empty" id="matchDetailHighlightMessage">Vidéo non fournie.</p>
+            <a id="matchDetailHighlightLink" class="match-detail-highlight-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Lire le résumé vidéo" hidden>
+              <span class="match-detail-video-poster">
+                <img id="matchDetailHighlightImage" alt="" hidden>
+                <span class="match-detail-video-fallback" id="matchDetailHighlightFallback"></span>
+                <span class="match-detail-play" aria-hidden="true">&#9654;</span>
+              </span>
+            </a>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+  </html>
