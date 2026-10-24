@@ -918,7 +918,7 @@ export const mountResults = (root) => {
     const isL1 = linafootLeague.value === "L1";
     const options = isL1
       ? [["A", "Groupe A"], ["B", "Groupe B"], ["PO", "Play Off (aperçu)"]]
-      : [["A", "Groupe A"], ["B", "Groupe B"], ["C", "Groupe C"]];
+      : [["A", "Zone Ouest"], ["B", "Zone Centre-Sud"], ["C", "Zone Est"]];
     const current = linafootGroup.value;
     linafootGroup.innerHTML = options
       .map(([value, label]) => `<option value="${value}">${label}</option>`)
@@ -1057,4 +1057,4 @@ export const mountResults = (root) => {
     if (buteursChannel) unsubscribeButeurs(buteursChannel);
     root.dataset.initialized = "false";
   };
-};
+};
