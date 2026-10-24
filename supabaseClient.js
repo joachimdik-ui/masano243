@@ -1,28 +1,40 @@
-const buildUrl = typeof process !== "undefined"
-  ? process.env.NEXT_PUBLIC_SUPABASE_URL
-  : "";
-const buildAnonKey = typeof process !== "undefined"
-  ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  : "";
+const getWindowValue = (...keys) => {
+  if (typeof window === "undefined") return undefined;
+  for (const key of keys) {
+    const value = window[key];
+    if (value !== undefined && value !== null && value !== "") return value;
+  }
+  return undefined;
+};
 
-const supabaseUrl = window.NEXT_PUBLIC_SUPABASE_URL
-  || window.SUPABASE_URL
-  || buildUrl
+const getProcessValue = (...keys) => {
+  if (typeof process === "undefined" || !process.env) return undefined;
+  for (const key of keys) {
+    const value = process.env[key];
+    if (value !== undefined && value !== null && value !== "") return value;
+  }
+  return undefined;
+};
+
+const readSupabaseValue = (...keys) => getWindowValue(...keys) ?? getProcessValue(...keys);
+
+const supabaseUrl = readSupabaseValue("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_URL")
   || "https://cisgavepcswtgnpomlyg.supabase.co";
-const supabaseAnonKey = window.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  || window.SUPABASE_ANON_KEY
-  || buildAnonKey
+const supabaseAnonKey = readSupabaseValue("NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_ANON_KEY")
   || "sb_publishable_ImWO2pVSsT9DjXAv9_gq2g_gPFAUxC5";
 
-const createSupabaseClient = (url, key) => window.supabase && url && key
-  ? window.supabase.createClient(url, key)
-  : null;
+const createSupabaseClient = (url, key) => {
+  if (!url || !key) return null;
+  if (typeof window !== "undefined" && window.supabase && typeof window.supabase.createClient === "function") {
+    return window.supabase.createClient(url, key);
+  }
+  return null;
+};
 
 export const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);
 
-const scoopSupabaseUrl = window.SCOOP_SUPABASE_URL
-  || "https://qkzzhjeeuierlqkqexrf.supabase.co";
-const scoopSupabaseAnonKey = window.SCOOP_SUPABASE_PUBLISHABLE_KEY
+const scoopSupabaseUrl = readSupabaseValue("SCOOP_SUPABASE_URL") || "https://qkzzhjeeuierlqkqexrf.supabase.co";
+const scoopSupabaseAnonKey = readSupabaseValue("SCOOP_SUPABASE_PUBLISHABLE_KEY")
   || "sb_publishable_ZbBHL33f1N8IwdvKRyWLfA_CI9hmi_z";
 
 export const scoopSupabase = createSupabaseClient(scoopSupabaseUrl, scoopSupabaseAnonKey);

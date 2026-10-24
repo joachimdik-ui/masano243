@@ -1,5 +1,5 @@
 import { scoopSupabase, supabase } from "./supabaseClient.js";
-import { mountResults } from "./results.js";
+import { mountResults } from "./src_results.js";
 
 let articles = [];
 let resultsCleanup;
