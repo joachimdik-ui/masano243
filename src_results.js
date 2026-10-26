@@ -19,6 +19,10 @@ import {
   subscribeButeurs,
   unsubscribeButeurs
 } from "./services/linafootService.js";
+import {
+  fetchLeopardsPlayers,
+  fetchPlayerDetails
+} from "./services/leopardsPlayersService.js";
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({
   "&": "&amp;",
@@ -65,7 +69,13 @@ const renderMatch = (match) => {
     ? (match.competition_category === "linafoot_l2" ? "Linafoot L2" : "Linafoot L1")
     : match.source === "epf_kin"
       ? `EPF-KIN · Série ${match.serie}`
-      : (match.competition_category === "leopards" ? "Léopards" : "International");
+      : ({
+        leopards: "Léopards",
+        interclubs: "Interclubs (CAF)",
+        basketball: "Basketball",
+        judo: "Judo",
+        omnisports: "Omnisports"
+      }[match.competition_category] || "International");
   const isLive = match.statut === "live";
   const hasScore = match.score_domicile !== null && match.score_visiteur !== null;
   const score = hasScore
@@ -86,9 +96,52 @@ const renderMatch = (match) => {
   </article>`;
 };
 
+const EMPTY_EVENTS_MESSAGE = "Aucun événement n'est disponible pour le moment.";
+const EMPTY_DATA_MESSAGE = "Aucune donnée n'est disponible pour le moment.";
+const EMPTY_PLAYERS_MESSAGE = "Aucun joueur n'est disponible pour le moment.";
+
+const normalizeSearch = (value) => String(value ?? "")
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .toLowerCase()
+  .trim();
+
+const formatStat = (value) => {
+  const number = Number(value);
+  return value === null || value === undefined || value === "" || !Number.isFinite(number) ? "—" : String(number);
+};
+
+const playerAge = (birthDate) => {
+  const birth = new Date(birthDate);
+  if (!birthDate || Number.isNaN(birth.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const monthGap = now.getMonth() - birth.getMonth();
+  if (monthGap < 0 || (monthGap === 0 && now.getDate() < birth.getDate())) age -= 1;
+  return age;
+};
+
+const PLAYER_POSITIONS = [
+  ["gardien", "Gardiens"],
+  ["defenseur", "Défenseurs"],
+  ["milieu", "Milieux"],
+  ["attaquant", "Attaquants"]
+];
+
+const playerPositionKey = (position) => {
+  const normalized = normalizeSearch(position);
+  return PLAYER_POSITIONS.find(([key]) => normalized.startsWith(key))?.[0] || "autre";
+};
+
+const renderPlayerAvatar = (player, extraClass = "") => {
+  const name = player.nom || "Joueur";
+  const initials = escapeHtml(name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase());
+  return `<span class="player-avatar ${extraClass}" aria-hidden="true"><span class="player-avatar-fallback"${player.photo_url ? " hidden" : ""}>${initials}</span>${player.photo_url ? `<img class="player-avatar-img" src="${escapeHtml(player.photo_url)}" alt="" loading="lazy">` : ""}</span>`;
+};
+
 const scoreOf = (match) => `${match.score_domicile ?? ""}:${match.score_visiteur ?? ""}`;
 
-export const mountResults = (root) => {
+export const mountResults = (root, competitionPage = null) => {
   if (!root) return () => {};
   root.dataset.initialized = "true";
 
@@ -96,7 +149,7 @@ export const mountResults = (root) => {
   const { signal } = controller;
   root.addEventListener("error", (event) => {
     const image = event.target;
-    if (image instanceof HTMLImageElement && image.classList.contains("club-logo")) {
+    if (image instanceof HTMLImageElement && (image.classList.contains("club-logo") || image.classList.contains("player-avatar-img"))) {
       image.hidden = true;
       const fallback = image.previousElementSibling;
       if (fallback) fallback.hidden = false;
@@ -105,6 +158,8 @@ export const mountResults = (root) => {
   const list = root.querySelector("#matchList");
   const notice = root.querySelector("#resultsNotice");
   const count = root.querySelector("#liveMatchCount");
+  const resultsTitle = root.querySelector("#resultsTitle");
+  const resultsSubtitle = root.querySelector(".live-center-subtitle");
   const detailPage = document.getElementById("matchDetailPage");
   const detailPageContent = detailPage?.querySelector(".match-detail-page-content");
   const detailModal = detailPage;
@@ -113,7 +168,6 @@ export const mountResults = (root) => {
   const standingsTab = root.querySelector("#standingsTab");
   const matchesPanel = root.querySelector("#matchesPanel");
   const standingsPanel = root.querySelector("#standingsPanel");
-  const teamStandingsView = root.querySelector("#teamStandingsView");
   const topScorersView = root.querySelector("#topScorersView");
   const standingsCompetition = root.querySelector("#standingsCompetition");
   const standingsGroup = root.querySelector("#standingsGroup");
@@ -121,14 +175,44 @@ export const mountResults = (root) => {
   const topScorersContainer = root.querySelector("#topScorersContainer");
   const standingsToolbar = root.querySelector(".standings-toolbar");
   const linafootLeague = root.querySelector("#linafootLeague");
+  const linafootLeagueLabel = root.querySelector('label[for="linafootLeague"]');
   const linafootGroup = root.querySelector("#linafootGroup");
   const linafootControls = root.querySelector(".linafoot-controls");
   const epfKinControls = root.querySelector("#epfKinControls");
   const epfKinSeries = root.querySelector("#epfKinSeries");
+  const disciplineCompetitionControls = root.querySelector("#disciplineCompetitionControls");
+  const calendarTab = root.querySelector("#calendarTab");
+  const resultsOnlyTab = root.querySelector("#resultsOnlyTab");
+  const playersTab = root.querySelector("#playersTab");
+  const playersPanel = root.querySelector("#playersPanel");
+  const playersContainer = root.querySelector("#playersContainer");
+  const playersSearch = root.querySelector("#playersSearch");
+  const playersPosition = root.querySelector("#playersPosition");
+  const statusFilters = root.querySelector(".match-status-filters");
+  const liveFilterButton = root.querySelector('[data-status="live"]');
+  const playerModal = document.getElementById("playerModal");
+  const playerModalBody = document.getElementById("playerModalBody");
+  // live = Live Center ; league / leopards / interclubs / international / events = pages de rubrique
+  const layout = competitionPage?.layout || (competitionPage ? "events" : "live");
+  const isLiveCenter = layout === "live";
+  root.classList.toggle("is-live-center", isLiveCenter);
+  root.classList.toggle("is-compact", !isLiveCenter);
+  const allTabs = [matchesTab, calendarTab, resultsOnlyTab, standingsTab, topScorersView, playersTab];
+  const markTab = (active) => allTabs.forEach((tab) => {
+    const isActive = tab === active;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
+  const showPanel = (panel) => [matchesPanel, standingsPanel, playersPanel].forEach((item) => { item.hidden = item !== panel; });
+  let players = [];
+  let playersLoaded = false;
+  let playerReturnFocus;
+  let activePlayerId;
   let matches = [];
   let standings = [];
   let standingsMode = "teams";
-  let competitionFilter = "linafoot_l1";
+  let competitionFilter = competitionPage?.competition || "linafoot_l1";
+  let selectedDisciplineCompetition = "";
   let statusFilter = "all";
   let activeView = "matches";
   let realtimeChannel;
@@ -154,19 +238,44 @@ export const mountResults = (root) => {
     element.className = `match-rank-badge ${rankClass}`;
   };
 
-  const teamPosition = (rows, team) => {
-    const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-    const row = rows.find((item) => normalize(item.club?.nom || item.equipe || item.equipe_nom || item.team) === normalize(team));
-    const position = Number(row?.position ?? row?.rang);
-    return Number.isFinite(position) ? position : null;
+  const normalizeDetailStandings = (rows) => rows.map((row) => ({
+    team_id: row.club?.id ?? row.club_id ?? row.equipe_id ?? null,
+    team: row.club?.nom || row.equipe || row.equipe_nom || row.team || row.nom || "",
+    logo: row.club?.logo_url || row.logo_url || "",
+    group: row.groupe || row.serie || "",
+    position: row.position ?? row.rang ?? null,
+    played: row.joues ?? row.matches_played ?? null,
+    won: row.gagnes ?? row.victoires ?? row.wins ?? null,
+    draw: row.nuls ?? row.draws ?? null,
+    lost: row.defaites ?? row.losses ?? null,
+    goal_difference: row.difference_buts ?? row.goal_difference ?? null,
+    points: row.points ?? row.pts ?? null
+  }));
+
+  const fetchSupabaseMatchStandings = async (match) => {
+    const rows = match.source === "epf_kin"
+      ? await fetchEpfKinStandings("2026-2027", match.serie)
+      : ["linafoot_l1", "linafoot_l2"].includes(match.competition_category)
+        ? await getClassement(match.ligue || (match.competition_category === "linafoot_l2" ? "L2" : "L1"), match.groupe || linafootGroup.value)
+        : await fetchClassement(match.competition, match.groupe || "");
+    return normalizeDetailStandings(rows);
+  };
+
+  const addSupabaseMatchStandings = async (match, details) => {
+    try {
+      return { ...details, rankings: await fetchSupabaseMatchStandings(match) };
+    } catch (error) {
+      console.error("Impossible de charger le classement associé au match.", error);
+      return { ...details, rankings: [], warnings: [...(details.warnings || []), "standings"] };
+    }
   };
 
   const loadMatchDetails = (match) => {
     if (!matchDetailsCache.has(match.id)) {
       const detailsRequest = match.source === "local"
-        ? fetchLocalMatchDetails(match)
+        ? fetchLocalMatchDetails(match).then((details) => addSupabaseMatchStandings(match, details))
         : match.source === "epf_kin"
-          ? Promise.resolve({
+          ? addSupabaseMatchStandings(match, {
             venue: match.stade || "",
             referee: "",
             events: [],
@@ -439,40 +548,12 @@ export const mountResults = (root) => {
       : "";
   };
 
-  const loadMatchRanks = async (match) => {
-    const homeRank = detailModal.querySelector("#matchDetailHomeRank");
-    const awayRank = detailModal.querySelector("#matchDetailAwayRank");
-    if (match.source !== "local") {
-      homeRank.textContent = "Chargement…";
-      awayRank.textContent = "Chargement…";
-      return;
-    }
-    homeRank.textContent = "Chargement…";
-    awayRank.textContent = "Chargement…";
-    try {
-      const rows = match.source === "local" && ["linafoot_l1", "linafoot_l2"].includes(match.competition_category)
-        ? await getClassement(match.ligue || (match.competition_category === "linafoot_l2" ? "L2" : "L1"), match.groupe || linafootGroup.value)
-        : await fetchClassement(match.competition, match.groupe || "");
-      if (activeDetailMatchId !== match.id || detailModal.hidden) return;
-      setDetailRank(homeRank, teamPosition(rows, match.equipe_domicile), rows.length);
-      setDetailRank(awayRank, teamPosition(rows, match.equipe_visiteur), rows.length);
-    } catch (error) {
-      if (activeDetailMatchId !== match.id || detailModal.hidden) return;
-      console.error("Impossible de charger le classement associé au détail du match.", error);
-      homeRank.textContent = "Classement indisponible";
-      awayRank.textContent = "Classement indisponible";
-      homeRank.className = "match-rank-badge";
-      awayRank.className = "match-rank-badge";
-    }
-  };
-
   const openMatchDetail = (match, trigger) => {
     if (!detailModal || !detailDialog) return;
     matchDetailReturnFocus = trigger;
     activeDetailMatchId = match.id;
-    const hasApiCompetitionStandings = ["international", "leopards"].includes(match.competition_category);
     const standingsTab = detailModal.querySelector("#matchTabStandings");
-    standingsTab.hidden = !hasApiCompetitionStandings;
+    standingsTab.hidden = false;
     detailModal.querySelector("#matchDetailStandings").innerHTML = `<p class="match-detail-empty">Chargement du classement…</p>`;
     const homeLogo = detailModal.querySelector("#matchDetailHomeLogo");
     const awayLogo = detailModal.querySelector("#matchDetailAwayLogo");
@@ -523,7 +604,6 @@ export const mountResults = (root) => {
     detailModal.hidden = false;
     detailModal.scrollTop = 0;
     detailDialog.focus();
-    if (match.source === "local") void loadMatchRanks(match);
     void loadMatchDetails(match).then((details) => {
       if (activeDetailMatchId === match.id && !detailModal.hidden) renderMatchDetails(match, details);
     }).catch((error) => {
@@ -558,9 +638,11 @@ export const mountResults = (root) => {
     matchDetailReturnFocus?.focus();
   };
 
+  // Les messages techniques ne sont plus affichés aux visiteurs : ils restent dans la console.
   const displayNotice = (messages) => {
-    notice.hidden = messages.length === 0;
-    notice.textContent = messages.join(" ");
+    notice.hidden = true;
+    notice.textContent = "";
+    if (messages.length) console.warn("Live Center :", ...messages);
   };
 
   const sourceErrorMessage = (source, error) => {
@@ -581,28 +663,73 @@ export const mountResults = (root) => {
   };
 
   const filteredMatches = () => matches.filter((match) => {
-    const matchesCompetition = match.competition_category === competitionFilter;
-    const matchesLeague = match.source !== "local"
+    const matchesCompetition = isLiveCenter || match.competition_category === competitionFilter;
+    const matchesNamedCompetition = !selectedDisciplineCompetition || match.competition === selectedDisciplineCompetition;
+    const matchesLeague = isLiveCenter || match.source !== "local"
       || !match.ligue
       || match.ligue === linafootLeague.value;
-    const matchesGroup = match.source !== "local"
+    const matchesGroup = isLiveCenter || match.source !== "local"
       || !match.groupe
       || match.groupe === linafootGroup.value;
-    const matchesEpfSeries = match.source !== "epf_kin"
+    const matchesEpfSeries = isLiveCenter || match.source !== "epf_kin"
       || match.serie === epfKinSeries.value;
-    return matchesCompetition && matchesLeague && matchesGroup
-      && matchesEpfSeries
-      && (statusFilter === "all" || match.statut === statusFilter);
+    // « calendar » = matchs en cours ou à venir (onglet « Calendriers » d'Interclubs).
+    const matchesStatus = statusFilter === "all"
+      || (statusFilter === "calendar" ? match.statut !== "finished" : match.statut === statusFilter);
+    return matchesCompetition && matchesNamedCompetition && matchesLeague && matchesGroup
+      && matchesEpfSeries && matchesStatus;
   });
 
+  const renderDisciplineCompetitionTabs = () => {
+    if (!competitionPage?.discipline) {
+      disciplineCompetitionControls.hidden = true;
+      return;
+    }
+    const competitions = [...new Set(matches
+      .filter((match) => match.competition_category === competitionPage.discipline)
+      .map((match) => match.competition)
+      .filter(Boolean))].sort();
+    if (!competitions.includes(selectedDisciplineCompetition)) selectedDisciplineCompetition = "";
+    const options = ["", ...competitions];
+    disciplineCompetitionControls.innerHTML = options.map((competition) => {
+      const selected = competition === selectedDisciplineCompetition;
+      const label = competition || "Toutes les compétitions";
+      return `<button type="button" class="competition-filter${selected ? " is-active" : ""}" role="tab" aria-selected="${selected}" data-discipline-competition="${escapeHtml(competition)}">${escapeHtml(label)}</button>`;
+    }).join("");
+    disciplineCompetitionControls.hidden = false;
+  };
+
   const renderMatches = () => {
-    count.textContent = String(matches.filter((match) => match.statut === "live").length);
+    const liveCount = matches.filter((match) => match.statut === "live").length;
+    count.textContent = String(liveCount);
+    if (liveFilterButton) {
+      const scopeLive = isLiveCenter
+        ? liveCount
+        : matches.filter((match) => match.competition_category === competitionFilter && match.statut === "live").length;
+      liveFilterButton.textContent = scopeLive ? `🔴 En direct (${scopeLive})` : "🔴 En direct";
+    }
+    document.querySelectorAll(".nav-live").forEach((link) => {
+      link.classList.toggle("is-live", liveCount > 0);
+      link.setAttribute("aria-label", `Live Center, ${liveCount} match${liveCount === 1 ? "" : "s"} en direct`);
+    });
     const filtered = filteredMatches();
     if (!filtered.length) {
       const playoffPreview = competitionFilter === "linafoot_l1" && linafootGroup.value === "PO";
-      list.innerHTML = `<p class="results-empty">${playoffPreview
+      const scopeHasMatches = isLiveCenter
+        ? matches.length > 0
+        : matches.some((match) => match.competition_category === competitionFilter);
+      const message = playoffPreview
         ? "Aucun match de play-off programmé pour le moment. Consultez l’onglet Classements pour voir les équipes provisoirement qualifiées."
-        : matches.length ? "Aucun match ne correspond à ces filtres." : "Aucun match disponible pour le moment."}</p>`;
+        : !scopeHasMatches
+          ? EMPTY_EVENTS_MESSAGE
+          : isLiveCenter && statusFilter === "live"
+            ? "Aucun match en direct pour le moment."
+            : statusFilter === "calendar"
+              ? "Aucun match à venir pour le moment."
+              : statusFilter === "finished" && layout === "interclubs"
+                ? "Aucun résultat n'est disponible pour le moment."
+                : "Aucun match ne correspond à ces filtres.";
+      list.innerHTML = `<p class="results-empty">${message}</p>`;
       return;
     }
     list.innerHTML = filtered
@@ -720,7 +847,9 @@ export const mountResults = (root) => {
     }
     matches = nextMatches;
     displayNotice(messages);
+    renderDisciplineCompetitionTabs();
     renderMatches();
+    if (activeView === "standings" || activeView === "scorers") renderStandings();
   };
 
   const competitionOptions = (rows) => [...new Set(rows.map((row) => row.competition).filter(Boolean))].sort();
@@ -778,8 +907,17 @@ export const mountResults = (root) => {
     try {
       const linafootSelected = ["linafoot_l1", "linafoot_l2"].includes(competitionFilter);
       const epfKinSelected = competitionFilter === "epf_kin";
-      standingsToolbar.hidden = linafootSelected || epfKinSelected;
-      if (epfKinSelected) {
+      const leopardsSelected = competitionFilter === "leopards";
+      standingsToolbar.hidden = linafootSelected || epfKinSelected || leopardsSelected;
+      if (leopardsSelected) {
+        const match = matches.find((item) => item.competition_category === "leopards");
+        if (!match) {
+          standingsContainer.innerHTML = `<p class="results-empty">Aucun classement disponible tant qu’un match des Léopards n’est pas fourni par l’API.</p>`;
+          return;
+        }
+        const details = await fetchMatchDetails(match.id);
+        standings = details.rankings || [];
+      } else if (epfKinSelected) {
         standings = await fetchEpfKinStandings("2026-2027", epfKinSeries.value);
       } else {
         standings = linafootSelected
@@ -787,7 +925,7 @@ export const mountResults = (root) => {
           : await fetchClassement(standingsCompetition.value, standingsGroup.value);
       }
       if (stopped || requestId !== standingsRequestId) return;
-      if (!linafootSelected && !epfKinSelected) {
+      if (!linafootSelected && !epfKinSelected && !leopardsSelected) {
         const comps = competitionOptions(standings);
         const currentCompetition = standingsCompetition.value;
         if (!currentCompetition && comps.length) {
@@ -799,7 +937,7 @@ export const mountResults = (root) => {
         standingsCompetition.value = currentCompetition;
         standingsGroup.value = groups.includes(currentGroup) ? currentGroup : "";
       }
-      const visibleStandings = [...(epfKinSelected
+      const visibleStandings = [...(epfKinSelected || leopardsSelected
         ? standings
         : standings.filter((row) => {
           const category = normalizeCompetition(row.competition).category;
@@ -841,11 +979,11 @@ export const mountResults = (root) => {
           return `<tr class="${isTopFour ? "qualification-place" : isBottomFour ? "relegation-place" : ""}">
             <td><span class="standing-position">${position}</span></td>
             <th scope="row"><span class="standing-team">${logo}<span>${escapeHtml(team)}</span></span></th>
-            <td>${Number(row.joues ?? row.matches_played ?? 0)}</td>
-            <td>${Number(row.gagnes ?? row.victoires ?? row.wins ?? 0)}</td>
-            <td>${Number(row.nuls ?? row.draws ?? 0)}</td>
-            <td>${Number(row.defaites ?? row.losses ?? 0)}</td>
-            <td>${Number(row.difference_buts ?? 0)}</td>
+            <td>${Number(row.joues ?? row.matches_played ?? row.played ?? 0)}</td>
+            <td>${Number(row.gagnes ?? row.victoires ?? row.wins ?? row.won ?? 0)}</td>
+            <td>${Number(row.nuls ?? row.draws ?? row.draw ?? 0)}</td>
+            <td>${Number(row.defaites ?? row.losses ?? row.lost ?? 0)}</td>
+            <td>${Number(row.difference_buts ?? row.goal_difference ?? 0)}</td>
             <td><strong>${Number(row.points ?? row.pts ?? 0)}</strong></td>
           </tr>`;
         }).join("")}</tbody>
@@ -862,14 +1000,22 @@ export const mountResults = (root) => {
     const requestId = ++topScorersRequestId;
     const ligue = linafootLeague.value;
     const isEpfKin = competitionFilter === "epf_kin";
+    const isLeopards = competitionFilter === "leopards";
+    const leopardsMatch = isLeopards && matches.find((match) => match.competition_category === "leopards" && match.league_id && match.season);
     topScorersContainer.innerHTML = `<div class="match-skeleton"></div>`;
+    if (isLeopards && !leopardsMatch) {
+      topScorersContainer.innerHTML = `<p class="results-empty">Aucune compétition des Léopards n’est actuellement fournie par l’API.</p>`;
+      return;
+    }
     try {
       const scorers = isEpfKin
         ? await fetchEpfKinTopScorers("2026-2027")
-        : await fetchTopButeurs(ligue);
+        : isLeopards
+          ? (await loadMatchDetails(leopardsMatch)).top_scorers || []
+          : await fetchTopButeurs(ligue);
       if (stopped || requestId !== topScorersRequestId) return;
       if (!scorers.length) {
-        const rankingLabel = isEpfKin ? "EPF-KIN, toutes séries" : `Linafoot ${ligue}`;
+        const rankingLabel = isEpfKin ? "EPF-KIN, toutes séries" : isLeopards ? "Léopards" : `Linafoot ${ligue}`;
         topScorersContainer.innerHTML = `<p class="results-empty">Aucun buteur ${escapeHtml(rankingLabel)} disponible pour le moment.</p>`;
         return;
       }
@@ -890,7 +1036,7 @@ export const mountResults = (root) => {
       </table></div>`;
     } catch (error) {
       if (stopped || requestId !== topScorersRequestId) return;
-      console.error(`Impossible de charger le classement des buteurs ${isEpfKin ? "EPF-KIN" : ligue}.`, error);
+      console.error(`Impossible de charger le classement des buteurs ${isEpfKin ? "EPF-KIN" : isLeopards ? "Léopards" : ligue}.`, error);
       topScorersContainer.innerHTML = `<p class="results-empty">Classement des buteurs indisponible : ${escapeHtml(error.message)}</p>`;
     }
   };
@@ -898,20 +1044,21 @@ export const mountResults = (root) => {
   const setStandingsMode = (mode) => {
     standingsMode = mode;
     const showScorers = mode === "scorers";
-    teamStandingsView.classList.toggle("is-active", !showScorers);
-    teamStandingsView.setAttribute("aria-pressed", String(!showScorers));
-    topScorersView.classList.toggle("is-active", showScorers);
-    topScorersView.setAttribute("aria-pressed", String(showScorers));
+    activeView = showScorers ? "scorers" : "standings";
+    showPanel(standingsPanel);
+    markTab(showScorers ? topScorersView : standingsTab);
     standingsContainer.hidden = showScorers;
     topScorersContainer.hidden = !showScorers;
     standingsToolbar.hidden = showScorers || ["linafoot_l1", "linafoot_l2", "epf_kin"].includes(competitionFilter);
-    if (activeView === "standings") renderStandings();
+    if (activeView === "standings" || activeView === "scorers") renderStandings();
   };
 
   const updateTopScorersLabel = () => {
     topScorersView.textContent = competitionFilter === "epf_kin"
-      ? "Meilleur buteur (EPF-KIN, toutes séries)"
-      : `Meilleur buteur (${linafootLeague.value})`;
+      ? "Buteurs EPF-KIN"
+      : competitionFilter === "leopards"
+        ? "Buteurs Léopards"
+        : `Buteurs Linafoot ${linafootLeague.value}`;
   };
 
   const updateLinafootGroupOptions = () => {
@@ -930,55 +1077,103 @@ export const mountResults = (root) => {
 
   updateLinafootGroupOptions();
 
+  const updateCompetitionTabs = () => {
+    const supportsStandings = ["linafoot_l1", "linafoot_l2", "epf_kin"].includes(competitionFilter);
+    const supportsScorers = ["linafoot_l1", "linafoot_l2", "epf_kin"].includes(competitionFilter);
+    standingsTab.hidden = !supportsStandings;
+    topScorersView.hidden = !supportsScorers;
+    if (!supportsStandings && activeView !== "matches") matchesTab.click();
+  };
+
+  if (competitionPage) {
+    resultsTitle.textContent = competitionPage.title;
+    resultsSubtitle.textContent = "";
+    root.querySelector(".competition-filters").hidden = true;
+    linafootControls.hidden = !["linafoot_l1", "linafoot_l2"].includes(competitionFilter);
+    if (["linafoot_l1", "linafoot_l2"].includes(competitionFilter)) {
+      linafootLeague.hidden = true;
+      linafootLeagueLabel.hidden = true;
+    }
+    epfKinControls.hidden = competitionFilter !== "epf_kin";
+    if (competitionFilter === "linafoot_l2") linafootLeague.value = "L2";
+    if (competitionFilter === "linafoot_l1") linafootLeague.value = "L1";
+    updateLinafootGroupOptions();
+    updateCompetitionTabs();
+    renderDisciplineCompetitionTabs();
+  }
+
+  // Organisation des onglets selon la rubrique.
+  const configureLayout = () => {
+    const tabsBar = root.querySelector(".results-view-tabs");
+    const setTab = (tab, visible, label) => {
+      tab.hidden = !visible;
+      if (label) tab.textContent = label;
+    };
+    if (layout === "leopards") {
+      setTab(matchesTab, true, "Calendrier et résultats");
+      setTab(standingsTab, false);
+      setTab(topScorersView, false);
+      setTab(playersTab, true);
+    } else if (layout === "interclubs") {
+      setTab(matchesTab, false);
+      setTab(calendarTab, true);
+      setTab(resultsOnlyTab, true);
+      setTab(standingsTab, false);
+      setTab(topScorersView, false);
+      statusFilter = "calendar";
+    } else if (layout === "international" || layout === "events") {
+      setTab(standingsTab, false);
+      setTab(topScorersView, false);
+    }
+    // Filtre par statut : uniquement pour le Live Center et les championnats (Linafoot, EPF-KIN).
+    statusFilters.hidden = !(isLiveCenter || layout === "league");
+    const visibleTabs = [...tabsBar.querySelectorAll(".results-tab")].filter((tab) => !tab.hidden);
+    tabsBar.hidden = isLiveCenter || visibleTabs.length < 2;
+  };
+  configureLayout();
+
   matchesTab.addEventListener("click", () => {
     activeView = "matches";
-    root.querySelectorAll('[data-competition="leopards"], [data-competition="international"]')
-      .forEach((button) => { button.hidden = false; });
-    matchesPanel.hidden = false;
-    standingsPanel.hidden = true;
-    matchesTab.classList.add("is-active");
-    matchesTab.setAttribute("aria-selected", "true");
-    standingsTab.classList.remove("is-active");
-    standingsTab.setAttribute("aria-selected", "false");
+    if (!competitionPage) root.querySelectorAll("[data-competition]").forEach((button) => { button.hidden = false; });
+    showPanel(matchesPanel);
+    markTab(matchesTab);
+  }, { signal });
+  calendarTab.addEventListener("click", () => {
+    activeView = "matches";
+    statusFilter = "calendar";
+    showPanel(matchesPanel);
+    markTab(calendarTab);
+    renderMatches();
+  }, { signal });
+  resultsOnlyTab.addEventListener("click", () => {
+    activeView = "matches";
+    statusFilter = "finished";
+    showPanel(matchesPanel);
+    markTab(resultsOnlyTab);
+    renderMatches();
   }, { signal });
   standingsTab.addEventListener("click", () => {
-    activeView = "standings";
-    root.querySelectorAll('[data-competition="leopards"], [data-competition="international"]')
-      .forEach((button) => { button.hidden = true; });
-    if (["leopards", "international"].includes(competitionFilter)) {
-      competitionFilter = "linafoot_l1";
-      linafootLeague.value = "L1";
-      updateLinafootGroupOptions();
-      linafootControls.hidden = false;
-      epfKinControls.hidden = true;
-      topScorersView.hidden = false;
-      updateTopScorersLabel();
-      root.querySelectorAll("[data-competition]").forEach((button) => {
-        const active = button.dataset.competition === competitionFilter;
-        button.classList.toggle("is-active", active);
-        button.setAttribute("aria-pressed", String(active));
-      });
-    }
-    matchesPanel.hidden = true;
-    standingsPanel.hidden = false;
-    standingsTab.classList.add("is-active");
-    standingsTab.setAttribute("aria-selected", "true");
-    matchesTab.classList.remove("is-active");
-    matchesTab.setAttribute("aria-selected", "false");
-    renderStandings();
+    setStandingsMode("teams");
   }, { signal });
-  teamStandingsView.addEventListener("click", () => setStandingsMode("teams"), { signal });
   topScorersView.addEventListener("click", () => setStandingsMode("scorers"), { signal });
+  disciplineCompetitionControls.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-discipline-competition]");
+    if (!button) return;
+    selectedDisciplineCompetition = button.dataset.disciplineCompetition;
+    renderDisciplineCompetitionTabs();
+    renderMatches();
+  }, { signal });
   root.querySelectorAll("[data-competition]").forEach((button) => button.addEventListener("click", () => {
     competitionFilter = button.dataset.competition;
     linafootControls.hidden = !["linafoot_l1", "linafoot_l2"].includes(competitionFilter);
     epfKinControls.hidden = competitionFilter !== "epf_kin";
-    topScorersView.hidden = !["linafoot_l1", "linafoot_l2", "epf_kin"].includes(competitionFilter);
+    topScorersView.hidden = !["linafoot_l1", "linafoot_l2", "epf_kin", "leopards"].includes(competitionFilter);
     if (topScorersView.hidden && standingsMode === "scorers") setStandingsMode("teams");
     if (competitionFilter === "linafoot_l1") linafootLeague.value = "L1";
     if (competitionFilter === "linafoot_l2") linafootLeague.value = "L2";
     if (["linafoot_l1", "linafoot_l2"].includes(competitionFilter)) updateLinafootGroupOptions();
     updateTopScorersLabel();
+    updateCompetitionTabs();
     root.querySelectorAll("[data-competition]").forEach((item) => {
       const active = item === button;
       item.classList.toggle("is-active", active);
@@ -1024,7 +1219,186 @@ export const mountResults = (root) => {
     updateTopScorersLabel();
     if (activeView === "standings") renderStandings();
   }, { signal });
+  // ---- Léopards : liste des joueurs + fiche individuelle ----
+  const renderPlayers = () => {
+    const query = normalizeSearch(playersSearch.value);
+    const position = playersPosition.value;
+    const visible = players.filter((player) => (
+      (!query || normalizeSearch(`${player.nom} ${player.club}`).includes(query))
+      && (!position || playerPositionKey(player.poste) === position)
+    ));
+    if (!players.length) {
+      playersContainer.innerHTML = `<p class="results-empty">${EMPTY_PLAYERS_MESSAGE}</p>`;
+      return;
+    }
+    if (!visible.length) {
+      playersContainer.innerHTML = `<p class="results-empty">Aucun joueur ne correspond à cette recherche.</p>`;
+      return;
+    }
+    const groups = [...PLAYER_POSITIONS, ["autre", "Autres joueurs"]];
+    playersContainer.innerHTML = groups.map(([key, label]) => {
+      const group = visible.filter((player) => playerPositionKey(player.poste) === key);
+      if (!group.length) return "";
+      return `<section class="players-group" aria-label="${label}">
+        <h3 class="players-group-title">${label} <span>${group.length}</span></h3>
+        <div class="players-grid">${group.map((player) => `<button type="button" class="player-card" data-player-id="${escapeHtml(player.id)}" aria-haspopup="dialog">
+          ${renderPlayerAvatar(player)}
+          <span class="player-card-body">
+            <strong>${escapeHtml(player.nom || "Joueur")}</strong>
+            <span>${escapeHtml(player.club || player.poste || "Club à confirmer")}</span>
+          </span>
+          ${player.numero ? `<span class="player-card-number">${escapeHtml(player.numero)}</span>` : ""}
+        </button>`).join("")}</div>
+      </section>`;
+    }).join("");
+  };
+
+  const loadPlayers = async () => {
+    if (playersLoaded) {
+      renderPlayers();
+      return;
+    }
+    playersContainer.innerHTML = `<div class="match-skeleton" aria-hidden="true"></div>`;
+    try {
+      players = await fetchLeopardsPlayers();
+      if (stopped) return;
+      playersLoaded = true;
+      renderPlayers();
+    } catch (error) {
+      if (stopped) return;
+      console.error("Impossible de charger les joueurs des Léopards.", error);
+      playersContainer.innerHTML = `<p class="results-empty">${EMPTY_PLAYERS_MESSAGE}</p>`;
+    }
+  };
+
+  const renderSelectionStats = (details) => {
+    const selection = details.selection || {};
+    return `${details.season ? `<p class="player-season-label">Saison ${escapeHtml(details.season)}</p>` : ""}
+      <div class="player-stats-grid">
+        <div class="player-stat"><strong>${formatStat(selection.selections)}</strong><span>Sélections</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.buts_selection)}</strong><span>Buts</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.passes_selection)}</strong><span>Passes déc.</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.minutes_selection)}</strong><span>Minutes</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.cartons_jaunes)}</strong><span>Cartons jaunes</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.cartons_rouges)}</strong><span>Cartons rouges</span></div>
+      </div>`;
+  };
+
+  const renderClubPerformances = (rows) => {
+    if (!rows.length) {
+      return `<p class="match-detail-empty">Aucune performance en club n'est disponible pour le moment.</p>`;
+    }
+    const sum = (key) => rows.reduce((total, row) => total + (Number(row[key]) || 0), 0);
+    const ratings = rows.map((row) => Number(row.note)).filter((note) => Number.isFinite(note) && note > 0);
+    const average = ratings.length ? (ratings.reduce((total, note) => total + note, 0) / ratings.length).toFixed(1) : "—";
+    return `<div class="player-stats-grid">
+        <div class="player-stat"><strong>${sum("matchs")}</strong><span>Matchs</span></div>
+        <div class="player-stat"><strong>${sum("minutes")}</strong><span>Minutes</span></div>
+        <div class="player-stat"><strong>${sum("buts")}</strong><span>Buts</span></div>
+        <div class="player-stat"><strong>${sum("passes")}</strong><span>Passes déc.</span></div>
+        <div class="player-stat"><strong>${average}</strong><span>Note moy.</span></div>
+      </div>
+      <div class="standings-scroll"><table class="standings-table player-performance-table">
+        <thead><tr><th>Club</th><th>Compétition</th><th>MJ</th><th>Min</th><th>B</th><th>PD</th><th>Note</th></tr></thead>
+        <tbody>${rows.map((row) => `<tr>
+          <th scope="row">${escapeHtml(row.club || "—")}${row.saison ? ` <small>${escapeHtml(row.saison)}</small>` : ""}</th>
+          <td>${escapeHtml(row.competition || "—")}</td>
+          <td>${formatStat(row.matchs)}</td>
+          <td>${formatStat(row.minutes)}</td>
+          <td>${formatStat(row.buts)}</td>
+          <td>${formatStat(row.passes)}</td>
+          <td>${formatStat(row.note)}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>`;
+  };
+
+  const playerIdentityLine = (player, details = {}) => {
+    const age = details.player?.age ?? player.age ?? playerAge(details.player?.date_naissance || player.date_naissance);
+    const poste = details.player?.poste || player.poste;
+    return [poste, age !== null && age !== undefined ? `${age} ans` : "", details.club || player.club, details.championnat || player.championnat]
+      .filter(Boolean).map(escapeHtml).join(" · ");
+  };
+
+  const openPlayerModal = (player, trigger) => {
+    if (!playerModal || !playerModalBody) return;
+    playerReturnFocus = trigger;
+    activePlayerId = player.id;
+    playerModalBody.innerHTML = `<header class="player-modal-header">
+        ${renderPlayerAvatar(player, "is-large")}
+        <div>
+          <h3 id="playerModalName">${escapeHtml(player.nom || "Joueur")}${player.numero ? ` <span class="player-modal-number">#${escapeHtml(player.numero)}</span>` : ""}</h3>
+          <p id="playerIdentity">${playerIdentityLine(player) || "Informations à confirmer"}</p>
+        </div>
+      </header>
+      <section class="player-modal-section">
+        <h4>Statistiques individuelles · sélection</h4>
+        <div id="playerSelectionStats"><div class="match-skeleton" aria-hidden="true"></div></div>
+      </section>
+      <section class="player-modal-section">
+        <h4>Suivi en club</h4>
+        <div id="playerPerformances"><div class="match-skeleton" aria-hidden="true"></div></div>
+      </section>`;
+    document.body.classList.add("has-player-modal");
+    playerModal.hidden = false;
+    playerModal.querySelector(".player-modal-dialog").scrollTop = 0;
+    playerModal.querySelector(".player-modal-dialog").focus();
+    fetchPlayerDetails(player).then((details) => {
+      if (activePlayerId !== player.id || playerModal.hidden) return;
+      playerModalBody.querySelector("#playerIdentity").innerHTML = playerIdentityLine(player, details) || "Informations à confirmer";
+      playerModalBody.querySelector("#playerSelectionStats").innerHTML = renderSelectionStats(details);
+      playerModalBody.querySelector("#playerPerformances").innerHTML = renderClubPerformances(details.club_stats || []);
+    }).catch((error) => {
+      if (activePlayerId !== player.id || playerModal.hidden) return;
+      console.error("Impossible de charger les statistiques du joueur.", error);
+      const empty = `<p class="match-detail-empty">${EMPTY_DATA_MESSAGE}</p>`;
+      playerModalBody.querySelector("#playerSelectionStats").innerHTML = empty;
+      playerModalBody.querySelector("#playerPerformances").innerHTML = empty;
+    });
+  };
+
+  const closePlayerModal = () => {
+    if (!playerModal || playerModal.hidden) return;
+    playerModal.hidden = true;
+    activePlayerId = null;
+    document.body.classList.remove("has-player-modal");
+    playerReturnFocus?.focus();
+  };
+
+  playersTab.addEventListener("click", () => {
+    activeView = "players";
+    showPanel(playersPanel);
+    markTab(playersTab);
+    loadPlayers();
+  }, { signal });
+  playersSearch.addEventListener("input", renderPlayers, { signal });
+  playersPosition.addEventListener("change", renderPlayers, { signal });
+  playersContainer.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-player-id]");
+    if (!trigger) return;
+    const player = players.find((item) => String(item.id) === trigger.dataset.playerId);
+    if (player) openPlayerModal(player, trigger);
+  }, { signal });
+  if (playerModal) {
+    playerModal.addEventListener("click", (event) => {
+      if (event.target.closest("[data-player-close]")) closePlayerModal();
+    }, { signal });
+    playerModal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePlayerModal();
+      }
+    }, { signal });
+    playerModal.addEventListener("error", (event) => {
+      const image = event.target;
+      if (image instanceof HTMLImageElement && image.classList.contains("player-avatar-img")) {
+        image.hidden = true;
+        if (image.previousElementSibling) image.previousElementSibling.hidden = false;
+      }
+    }, { capture: true, signal });
+  }
+
   refreshMatches(true);
+  if (layout === "interclubs") markTab(calendarTab);
   try {
     realtimeChannel = subscribeMatchsLocaux(() => refreshMatches());
     standingsChannel = subscribeClassementsLocaux(() => {
@@ -1037,7 +1411,7 @@ export const mountResults = (root) => {
   }
   try {
     buteursChannel = subscribeButeurs(() => {
-      if (activeView === "standings" && standingsMode === "scorers") renderTopScorers();
+      if (activeView === "scorers" && standingsMode === "scorers") renderTopScorers();
     });
   } catch (error) {
     console.error("Impossible d’activer Supabase Realtime pour les buteurs L1.", error);
@@ -1046,6 +1420,10 @@ export const mountResults = (root) => {
   return () => {
     stopped = true;
     controller.abort();
+    if (playerModal && !playerModal.hidden) {
+      playerModal.hidden = true;
+      document.body.classList.remove("has-player-modal");
+    }
     window.clearInterval(refreshTimer);
     if (detailPage && !detailPage.hidden) {
       detailPage.hidden = true;
@@ -1055,6 +1433,10 @@ export const mountResults = (root) => {
     if (realtimeChannel) unsubscribeMatchsLocaux(realtimeChannel);
     if (standingsChannel) unsubscribeMatchsLocaux(standingsChannel);
     if (buteursChannel) unsubscribeButeurs(buteursChannel);
+    document.querySelectorAll(".nav-live").forEach((link) => {
+      link.classList.remove("is-live");
+      link.setAttribute("aria-label", "Live Center, aucun match en direct");
+    });
     root.dataset.initialized = "false";
   };
 };

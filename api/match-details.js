@@ -222,11 +222,15 @@ const apiFootballDetails = async (fixtureId, apiKey) => {
   const standingsRequest = Number.isInteger(fixture.league?.id) && Number.isInteger(fixture.league?.season)
     ? endpoint("standings", { league: fixture.league.id, season: fixture.league.season })
     : Promise.resolve([]);
-  const [events, lineups, history, standings] = await Promise.all([
+  const topScorersRequest = Number.isInteger(fixture.league?.id) && Number.isInteger(fixture.league?.season)
+    ? endpoint("players/topscorers", { league: fixture.league.id, season: fixture.league.season })
+    : Promise.resolve([]);
+  const [events, lineups, history, standings, topScorers] = await Promise.all([
     load("events", endpoint("fixtures/events", { fixture: fixtureId })),
     load("lineups", endpoint("fixtures/lineups", { fixture: fixtureId })),
     load("head-to-head", endpoint("fixtures/headtohead", { h2h: `${homeId}-${awayId}`, last: 5 })),
-    load("standings", standingsRequest)
+    load("standings", standingsRequest),
+    load("top-scorers", topScorersRequest)
   ]);
   const lineupFor = (teamId) => {
     const lineup = lineups.find((item) => item.team?.id === teamId);
@@ -306,6 +310,18 @@ const apiFootballDetails = async (fixtureId, apiKey) => {
       goal_difference: row.goalsDiff ?? null,
       points: row.points ?? null
     })),
+    top_scorers: topScorers.map((item) => {
+      const statistics = item.statistics?.find((entry) => entry.league?.id === fixture.league?.id) || item.statistics?.[0] || {};
+      return {
+        nom: item.player?.name || "Joueur à confirmer",
+        club: {
+          nom: statistics.team?.name || "Équipe à confirmer",
+          logo_url: statistics.team?.logo || ""
+        },
+        matches_joues: statistics.games?.appearences ?? 0,
+        buts: statistics.goals?.total ?? 0
+      };
+    }),
     highlights_url: "",
     warnings
   };

@@ -49,16 +49,18 @@
 
     <div class="nav-row">
       <nav class="nav-left" aria-label="Navigation principale">
-        <a href="#linafoot">LINAFOOT</a>
-        <a href="#leopards">LÉOPARDS</a>
-        <a href="#football">FOOTBALL</a>
-        <a href="#basket-ball">BASKET-BALL</a>
-        <a href="#boxe">BOXE</a>
-        <a href="#judo">JUDO</a>
-        <a href="#omnisports">OMNISPORTS</a>
-        <a href="/resultats">RÉSULTATS</a>
-        <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer" class="nav-external">SCOOP243</a>
+        <a href="/" id="mainHomeLink">Accueil</a>
+        <a href="#football">Football</a>
+        <a href="#basket-ball">Basketball</a>
+        <a href="#judo">Judo</a>
+        <a href="#omnisports">Omnisports</a>
+        <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer" class="nav-external">Scoop243</a>
+        <a href="#resultats" class="nav-live" aria-label="Live Center, aucun match en direct">Live Center</a>
       </nav>
+    </div>
+
+    <div class="section-nav-row" id="sectionNavRow" hidden>
+      <nav class="section-nav" id="sectionNav" aria-label="Sous-rubriques"></nav>
     </div>
 
     <section class="flash-ticker" aria-label="Articles éclair">
@@ -80,29 +82,28 @@
         <div id="listViewContainer">
           <h2 class="section-title" id="pageSectionTitle">A la une</h2>
 
-          <!-- Article Principal -->
+          <!-- À la une : carrousel avec transition slide -->
           <div id="heroContainer">
-            <a href="#read" id="heroClickable" class="hero hero-link">
-              <div class="hero-img-container">
-                <img class="hero-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='360'%3E%3Crect width='900' height='360' fill='%23e9e9e9'/%3E%3C/svg%3E" alt="Masano Choc">
-              </div>
-              <div class="hero-body">
-                <h3 class="hero-title lead-title">Chargement...</h3>
-                <p class="hero-excerpt lead-summary">En attente des actualités du sport.</p>
-                <div class="hero-meta article-meta">Par...</div>
-                <div class="carousel-controls" aria-label="Navigation de la une">
-                  <button type="button" class="carousel-button" id="carouselPrevious" aria-label="Article précédent">&#8592;</button>
-                  <span class="carousel-position" id="carouselPosition">1 / 1</span>
-                  <button type="button" class="carousel-button" id="carouselNext" aria-label="Article suivant">&#8594;</button>
+            <div class="hero hero-carousel" id="heroCarousel" role="region" aria-roledescription="carrousel" aria-label="Articles à la une">
+              <div class="hero-viewport">
+                <div class="hero-track" id="heroTrack">
+                  <!-- Injecté par JavaScript -->
                 </div>
               </div>
-            </a>
+              <div class="carousel-controls" aria-label="Navigation de la une">
+                <button type="button" class="carousel-button" id="carouselPrevious" aria-label="Article précédent">&#8592;</button>
+                <span class="carousel-position" id="carouselPosition" aria-live="polite">1 / 1</span>
+                <button type="button" class="carousel-button" id="carouselNext" aria-label="Article suivant">&#8594;</button>
+              </div>
+            </div>
           </div>
 
-          <!-- Grille d'articles secondaires -->
-          <div class="posts-grid" id="postsGrid" role="list">
+          <!-- Liste simple des articles (rubriques « Actualités » et recherche) -->
+          <div class="article-list" id="articleList" role="list" hidden>
             <!-- Injecté par JavaScript -->
           </div>
+
+          <div class="home-category-sections" id="homeCategorySections" hidden></div>
 
           <section id="resultsView" class="results-view" hidden aria-labelledby="resultsTitle">
             <header class="live-center-header">
@@ -122,14 +123,19 @@
 
             <div class="results-toolbar">
               <div class="results-view-tabs" role="tablist" aria-label="Vue des résultats">
-                <button type="button" class="results-tab is-active" id="matchesTab" role="tab" aria-selected="true" aria-controls="matchesPanel">Résultats &amp; Directs</button>
+                <button type="button" class="results-tab is-active" id="matchesTab" role="tab" aria-selected="true" aria-controls="matchesPanel">Calendrier &amp; résultats</button>
+                <button type="button" class="results-tab" id="calendarTab" role="tab" aria-selected="false" aria-controls="matchesPanel" hidden>Calendriers</button>
+                <button type="button" class="results-tab" id="resultsOnlyTab" role="tab" aria-selected="false" aria-controls="matchesPanel" hidden>Résultats</button>
                 <button type="button" class="results-tab" id="standingsTab" role="tab" aria-selected="false" aria-controls="standingsPanel">Classements</button>
+                <button type="button" class="results-tab" id="topScorersView" role="tab" aria-selected="false" aria-controls="standingsPanel">Buteurs</button>
+                <button type="button" class="results-tab" id="playersTab" role="tab" aria-selected="false" aria-controls="playersPanel" hidden>Joueurs</button>
               </div>
               <div class="competition-filters" role="group" aria-label="Filtrer par compétition">
                 <button type="button" class="competition-filter is-active" data-competition="linafoot_l1" aria-pressed="true">Linafoot L1</button>
                 <button type="button" class="competition-filter" data-competition="linafoot_l2" aria-pressed="false">Linafoot L2</button>
                 <button type="button" class="competition-filter" data-competition="epf_kin" aria-pressed="false">EPF-KIN</button>
                 <button type="button" class="competition-filter" data-competition="leopards" aria-pressed="false">Léopards</button>
+                <button type="button" class="competition-filter" data-competition="interclubs" aria-pressed="false">Interclubs</button>
                 <button type="button" class="competition-filter" data-competition="international" aria-pressed="false">International</button>
               </div>
               <div class="linafoot-controls" role="group" aria-label="Filtrer par ligue Linafoot et groupe">
@@ -153,6 +159,7 @@
                   <option value="C">Poule C</option>
                 </select>
               </div>
+              <div class="competition-filters discipline-competition-tabs" id="disciplineCompetitionControls" role="tablist" aria-label="Compétitions de la discipline" hidden></div>
             </div>
 
             <section id="matchesPanel" class="results-panel" role="tabpanel" aria-labelledby="matchesTab">
@@ -170,10 +177,6 @@
             </section>
 
             <section id="standingsPanel" class="results-panel standings-panel" role="tabpanel" aria-labelledby="standingsTab" hidden>
-              <div class="standings-view-tabs" role="group" aria-label="Type de classement">
-                <button type="button" class="standings-view-tab is-active" id="teamStandingsView" aria-pressed="true">Classement des équipes</button>
-                <button type="button" class="standings-view-tab" id="topScorersView" aria-pressed="false">Meilleur buteur (L1)</button>
-              </div>
               <div class="standings-toolbar">
                 <label for="standingsCompetition">Compétition</label>
                 <select id="standingsCompetition">
@@ -190,6 +193,20 @@
               <div id="topScorersContainer" class="standings-container" aria-live="polite" hidden>
                 <div class="match-skeleton" aria-hidden="true"></div>
               </div>
+            </section>
+
+            <section id="playersPanel" class="results-panel players-panel" role="tabpanel" aria-labelledby="playersTab" hidden>
+              <div class="players-toolbar">
+                <input type="search" id="playersSearch" placeholder="Rechercher un joueur ou un club…" aria-label="Rechercher un joueur">
+                <select id="playersPosition" aria-label="Filtrer par poste">
+                  <option value="">Tous les postes</option>
+                  <option value="gardien">Gardiens</option>
+                  <option value="defenseur">Défenseurs</option>
+                  <option value="milieu">Milieux</option>
+                  <option value="attaquant">Attaquants</option>
+                </select>
+              </div>
+              <div id="playersContainer" aria-live="polite"></div>
             </section>
           </section>
 
@@ -270,11 +287,8 @@
         <nav class="footer-column" aria-labelledby="footerSectionsTitle">
           <h2 id="footerSectionsTitle">Rubriques</h2>
           <ul>
-            <li><a href="#linafoot">Linafoot</a></li>
-            <li><a href="#leopards">Léopards</a></li>
             <li><a href="#football">Football</a></li>
             <li><a href="#basket-ball">Basket-ball</a></li>
-            <li><a href="#boxe">Boxe</a></li>
             <li><a href="#judo">Judo</a></li>
             <li><a href="#omnisports">Omnisports</a></li>
           </ul>
@@ -397,6 +411,14 @@
             </a>
           </section>
         </div>
+      </section>
+    </div>
+
+    <div id="playerModal" class="player-modal" hidden>
+      <div class="player-modal-backdrop" data-player-close></div>
+      <section class="player-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="playerModalName" tabindex="-1">
+        <button type="button" class="player-modal-close" data-player-close aria-label="Fermer la fiche joueur">&times;</button>
+        <div id="playerModalBody"></div>
       </section>
     </div>
 

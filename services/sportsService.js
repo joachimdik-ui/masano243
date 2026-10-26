@@ -13,8 +13,18 @@ const normalizeCompetition = (competition) => {
   const name = text(competition).trim();
   const normalized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const isLinafoot = /linafoot/.test(normalized);
-  const category = /basket|coupe rdc/.test(normalized)
+  const isInterclubs = /caf champions league|caf confederation cup|ligue des champions caf|coupe de la confederation caf|inter.?clubs?/.test(normalized);
+  const isBasketball = /basket|coupe rdc/.test(normalized);
+  const isJudo = /judo/.test(normalized);
+  const isOmnisports = /omnisport|athlet|volley|handball|boxe|tennis|rugby|cyclisme|natation|karate/.test(normalized);
+  const category = isInterclubs
+    ? "interclubs"
+    : isBasketball
     ? "basketball"
+    : isJudo
+      ? "judo"
+      : isOmnisports
+        ? "omnisports"
     : isLinafoot && /(?:^|[^a-z0-9])(?:l2|ligue\s*2|division\s*2)(?:$|[^a-z0-9])/.test(normalized)
       ? "linafoot_l2"
       : isLinafoot && /(?:^|[^a-z0-9])(?:l1|ligue\s*1|division\s*1)(?:$|[^a-z0-9])/.test(normalized)
