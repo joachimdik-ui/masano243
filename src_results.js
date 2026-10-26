@@ -19,10 +19,9 @@ import {
   subscribeButeurs,
   unsubscribeButeurs
 } from "./services/linafootService.js";
-import {
-  fetchLeopardsPlayers,
-  fetchPlayerDetails
-} from "./services/leopardsPlayersService.js";
+// Chargé à la demande (import dynamique) : si ce fichier manque ou échoue, seul l'onglet « Joueurs »
+// est touché, jamais le reste du site (articles, scores, boutons).
+const loadPlayersService = () => import("./services/leopardsPlayersService.js");
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({
   "&": "&amp;",
@@ -1260,6 +1259,7 @@ export const mountResults = (root, competitionPage = null) => {
     }
     playersContainer.innerHTML = `<div class="match-skeleton" aria-hidden="true"></div>`;
     try {
+      const { fetchLeopardsPlayers } = await loadPlayersService();
       players = await fetchLeopardsPlayers();
       if (stopped) return;
       playersLoaded = true;
@@ -1342,7 +1342,7 @@ export const mountResults = (root, competitionPage = null) => {
     playerModal.hidden = false;
     playerModal.querySelector(".player-modal-dialog").scrollTop = 0;
     playerModal.querySelector(".player-modal-dialog").focus();
-    fetchPlayerDetails(player).then((details) => {
+    loadPlayersService().then(({ fetchPlayerDetails }) => fetchPlayerDetails(player)).then((details) => {
       if (activePlayerId !== player.id || playerModal.hidden) return;
       playerModalBody.querySelector("#playerIdentity").innerHTML = playerIdentityLine(player, details) || "Informations à confirmer";
       playerModalBody.querySelector("#playerSelectionStats").innerHTML = renderSelectionStats(details);
