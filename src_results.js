@@ -138,6 +138,11 @@ const renderPlayerAvatar = (player, extraClass = "") => {
   return `<span class="player-avatar ${extraClass}" aria-hidden="true"><span class="player-avatar-fallback"${player.photo_url ? " hidden" : ""}>${initials}</span>${player.photo_url ? `<img class="player-avatar-img" src="${escapeHtml(player.photo_url)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
+const MATCH_SKELETONS = '<div class="match-skeleton"></div><div class="match-skeleton"></div><div class="match-skeleton"></div>';
+
+// Derniers matchs chargés : réaffichés instantanément quand on change de page (L1 → L2…), puis actualisés en arrière-plan.
+let matchesCache = null;
+
 const scoreOf = (match) => `${match.score_domicile ?? ""}:${match.score_visiteur ?? ""}`;
 
 export const mountResults = (root, competitionPage = null) => {
@@ -708,6 +713,10 @@ export const mountResults = (root, competitionPage = null) => {
       link.setAttribute("aria-label", `Live Center, ${liveCount} match${liveCount === 1 ? "" : "s"} en direct`);
     });
     const filtered = filteredMatches();
+    if (!filtered.length && loadingMatches) {
+      list.innerHTML = MATCH_SKELETONS;
+      return;
+    }
     if (!filtered.length) {
       const playoffPreview = competitionFilter === "linafoot_l1" && linafootGroup.value === "PO";
       const scopeHasMatches = isLiveCenter
@@ -781,66 +790,72 @@ export const mountResults = (root, competitionPage = null) => {
     }, { signal });
   }
 
+  let loadingMatches = false;
   const refreshMatches = async (showSkeletons = false) => {
     if (showSkeletons) {
-      list.innerHTML = `<div class="match-skeleton"></div><div class="match-skeleton"></div><div class="match-skeleton"></div>`;
+      loadingMatches = true;
+      list.innerHTML = MATCH_SKELETONS;
     }
-    const results = await Promise.allSettled([
-      fetchMatchsLocaux(),
-      fetchMatchsEpfKin(),
-      fetchMatchsInternationaux(),
-      fetchMatchsLeopards()
-    ]);
-    if (stopped) return;
-
+    // Premier chargement : chaque source s'affiche dès qu'elle répond, sans attendre la plus lente.
+    const incremental = showSkeletons;
+    const settled = {};
     const messages = [];
-    const nextMatches = [];
-    const localResult = results[0];
-    const epfKinResult = results[1];
-    const internationalResult = results[2];
-    const leopardsResult = results[3];
-    if (localResult.status === "fulfilled") {
-      for (const match of localResult.value) {
-        const previous = previousLocalScores.get(match.id);
-        if (previous && previous !== scoreOf(match) && match.statut === "live") {
-          recentGoalIds.add(match.id);
-          window.setTimeout(() => {
-            recentGoalIds.delete(match.id);
-            renderMatches();
-          }, 1800);
-        }
-        previousLocalScores.set(match.id, scoreOf(match));
-        nextMatches.push(match);
+    const compose = (final = false) => {
+      const next = [];
+      if (settled.local?.status === "fulfilled") next.push(...settled.local.value);
+      if (settled.epf?.status === "fulfilled") next.push(...settled.epf.value);
+      if (settled.international?.status === "fulfilled") {
+        next.push(...settled.international.value.filter((match) => (
+          match.competition_category !== "leopards" || settled.leopards?.status === "rejected"
+        )));
       }
-    } else {
-      console.error("Impossible de charger les matchs locaux.", localResult.reason);
-      messages.push(sourceErrorMessage("local", localResult.reason));
-    }
-    if (epfKinResult.status === "fulfilled") {
-      nextMatches.push(...epfKinResult.value);
-    } else {
-      console.error("Impossible de charger les matchs EPF-KIN.", epfKinResult.reason);
-      messages.push(`EPF-KIN : ${epfKinResult.reason.message}`);
-    }
-    if (internationalResult.status === "fulfilled") {
-      nextMatches.push(...internationalResult.value.filter((match) => (
-        leopardsResult.status !== "fulfilled" || match.competition_category !== "leopards"
-      )));
-    } else {
-      console.error("Impossible de charger les matchs internationaux.", internationalResult.reason);
-      messages.push(sourceErrorMessage("international", internationalResult.reason));
-    }
-    if (leopardsResult.status === "fulfilled") {
-      nextMatches.push(...leopardsResult.value);
-    } else {
-      console.error("Impossible de charger les matchs des Léopards.", leopardsResult.reason);
-      messages.push(sourceErrorMessage("leopards", leopardsResult.reason));
-    }
-    matches = nextMatches;
+      if (settled.leopards?.status === "fulfilled") next.push(...settled.leopards.value);
+      matches = next;
+      if (next.length) matchesCache = next;
+      renderDisciplineCompetitionTabs();
+      renderMatches();
+      if (final && (activeView === "standings" || activeView === "scorers")) renderStandings();
+    };
+    const sources = [
+      ["local", fetchMatchsLocaux, "local"],
+      ["epf", fetchMatchsEpfKin, "epf"],
+      ["international", fetchMatchsInternationaux, "international"],
+      ["leopards", fetchMatchsLeopards, "leopards"]
+    ];
+    await Promise.all(sources.map(async ([key, fetcher, errorKey]) => {
+      try {
+        settled[key] = { status: "fulfilled", value: await fetcher() };
+      } catch (reason) {
+        settled[key] = { status: "rejected", reason };
+      }
+      if (stopped) return;
+      const result = settled[key];
+      if (result.status === "fulfilled") {
+        if (key === "local") {
+          for (const match of result.value) {
+            const previous = previousLocalScores.get(match.id);
+            if (previous && previous !== scoreOf(match) && match.statut === "live") {
+              recentGoalIds.add(match.id);
+              window.setTimeout(() => {
+                recentGoalIds.delete(match.id);
+                renderMatches();
+              }, 1800);
+            }
+            previousLocalScores.set(match.id, scoreOf(match));
+          }
+        }
+      } else {
+        console.error(`Impossible de charger les matchs (${key}).`, result.reason);
+        messages.push(key === "epf"
+          ? `EPF-KIN : ${result.reason.message}`
+          : sourceErrorMessage(errorKey, result.reason));
+      }
+      if (incremental) compose();
+    }));
+    if (stopped) return;
+    loadingMatches = false;
     displayNotice(messages);
-    renderDisciplineCompetitionTabs();
-    renderMatches();
-    if (activeView === "standings" || activeView === "scorers") renderStandings();
+    compose(true);
   };
 
   const competitionOptions = (rows) => [...new Set(rows.map((row) => row.competition).filter(Boolean))].sort();
@@ -1075,6 +1090,39 @@ export const mountResults = (root, competitionPage = null) => {
     topScorersView.hidden = !supportsScorers;
     if (!supportsStandings && activeView !== "matches") matchesTab.click();
   };
+
+  // La vue est réutilisée d'une page à l'autre : on efface tout ce qui vient de la page précédente.
+  const resetView = () => {
+    list.innerHTML = MATCH_SKELETONS;
+    standingsContainer.innerHTML = "";
+    topScorersContainer.innerHTML = "";
+    playersContainer.innerHTML = "";
+    playersSearch.value = "";
+    playersPosition.value = "";
+    disciplineCompetitionControls.innerHTML = "";
+    disciplineCompetitionControls.hidden = true;
+    standingsToolbar.hidden = false;
+    matchesTab.hidden = false;
+    matchesTab.textContent = "Calendrier & résultats";
+    standingsTab.hidden = false;
+    topScorersView.hidden = false;
+    playersTab.hidden = true;
+    root.querySelector(".competition-filters").hidden = false;
+    linafootLeague.hidden = false;
+    linafootLeagueLabel.hidden = false;
+    linafootGroup.value = "A";
+    epfKinSeries.value = "A";
+    standingsCompetition.value = "";
+    standingsGroup.value = "";
+    root.querySelectorAll("[data-status]").forEach((item) => {
+      const active = item.dataset.status === "all";
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+    showPanel(matchesPanel);
+    markTab(matchesTab);
+  };
+  resetView();
 
   if (competitionPage) {
     resultsTitle.textContent = competitionPage.title;
@@ -1369,7 +1417,14 @@ export const mountResults = (root, competitionPage = null) => {
     }, { capture: true, signal });
   }
 
-  refreshMatches(true);
+  if (matchesCache) {
+    matches = matchesCache;
+    renderDisciplineCompetitionTabs();
+    renderMatches();
+    refreshMatches(false);
+  } else {
+    refreshMatches(true);
+  }
   try {
     realtimeChannel = subscribeMatchsLocaux(() => refreshMatches());
     standingsChannel = subscribeClassementsLocaux(() => {

@@ -200,12 +200,35 @@ export const fetchArticles = async () => {
   return (data || []).map(normalizeArticle);
 };
 
+const ARTICLES_CACHE_KEY = "masano243:articles:v1";
+
+// Les articles de la dernière visite s'affichent instantanément, puis sont actualisés en arrière-plan.
+const readArticlesCache = () => {
+  try {
+    const cached = JSON.parse(window.localStorage.getItem(ARTICLES_CACHE_KEY));
+    return Array.isArray(cached) ? cached : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeArticlesCache = (items) => {
+  try {
+    window.localStorage.setItem(ARTICLES_CACHE_KEY, JSON.stringify(items));
+  } catch {
+    // Stockage plein ou indisponible : sans conséquence.
+  }
+};
+
+const articlesSignature = (items) => items.map((item) => `${item.id}|${item.title}|${item.date}|${item.image}|${item.category}`).join(",");
+
 const loadArticles = async () => {
   try {
     articles = sortedArticles(await fetchArticles());
+    writeArticlesCache(articles);
   } catch (error) {
     console.error("Impossible de charger les articles depuis Supabase.", error);
-    articles = [];
+    if (!articles.length) articles = [];
   }
 };
 
@@ -502,8 +525,11 @@ const renderHome = (query = "") => {
   const normalizedQuery = query.trim().toLowerCase();
 
   // Les reportages photo (tous sports) ne s'affichent que sur l'accueil, pas dans une rubrique ni une recherche.
+  const onlyRubrique = Boolean(category || normalizedQuery);
   const photoReportage = document.querySelector(".photo-reportage");
-  if (photoReportage) photoReportage.hidden = Boolean(category || normalizedQuery);
+  if (photoReportage) photoReportage.hidden = onlyRubrique;
+  const scoopWidget = document.querySelector(".sidebar-column .scoop-widget");
+  if (scoopWidget) scoopWidget.hidden = onlyRubrique;
   heroContainer.style.display = "none";
   articleList.hidden = true;
   homeSections.hidden = true;
@@ -693,11 +719,19 @@ const initializeArticlePage = () => {
   });
 };
 
+const cachedArticles = document.getElementById("listViewContainer") ? readArticlesCache() : null;
+if (cachedArticles?.length) {
+  articles = cachedArticles;
+  articlesLoading = false;
+}
+const cachedSignature = articlesSignature(articles);
 const articlesReady = loadArticles();
 if (document.getElementById("listViewContainer")) {
   // Le routage démarre tout de suite : les pages de scores n'attendent plus les articles.
   const onArticlesLoaded = initializeIndex();
-  articlesReady.then(onArticlesLoaded);
+  articlesReady.then(() => {
+    if (articlesLoading || articlesSignature(articles) !== cachedSignature) onArticlesLoaded();
+  });
   fetchFlashArticles();
   fetchPhotoReportage();
   fetchScoopLatestArticle();
