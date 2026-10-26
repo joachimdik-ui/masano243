@@ -180,8 +180,6 @@ export const mountResults = (root, competitionPage = null) => {
   const epfKinControls = root.querySelector("#epfKinControls");
   const epfKinSeries = root.querySelector("#epfKinSeries");
   const disciplineCompetitionControls = root.querySelector("#disciplineCompetitionControls");
-  const calendarTab = root.querySelector("#calendarTab");
-  const resultsOnlyTab = root.querySelector("#resultsOnlyTab");
   const playersTab = root.querySelector("#playersTab");
   const playersPanel = root.querySelector("#playersPanel");
   const playersContainer = root.querySelector("#playersContainer");
@@ -196,7 +194,7 @@ export const mountResults = (root, competitionPage = null) => {
   const isLiveCenter = layout === "live";
   root.classList.toggle("is-live-center", isLiveCenter);
   root.classList.toggle("is-compact", !isLiveCenter);
-  const allTabs = [matchesTab, calendarTab, resultsOnlyTab, standingsTab, topScorersView, playersTab];
+  const allTabs = [matchesTab, standingsTab, topScorersView, playersTab];
   const markTab = (active) => allTabs.forEach((tab) => {
     const isActive = tab === active;
     tab.classList.toggle("is-active", isActive);
@@ -672,9 +670,7 @@ export const mountResults = (root, competitionPage = null) => {
       || match.groupe === linafootGroup.value;
     const matchesEpfSeries = isLiveCenter || match.source !== "epf_kin"
       || match.serie === epfKinSeries.value;
-    // « calendar » = matchs en cours ou à venir (onglet « Calendriers » d'Interclubs).
-    const matchesStatus = statusFilter === "all"
-      || (statusFilter === "calendar" ? match.statut !== "finished" : match.statut === statusFilter);
+    const matchesStatus = statusFilter === "all" || match.statut === statusFilter;
     return matchesCompetition && matchesNamedCompetition && matchesLeague && matchesGroup
       && matchesEpfSeries && matchesStatus;
   });
@@ -723,11 +719,7 @@ export const mountResults = (root, competitionPage = null) => {
           ? EMPTY_EVENTS_MESSAGE
           : isLiveCenter && statusFilter === "live"
             ? "Aucun match en direct pour le moment."
-            : statusFilter === "calendar"
-              ? "Aucun match à venir pour le moment."
-              : statusFilter === "finished" && layout === "interclubs"
-                ? "Aucun résultat n'est disponible pour le moment."
-                : "Aucun match ne correspond à ces filtres.";
+            : "Aucun match ne correspond à ces filtres.";
       list.innerHTML = `<p class="results-empty">${message}</p>`;
       return;
     }
@@ -1113,14 +1105,8 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(standingsTab, false);
       setTab(topScorersView, false);
       setTab(playersTab, true);
-    } else if (layout === "interclubs") {
-      setTab(matchesTab, false);
-      setTab(calendarTab, true);
-      setTab(resultsOnlyTab, true);
-      setTab(standingsTab, false);
-      setTab(topScorersView, false);
-      statusFilter = "calendar";
-    } else if (layout === "international" || layout === "events") {
+    } else if (layout === "interclubs" || layout === "international" || layout === "events") {
+      // Pas d'onglets : les rencontres s'affichent directement sur la page.
       setTab(standingsTab, false);
       setTab(topScorersView, false);
     }
@@ -1136,20 +1122,6 @@ export const mountResults = (root, competitionPage = null) => {
     if (!competitionPage) root.querySelectorAll("[data-competition]").forEach((button) => { button.hidden = false; });
     showPanel(matchesPanel);
     markTab(matchesTab);
-  }, { signal });
-  calendarTab.addEventListener("click", () => {
-    activeView = "matches";
-    statusFilter = "calendar";
-    showPanel(matchesPanel);
-    markTab(calendarTab);
-    renderMatches();
-  }, { signal });
-  resultsOnlyTab.addEventListener("click", () => {
-    activeView = "matches";
-    statusFilter = "finished";
-    showPanel(matchesPanel);
-    markTab(resultsOnlyTab);
-    renderMatches();
   }, { signal });
   standingsTab.addEventListener("click", () => {
     setStandingsMode("teams");
@@ -1398,7 +1370,6 @@ export const mountResults = (root, competitionPage = null) => {
   }
 
   refreshMatches(true);
-  if (layout === "interclubs") markTab(calendarTab);
   try {
     realtimeChannel = subscribeMatchsLocaux(() => refreshMatches());
     standingsChannel = subscribeClassementsLocaux(() => {

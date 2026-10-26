@@ -455,6 +455,30 @@ const renderArticle = (article) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
+let articlesLoading = true;
+
+// Affiché pendant le chargement des articles (évite l'écran « Aucun article » ou le carrousel vide).
+const renderArticlesLoading = () => {
+  const list = document.getElementById("listViewContainer");
+  const view = document.getElementById("articleView");
+  if (resultsCleanup) {
+    resultsCleanup();
+    resultsCleanup = undefined;
+  }
+  document.querySelector("main.container")?.classList.remove("has-results-view");
+  list.style.display = "block";
+  document.getElementById("resultsView").hidden = true;
+  view.style.display = "none";
+  document.getElementById("heroContainer").style.display = "none";
+  document.getElementById("homeCategorySections").hidden = true;
+  const photoReportage = document.querySelector(".photo-reportage");
+  if (photoReportage) photoReportage.hidden = true;
+  document.getElementById("pageSectionTitle").textContent = "";
+  const articleList = document.getElementById("articleList");
+  articleList.innerHTML = '<div class="article-list-skeleton" aria-hidden="true"></div><div class="article-list-skeleton" aria-hidden="true"></div><div class="article-list-skeleton" aria-hidden="true"></div>';
+  articleList.hidden = false;
+};
+
 const renderHome = (query = "") => {
   const list = document.getElementById("listViewContainer");
   const view = document.getElementById("articleView");
@@ -554,6 +578,7 @@ const initializeIndex = () => {
       if (requestedView === "scorers") document.getElementById("topScorersView").click();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+    else if (articlesLoading) renderArticlesLoading();
     else if (route.startsWith("read/")) renderArticle(getArticle(route.slice(5)));
     else renderHome(search.value);
   };
@@ -613,6 +638,12 @@ const initializeIndex = () => {
   window.addEventListener("hashchange", showRoute);
   window.addEventListener("popstate", showRoute);
   showRoute();
+  document.querySelector("main.container")?.classList.remove("is-booting");
+  // Une fois les articles chargés, on réaffiche les pages qui en dépendent (les pages de scores restent intactes).
+  return () => {
+    articlesLoading = false;
+    if (document.getElementById("resultsView").hidden) showRoute();
+  };
 };
 
 const initializeArticlePage = () => {
@@ -662,12 +693,18 @@ const initializeArticlePage = () => {
   });
 };
 
-loadArticles().then(() => {
-  if (document.getElementById("listViewContainer")) {
-    initializeIndex();
-    fetchFlashArticles();
-    fetchPhotoReportage();
-  }
-  else initializeArticlePage();
+const articlesReady = loadArticles();
+if (document.getElementById("listViewContainer")) {
+  // Le routage démarre tout de suite : les pages de scores n'attendent plus les articles.
+  const onArticlesLoaded = initializeIndex();
+  articlesReady.then(onArticlesLoaded);
+  fetchFlashArticles();
+  fetchPhotoReportage();
   fetchScoopLatestArticle();
-});
+}
+else {
+  articlesReady.then(() => {
+    initializeArticlePage();
+    fetchScoopLatestArticle();
+  });
+}

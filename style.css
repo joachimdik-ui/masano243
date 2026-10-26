@@ -1144,3 +1144,9 @@ body.has-player-modal { overflow: hidden; }
 }
 
 .photo-reportage[hidden] { display: none !important; }
+
+/* Chargement : rien n'est affiché tant que la page (accueil, rubrique, Live Center) n'est pas choisie */
+.container.is-booting #listViewContainer { visibility: hidden; }
+.article-list-skeleton { height: 120px; border-radius: 14px; background: linear-gradient(90deg, #f1f1f1 25%, #e6e6e6 37%, #f1f1f1 63%); background-size: 400% 100%; animation: article-skeleton 1.3s ease infinite; }
+@keyframes article-skeleton { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { .article-list-skeleton { animation: none; } }
