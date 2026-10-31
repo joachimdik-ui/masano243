@@ -1071,7 +1071,7 @@ export const mountResults = (root, competitionPage = null) => {
     const isL1 = linafootLeague.value === "L1";
     const options = isL1
       ? [["A", "Groupe A"], ["B", "Groupe B"], ["PO", "Play Off (aperçu)"]]
-      : [["A", "Zone Ouest"], ["B", "Zone Centre-Sud"], ["C", "Zone Est"]];
+      : [["A", "Zone Est"], ["B", "Zone Ouest"], ["C", "Zone Centre-Sud"]];
     const current = linafootGroup.value;
     linafootGroup.innerHTML = options
       .map(([value, label]) => `<option value="${value}">${label}</option>`)

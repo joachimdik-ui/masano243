@@ -1152,3 +1152,37 @@ body.has-player-modal { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { .article-list-skeleton { animation: none; } }
 
 .sidebar-column .scoop-widget[hidden] { display: none !important; }
+
+/* --- MOBILE : tableaux à la largeur de la page + menu des rubriques glissable --- */
+/* Un enfant de grille a min-width:auto : un tableau en nowrap élargissait toute la colonne
+   au-delà de l'en-tête et du pied de page. On autorise la colonne à rétrécir ; le défilement
+   se fait alors dans le conteneur du tableau (.standings-scroll). */
+.container > *,
+.main-column,
+#listViewContainer,
+.results-view,
+.results-panel,
+.standings-container { min-width: 0; max-width: 100%; }
+.container.has-results-view { grid-template-columns: minmax(0, 1fr); }
+.standings-scroll { max-width: 100%; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 600px) {
+  .container { grid-template-columns: minmax(0, 1fr); }
+
+  /* Menu principal : une seule ligne que l'on fait glisser du doigt */
+  .nav-left,
+  .section-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .nav-left::-webkit-scrollbar,
+  .section-nav::-webkit-scrollbar { display: none; }
+  .nav-left > *,
+  .section-nav > * { flex: 0 0 auto; scroll-snap-align: start; }
+  .nav-left a.is-active { scroll-margin-inline: 24px; }
+}
