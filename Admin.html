@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Admin · Masano243</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js"></script>
+<style>
+:root{--bg:#f4f5f7;--cd:#fff;--tx:#14171a;--mu:#6b7280;--ac:#d7261e;--bd:#e5e7eb;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1114;--cd:#1a1d21;--tx:#f1f3f5;--mu:#9aa3ad;--bd:#2a2f36}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 0}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--cd);border-bottom:1px solid var(--bd)}
+header span{color:var(--ac)}header button{background:none;border:0;color:var(--mu)}
+main{max-width:720px;margin:0 auto;padding:12px 12px calc(150px + env(safe-area-inset-bottom))}
+.mu{color:var(--mu)}small{display:block;color:var(--mu)}
+.row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;margin-bottom:10px}
+.row img,.row .nb{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--bd);flex:none}
+.row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{flex:1;font-weight:600}.mt span:last-child{text-align:right}.mt b{flex:none;font-size:1.3rem;color:var(--ac)}
+.live{color:var(--ac);font-weight:700}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+.tabs button{flex:1;padding:10px 4px;background:none;border:0;color:var(--mu);font-size:.8rem}.tabs button i{display:block;font-style:normal;font-size:1.4rem}.tabs .on{color:var(--ac);font-weight:700}
+.fab{position:fixed;right:18px;bottom:calc(80px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:2rem;box-shadow:0 4px 14px #0004;z-index:6}
+#sheet{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:20}#sheet.on{display:flex}
+.box{background:var(--cd);width:100%;max-width:640px;max-height:94dvh;display:flex;flex-direction:column;border-radius:20px 20px 0 0}
+.bh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--bd)}.x{background:none;border:0;font-size:1.3rem}
+.bb{padding:8px 16px;overflow:auto;flex:1}.bf{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--bd)}
+label{display:block;margin:14px 0 6px;font-weight:600;font-size:.9rem}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;background:var(--bg)}
+.btn{flex:1;padding:14px;border-radius:12px;border:0;font-weight:700;background:var(--bd)}.pri{background:var(--ac);color:#fff}.dng{background:none;color:var(--ac);border:1px solid var(--ac);flex:none}.btn:disabled{opacity:.5}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:9px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--bg)}.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.sc{display:flex;gap:12px}.sc>div{flex:1;text-align:center}.st{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.st button{width:52px;height:52px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);font-size:1.6rem}.st b{font-size:2rem}
+.ph{display:flex;gap:8px;flex-wrap:wrap}.ph div{position:relative}.ph img{width:80px;height:80px;object-fit:cover;border-radius:10px}.ph button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:24px;height:24px;background:var(--ac);color:#fff}
+.add{display:block;margin-top:10px;padding:14px;text-align:center;border:2px dashed var(--bd);border-radius:12px;color:var(--ac)}
+#toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);background:#222;color:#fff;padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90%}#toast.on{opacity:1;transform:translate(-50%,0)}
+.login{max-width:380px;margin:12vh auto;padding:24px}.login h1{margin:0 0 4px}.err{color:var(--ac)}
+</style></head><body>
+<div id="app"></div><div id="sheet"></div><div id="toast"></div>
+<script>
+const sb=supabase.createClient("https://cisgavepcswtgnpomlyg.supabase.co","sb_publishable_ImWO2pVSsT9DjXAv9_gq2g_gPFAUxC5");
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2800)};
+const CATS=["Football","Basket-ball","Judo","Omnisports"];
+const GROUPS={L1:[["A","Groupe A"],["B","Groupe B"]],L2:[["A","Zone Est"],["B","Zone Ouest"],["C","Zone Centre-Sud"]]};
+const ST=[["upcoming","À venir"],["live","En direct"],["paused","Mi-temps"],["finished","Terminé"]];
+const fmt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+const loc=d=>{if(!d)return"";const t=new Date(d);t.setMinutes(t.getMinutes()-t.getTimezoneOffset());return t.toISOString().slice(0,16)};
+let tab="articles",me={},clubs=[],rows=[];
+const w=async q=>{const{data,error}=await q.select();if(error)throw error;if(!data.length)throw new Error("Droits insuffisants (exécutez supabase_admin.sql)");return data};
+const chips=(n,o,v)=>`<div class="chips" data-n="${n}">${o.map(([k,l])=>`<button type="button" class="chip${k==v?" on":""}" data-v="${esc(k)}">${esc(l)}</button>`).join("")}</div>`;
+const cv=n=>$(`.chips[data-n="${n}"] .on`)?.dataset.v;
+document.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;$$(".chip",c.parentNode).forEach(x=>x.classList.remove("on"));c.classList.add("on");c.parentNode.dispatchEvent(new Event("change",{bubbles:true}))});
+
+function sheet(title,body,save,del){
+  const s=$("#sheet");
+  s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">Enregistrer</button></div></div>`;
+  s.classList.add("on");s.onchange=null;
+  const close=()=>s.classList.remove("on");
+  $("#sx").onclick=close;s.onclick=e=>{if(e.target===s)close()};
+  $("#ss").onclick=async e=>{e.target.disabled=true;try{await save();close();toast("Enregistré ✓");load()}catch(err){toast("Erreur : "+(err.message||err))}e.target.disabled=false};
+  if(del)$("#sd").onclick=async()=>{if(!confirm("Supprimer définitivement ?"))return;try{await del();close();toast("Supprimé");load()}catch(err){toast("Erreur : "+err.message)}};
+}
+
+/* ---------- Articles ---------- */
+const up=async f=>{const p=`articles/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${(f.name.split(".").pop()||"jpg").toLowerCase()}`;const{error}=await sb.storage.from("photos").upload(p,f,{contentType:f.type});if(error)throw error;return sb.storage.from("photos").getPublicUrl(p).data.publicUrl};
+function articleForm(a={}){
+  let ph=[1,2,3,4,5].map(i=>a["photo_"+i]).filter(Boolean);
+  sheet(a.id?"Modifier l’article":"Nouvel article",`<label>Rubrique</label>${chips("cat",CATS.map(c=>[c,c]),a.categorie||"Football")}
+  <label>Titre</label><input id="f_t" value="${esc(a.titre)}" placeholder="Un titre accrocheur">
+  <label>Chapeau (résumé)</label><textarea id="f_c" rows="2">${esc(a.chapeau)}</textarea>
+  <label>Texte</label><textarea id="f_x" rows="9">${esc(a.contenu)}</textarea>
+  <label>Photos (5 maximum)</label><div class="ph" id="ph"></div>
+  <label class="add">📷 Ajouter des photos<input type="file" id="f_f" accept="image/*" multiple hidden></label>`,
+  async()=>{
+    const t=$("#f_t").value.trim(),x=$("#f_x").value.trim();if(!t||!x)throw new Error("Titre et texte obligatoires");
+    const urls=[];for(const p of ph)urls.push(typeof p==="string"?p:await up(p));
+    const r={titre:t,chapeau:$("#f_c").value.trim()||null,contenu:x,categorie:cv("cat"),photos:urls,publie_par:a.publie_par||me.nom};
+    [1,2,3,4,5].forEach(i=>r["photo_"+i]=urls[i-1]||null);
+    await w(a.id?sb.from("articles").update(r).eq("id",a.id):sb.from("articles").insert(r));
+  },a.id&&(()=>w(sb.from("articles").delete().eq("id",a.id))));
+  const draw=()=>{$("#ph").innerHTML=ph.map((p,i)=>`<div><img src="${typeof p==="string"?esc(p):URL.createObjectURL(p)}" alt=""><button type="button" data-i="${i}">✕</button></div>`).join("");$$("#ph button").forEach(b=>b.onclick=()=>{ph.splice(+b.dataset.i,1);draw()})};
+  $("#f_f").onchange=e=>{ph=[...ph,...e.target.files].slice(0,5);draw()};draw();
+}
+
+/* ---------- Matchs ---------- */
+function matchForm(m={}){
+  const nw=!m.id;let lg=m.ligue||"L1",gp=m.groupe||"A",sc=[m.score_domicile??0,m.score_visiteur??0];
+  const fill=()=>{const o=clubs.filter(c=>c.ligue===lg&&c.groupe===gp).map(c=>`<option value="${c.id}">${esc(c.nom)}</option>`).join("");$("#f_h").innerHTML=o;$("#f_v").innerHTML=o};
+  const drawG=()=>{$("#gp").innerHTML=chips("gp",GROUPS[lg],gp);fill()};
+  sheet(nw?"Nouveau match":esc(m.equipe_domicile)+" – "+esc(m.equipe_visiteur),
+  `${nw?`<label>Ligue</label>${chips("lg",[["L1","Ligue 1"],["L2","Ligue 2"]],lg)}<label>Groupe / Zone</label><div id="gp"></div><label>Domicile</label><select id="f_h"></select><label>Visiteur</label><select id="f_v"></select>`:""}
+  <label>Score</label><div class="sc">${[0,1].map(i=>`<div><small>${nw?(i?"Visiteur":"Domicile"):esc(i?m.equipe_visiteur:m.equipe_domicile)}</small><div class="st"><button type="button" data-i="${i}" data-d="-1">−</button><b id="s${i}">${sc[i]}</b><button type="button" data-i="${i}" data-d="1">+</button></div></div>`).join("")}</div>
+  <label>État du match</label>${chips("st",ST,m.statut||"upcoming")}
+  <label>Date et heure</label><input type="datetime-local" id="f_d" value="${loc(m.date_match)}">
+  <label>Stade</label><input id="f_s" value="${esc(m.stade)}"><label>Journée</label><input type="number" min="1" id="f_j" value="${m.journee??""}">`,
+  async()=>{
+    const st=cv("st"),up0=st==="upcoming";
+    const r={statut:st,score_domicile:up0?null:sc[0],score_visiteur:up0?null:sc[1],date_match:$("#f_d").value?new Date($("#f_d").value).toISOString():null,stade:$("#f_s").value.trim()||null,journee:+$("#f_j").value||null};
+    if(nw){const h=clubs.find(c=>c.id===$("#f_h").value),v=clubs.find(c=>c.id===$("#f_v").value);if(!h||!v||h.id===v.id)throw new Error("Choisissez deux clubs différents");
+      Object.assign(r,{club_domicile_id:h.id,club_visiteur_id:v.id,ligue:lg,groupe:gp,equipe_domicile:h.nom,equipe_visiteur:v.nom,competition:lg==="L1"?"Linafoot Ligue 1":"Linafoot Ligue 2"})}
+    await w(nw?sb.from("matchs").insert(r):sb.from("matchs").update(r).eq("id",m.id));
+  },m.id&&(()=>w(sb.from("matchs").delete().eq("id",m.id))));
+  $$(".st button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sc[i]=Math.max(0,sc[i]+ +b.dataset.d);$("#s"+i).textContent=sc[i]});
+  if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
+}
+
+/* ---------- Flash infos ---------- */
+const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<label>Message</label><textarea id="f_i" rows="3" placeholder="Ex. : Les Léopards s’imposent 2-0 !">${esc(f.info)}</textarea>`,
+  async()=>{const info=$("#f_i").value.trim();if(!info)throw new Error("Message vide");await w(f.id?sb.from("flash").update({info}).eq("id",f.id):sb.from("flash").insert({info}))},
+  f.id&&(()=>w(sb.from("flash").delete().eq("id",f.id))));
+
+/* ---------- Liste & navigation ---------- */
+const FORMS={articles:articleForm,matchs:matchForm,flash:flashForm};
+async function load(){
+  const L=$("#list");L.innerHTML='<p class="mu">Chargement…</p>';
+  const q={articles:()=>sb.from("articles").select("*").order("created_at",{ascending:false}).limit(60),
+    matchs:()=>sb.from("matchs").select("*").order("date_match",{ascending:false}).limit(60),
+    flash:()=>sb.from("flash").select("*").order("id",{ascending:false}).limit(60)}[tab];
+  const{data,error}=await q();if(error){L.innerHTML=`<p class="err">${esc(error.message)}</p>`;return}
+  rows=data;
+  if(!rows.length){L.innerHTML='<p class="mu">Rien pour le moment. Touchez ＋ pour commencer.</p>';return}
+  L.innerHTML=rows.map((r,i)=>tab==="articles"?`<button class="row" data-i="${i}">${r.photo_1?`<img src="${esc(r.photo_1)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(r.titre)}</b><small>${esc(r.categorie||"")} · ${fmt(r.created_at)}</small></div></button>`
+    :tab==="matchs"?`<button class="row" data-i="${i}"><div><div class="mt"><span>${esc(r.equipe_domicile)}</span><b>${r.score_domicile??"–"} : ${r.score_visiteur??"–"}</b><span>${esc(r.equipe_visiteur)}</span></div><small>${r.statut==="live"?'<span class="live">● En direct</span>':esc((ST.find(s=>s[0]===r.statut)||[0,r.statut])[1])} · ${fmt(r.date_match)} · ${esc(r.ligue||"")} ${esc(r.groupe||"")}</small></div></button>`
+    :`<button class="row" data-i="${i}"><div><b style="white-space:normal">${esc(r.info)}</b></div></button>`).join("");
+  $$("#list .row").forEach(b=>b.onclick=()=>FORMS[tab](rows[+b.dataset.i]));
+}
+function shell(){
+  const T=[["articles","📰","Articles"],["matchs","⚽","Matchs"],["flash","⚡","Flash infos"]];
+  $("#app").innerHTML=`<header><b>Masano243 <span>Admin</span></b><button id="out">Quitter</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">＋</button><nav class="tabs">${T.map(([k,i,l])=>`<button data-t="${k}" class="${k===tab?"on":""}"><i>${i}</i>${l}</button>`).join("")}</nav>`;
+  $("#fab").onclick=()=>FORMS[tab]();$("#out").onclick=async()=>{await sb.auth.signOut();loginView()};
+  $$(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;$$(".tabs button").forEach(x=>x.classList.toggle("on",x===b));load()});
+}
+function loginView(msg=""){
+  $("#app").innerHTML=`<form class="login" id="lf"><h1>Masano243</h1><p class="mu">Espace rédaction</p><label>Identifiant</label><input id="u" autocomplete="username" autocapitalize="none" required><label>Mot de passe</label><input id="p" type="password" autocomplete="current-password" required><p class="err" id="le">${esc(msg)}</p><button class="btn pri" style="width:100%">Se connecter</button></form>`;
+  $("#lf").onsubmit=async e=>{e.preventDefault();const u=$("#u").value.trim();
+    const{error}=await sb.auth.signInWithPassword({email:u.includes("@")?u:u+"@masano243.net",password:$("#p").value});
+    if(error)$("#le").textContent="Identifiant ou mot de passe incorrect.";else boot()};
+}
+async function boot(){
+  const{data:{session}}=await sb.auth.getSession();if(!session)return loginView();
+  const{data:ok}=await sb.rpc("is_admin");
+  if(!ok){await sb.auth.signOut();return loginView("Ce compte n’a pas les droits d’administration.")}
+  me={nom:session.user.user_metadata?.nom||session.user.email.split("@")[0]};
+  clubs=(await sb.from("clubs").select("id,nom,ligue,groupe").order("nom")).data||[];
+  shell();load();
+}
+boot();
+</script></body></html>
