@@ -50,13 +50,13 @@ const chips=(n,o,v)=>`<div class="chips" data-n="${n}">${o.map(([k,l])=>`<button
 const cv=n=>$(`.chips[data-n="${n}"] .on`)?.dataset.v;
 document.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;$$(".chip",c.parentNode).forEach(x=>x.classList.remove("on"));c.classList.add("on");c.parentNode.dispatchEvent(new Event("change",{bubbles:true}))});
 
-function sheet(title,body,save,del){
+function sheet(title,body,save,del,lbl){
   const s=$("#sheet");
   s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">Enregistrer</button></div></div>`;
-  s.classList.add("on");s.onchange=null;
+  s.classList.add("on");s.onchange=null;$("#ss").textContent=lbl||"Enregistrer";
   const close=()=>s.classList.remove("on");
   $("#sx").onclick=close;s.onclick=e=>{if(e.target===s)close()};
-  $("#ss").onclick=async e=>{e.target.disabled=true;try{await save();close();toast("Enregistré ✓");load()}catch(err){toast("Erreur : "+(err.message||err))}e.target.disabled=false};
+  $("#ss").onclick=async e=>{e.target.disabled=true;try{await save();close();if(!lbl)toast("Enregistré ✓");load()}catch(err){toast("Erreur : "+(err.message||err))}e.target.disabled=false};
   if(del)$("#sd").onclick=async()=>{if(!confirm("Supprimer définitivement ?"))return;try{await del();close();toast("Supprimé");load()}catch(err){toast("Erreur : "+err.message)}};
 }
 
@@ -87,7 +87,7 @@ function matchForm(m={}){
   const fill=()=>{const o=clubs.filter(c=>c.ligue===lg&&c.groupe===gp).map(c=>`<option value="${c.id}">${esc(c.nom)}</option>`).join("");$("#f_h").innerHTML=o;$("#f_v").innerHTML=o};
   const drawG=()=>{$("#gp").innerHTML=chips("gp",GROUPS[lg],gp);fill()};
   sheet(nw?"Nouveau match":esc(m.equipe_domicile)+" – "+esc(m.equipe_visiteur),
-  `${nw?`<label>Ligue</label>${chips("lg",[["L1","Ligue 1"],["L2","Ligue 2"]],lg)}<label>Groupe / Zone</label><div id="gp"></div><label>Domicile</label><select id="f_h"></select><label>Visiteur</label><select id="f_v"></select>`:""}
+  `${nw?"":'<div style="display:flex;gap:8px;margin-top:10px"><button type="button" class="btn" id="b_ev">⚽ Événements</button><button type="button" class="btn" id="b_lu">📋 Compositions</button></div>'}${nw?`<label>Ligue</label>${chips("lg",[["L1","Ligue 1"],["L2","Ligue 2"]],lg)}<label>Groupe / Zone</label><div id="gp"></div><label>Domicile</label><select id="f_h"></select><label>Visiteur</label><select id="f_v"></select>`:""}
   <label>Score</label><div class="sc">${[0,1].map(i=>`<div><small>${nw?(i?"Visiteur":"Domicile"):esc(i?m.equipe_visiteur:m.equipe_domicile)}</small><div class="st"><button type="button" data-i="${i}" data-d="-1">−</button><b id="s${i}">${sc[i]}</b><button type="button" data-i="${i}" data-d="1">+</button></div></div>`).join("")}</div>
   <label>État du match</label>${chips("st",ST,m.statut||"upcoming")}
   <label>Date et heure</label><input type="datetime-local" id="f_d" value="${loc(m.date_match)}">
@@ -100,7 +100,41 @@ function matchForm(m={}){
     await w(nw?sb.from("matchs").insert(r):sb.from("matchs").update(r).eq("id",m.id));
   },m.id&&(()=>w(sb.from("matchs").delete().eq("id",m.id))));
   $$(".st button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sc[i]=Math.max(0,sc[i]+ +b.dataset.d);$("#s"+i).textContent=sc[i]});
+  if(!nw){$("#b_ev").onclick=()=>eventsSheet(m);$("#b_lu").onclick=()=>lineupSheet(m)}
   if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
+}
+
+/* ---------- Événements & compositions ---------- */
+const EV=[["goal","⚽ But"],["penalty","🎯 Penalty"],["own_goal","CSC"],["yellow_card","🟨 Jaune"],["red_card","🟥 Rouge"],["substitution","🔁 Remplacement"],["other","Autre"]];
+function eventsSheet(m){
+  sheet("Événements du match",`<small>${esc(m.equipe_domicile)} – ${esc(m.equipe_visiteur)}</small><div id="ev" style="margin-top:10px"></div>
+  <label>Nouvel événement</label>${chips("et",EV,"goal")}<label>Équipe</label>${chips("tm",[["h",m.equipe_domicile],["v",m.equipe_visiteur]],"h")}
+  <div style="display:flex;gap:8px"><div style="flex:1"><label>Minute</label><input id="e_m" type="number" min="0" max="150" inputmode="numeric"></div><div style="flex:1"><label>+ Arrêts de jeu</label><input id="e_a" type="number" min="0" max="30" inputmode="numeric"></div></div>
+  <label>Joueur</label><input id="e_j"><label>Passeur (facultatif)</label><input id="e_p"><label>Détail (facultatif)</label><input id="e_d" placeholder="Ex. : remplace Mukendi">
+  <button type="button" class="btn pri" id="e_add" style="width:100%;margin:14px 0">Ajouter à la chronologie</button>`,async()=>{},null,"Fermer");
+  const ref=async()=>{const{data,error}=await sb.from("match_events").select("*").eq("match_id",m.id).order("minute").order("ordre");
+    $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc((EV.find(x=>x[0]===e.type)||[0,e.type])[1])} ${esc(e.joueur||"")}</b><small>${esc(e.club_id===m.club_domicile_id?m.equipe_domicile:m.equipe_visiteur)}${e.passeur?" · passe de "+esc(e.passeur):""}${e.detail?" · "+esc(e.detail):""}</small></div><button class="x" data-id="${e.id}">🗑</button></div>`).join(""):'<p class="mu">Aucun événement pour ce match.</p>';
+    $$("#ev .x").forEach(b=>b.onclick=async()=>{const{error}=await sb.from("match_events").delete().eq("id",b.dataset.id);if(error)toast("Erreur : "+error.message);ref()})};
+  ref();
+  $("#e_add").onclick=async e=>{e.target.disabled=true;try{const mn=$("#e_m").value;
+    await w(sb.from("match_events").insert({match_id:m.id,club_id:cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id,type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,joueur:$("#e_j").value.trim()||null,passeur:$("#e_p").value.trim()||null,detail:$("#e_d").value.trim()||null,ordre:Date.now()%1e9}));
+    ["e_m","e_a","e_j","e_p","e_d"].forEach(i=>$("#"+i).value="");toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
+}
+async function lineupSheet(m){
+  const T=[[m.club_domicile_id,m.equipe_domicile],[m.club_visiteur_id,m.equipe_visiteur]];
+  const{data:lu}=await sb.from("match_lineups").select("*").eq("match_id",m.id);
+  const ids=(lu||[]).map(l=>l.id);
+  const{data:pl}=ids.length?await sb.from("match_lineup_players").select("*").in("lineup_id",ids).order("ordre"):{data:[]};
+  const D=cid=>{const l=(lu||[]).find(x=>x.club_id===cid)||{},p=(pl||[]).filter(x=>x.lineup_id===l.id),f=s=>p.filter(x=>!!x.est_remplacant===s).map(x=>(x.numero?x.numero+" ":"")+x.nom).join("\n");return{l,t:f(false),s:f(true)}};
+  sheet("Compositions",T.map(([cid,nom],i)=>{const d=D(cid);return `<label style="font-size:1.1rem;color:var(--ac)">${esc(nom)}</label>
+  <input id="l_f${i}" placeholder="Formation (ex. 4-3-3)" value="${esc(d.l.formation)}"><input id="l_e${i}" placeholder="Entraîneur" style="margin-top:8px" value="${esc(d.l.entraineur)}">
+  <label>Titulaires — un joueur par ligne : numéro puis nom</label><textarea id="l_t${i}" rows="7" placeholder="1 Mpasi&#10;2 Kasongo">${esc(d.t)}</textarea>
+  <label>Remplaçants</label><textarea id="l_s${i}" rows="4">${esc(d.s)}</textarea>`}).join("<hr>"),
+  async()=>{for(const [i,[cid]] of T.entries()){
+    const [lr]=await w(sb.from("match_lineups").upsert({match_id:m.id,club_id:cid,formation:$("#l_f"+i).value.trim()||null,entraineur:$("#l_e"+i).value.trim()||null},{onConflict:"match_id,club_id"}));
+    const{error}=await sb.from("match_lineup_players").delete().eq("lineup_id",lr.id);if(error)throw error;
+    const P=(id,sub)=>$(id).value.split("\n").map(x=>x.trim()).filter(Boolean).map((x,k)=>{const y=x.match(/^(\d{1,2})[\s.\-–)]+(.+)$/);return{lineup_id:lr.id,nom:y?y[2]:x,numero:y?(+y[1]||null):null,est_remplacant:sub,ordre:k}});
+    const R=[...P("#l_t"+i,false),...P("#l_s"+i,true)];if(R.length)await w(sb.from("match_lineup_players").insert(R))}});
 }
 
 /* ---------- Flash infos ---------- */
