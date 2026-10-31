@@ -502,9 +502,7 @@ export const mountResults = (root, competitionPage = null) => {
 
   const renderMatchDetails = (match, details) => {
     const venue = details.venue || match.stade;
-    const referee = details.referee || match.arbitre;
     detailModal.querySelector("#matchDetailVenue").textContent = venue || "Lieu non renseigné";
-    detailModal.querySelector("#matchDetailReferee").textContent = referee || "Arbitre non renseigné";
     const events = details.events;
     detailModal.querySelector("#matchDetailTimeline").innerHTML = events.length
       ? events.map(renderMatchEvent).join("")
@@ -583,7 +581,6 @@ export const mountResults = (root, competitionPage = null) => {
     renderScorers(match, match.buteurs, "unknown", match.source !== "local");
     detailModal.querySelector("#matchDetailTimeline").innerHTML = `<li class="match-detail-empty">${match.statut === "upcoming" ? "Le match n’a pas encore commencé." : "Les événements chronologiques ne sont pas disponibles pour ce match."}</li>`;
     detailModal.querySelector("#matchDetailVenue").textContent = match.stade || "Chargement…";
-    detailModal.querySelector("#matchDetailReferee").textContent = match.arbitre || "Chargement…";
     detailModal.querySelector("#matchDetailHomeLineupName").textContent = match.equipe_domicile;
     detailModal.querySelector("#matchDetailAwayLineupName").textContent = match.equipe_visiteur;
     detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Chargement de la composition…</p>`;
@@ -618,7 +615,6 @@ export const mountResults = (root, competitionPage = null) => {
         detailModal.querySelector("#matchDetailAwayRank").textContent = "Classement indisponible";
         detailModal.querySelector("#matchDetailTimeline").innerHTML = `<li class="match-detail-empty">Impossible de charger les événements du match.</li>`;
         detailModal.querySelector("#matchDetailVenue").textContent = match.stade || "Lieu indisponible";
-        detailModal.querySelector("#matchDetailReferee").textContent = match.arbitre || "Arbitre indisponible";
         detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Impossible de charger la composition.</p>`;
         detailModal.querySelector("#matchDetailAwayLineup").innerHTML = `<p class="match-detail-empty">Impossible de charger la composition.</p>`;
         detailModal.querySelector("#matchDetailHistory").innerHTML = `<li class="match-detail-empty">Impossible de charger les confrontations.</li>`;
