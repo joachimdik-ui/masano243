@@ -671,7 +671,10 @@ export const mountResults = (root, competitionPage = null) => {
       || match.groupe === linafootGroup.value;
     const matchesEpfSeries = isLiveCenter || match.source !== "epf_kin"
       || match.serie === epfKinSeries.value;
-    const matchesStatus = statusFilter === "all" || match.statut === statusFilter;
+    // Live Center : uniquement les matchs en direct / en cours.
+    const matchesStatus = isLiveCenter
+      ? match.statut === "live"
+      : statusFilter === "all" || match.statut === statusFilter;
     return matchesCompetition && matchesNamedCompetition && matchesLeague && matchesGroup
       && matchesEpfSeries && matchesStatus;
   });
@@ -718,7 +721,9 @@ export const mountResults = (root, competitionPage = null) => {
       const scopeHasMatches = isLiveCenter
         ? matches.length > 0
         : matches.some((match) => match.competition_category === competitionFilter);
-      const message = playoffPreview
+      const message = isLiveCenter
+        ? "Aucun match ni événement en direct pour le moment."
+        : playoffPreview
         ? "Aucun match de play-off programmé pour le moment. Consultez l’onglet Classements pour voir les équipes provisoirement qualifiées."
         : !scopeHasMatches
           ? EMPTY_EVENTS_MESSAGE
@@ -1155,7 +1160,8 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(topScorersView, false);
     }
     // Filtre par statut : uniquement pour le Live Center et les championnats (Linafoot, EPF-KIN).
-    statusFilters.hidden = !(isLiveCenter || layout === "league");
+    // Le Live Center n'affiche que les matchs en direct : pas de filtre de statut.
+    statusFilters.hidden = layout !== "league";
     const visibleTabs = [...tabsBar.querySelectorAll(".results-tab")].filter((tab) => !tab.hidden);
     tabsBar.hidden = isLiveCenter || visibleTabs.length < 2;
   };
