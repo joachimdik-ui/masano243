@@ -4,15 +4,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f8f9fa;--cd:#fff;--tx:#1a1a1a;--mu:#6c757d;--ac:#42158f;--ac2:#6d45b2;--bd:#e9ecef;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#121014;--cd:#1c1a21;--tx:#f3f1f6;--mu:#a29bb0;--bd:#2d2936;--ac:#7c4fd6;--ac2:#9b78e8}}
+:root{--bg:#fff;--cd:#fff;--tx:#1a1a1a;--mu:#6c757d;--ac:#42158f;--ac2:#6d45b2;--bd:#e9ecef;color-scheme:light}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 "Montserrat",system-ui,sans-serif;padding:env(safe-area-inset-top) 0 0}
 button,input,select,textarea{font:inherit;color:inherit}
 header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--cd);border-bottom:1px solid var(--bd)}
 header{border-bottom:3px solid var(--ac)}header img{height:38px;width:auto;display:block}header .tt{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--ac);margin-left:10px}header .lg{display:flex;align-items:center}header button{background:none;border:0;color:var(--mu)}
 main{max-width:720px;margin:0 auto;padding:12px 12px calc(150px + env(safe-area-inset-bottom))}
 .mu{color:var(--mu)}small{display:block;color:var(--mu)}
-.row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;margin-bottom:10px}
+.row{box-shadow:0 2px 10px #0000000d;display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;margin-bottom:10px}
 .row img,.row .nb{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--bd);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{flex:1;font-weight:600}.mt span:last-child{text-align:right}.mt b{flex:none;font-size:1.3rem;color:var(--ac)}
