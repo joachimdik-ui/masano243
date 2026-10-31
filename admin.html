@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Admin · Masano243</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f5f7;--cd:#fff;--tx:#14171a;--mu:#6b7280;--ac:#d7261e;--bd:#e5e7eb;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1114;--cd:#1a1d21;--tx:#f1f3f5;--mu:#9aa3ad;--bd:#2a2f36}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 0}
+:root{--bg:#f8f9fa;--cd:#fff;--tx:#1a1a1a;--mu:#6c757d;--ac:#42158f;--ac2:#6d45b2;--bd:#e9ecef;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#121014;--cd:#1c1a21;--tx:#f3f1f6;--mu:#a29bb0;--bd:#2d2936;--ac:#7c4fd6;--ac2:#9b78e8}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 "Montserrat",system-ui,sans-serif;padding:env(safe-area-inset-top) 0 0}
 button,input,select,textarea{font:inherit;color:inherit}
 header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--cd);border-bottom:1px solid var(--bd)}
-header span{color:var(--ac)}header button{background:none;border:0;color:var(--mu)}
+header{border-bottom:3px solid var(--ac)}header img{height:38px;width:auto;display:block}header .tt{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--ac);margin-left:10px}header .lg{display:flex;align-items:center}header button{background:none;border:0;color:var(--mu)}
 main{max-width:720px;margin:0 auto;padding:12px 12px calc(150px + env(safe-area-inset-bottom))}
 .mu{color:var(--mu)}small{display:block;color:var(--mu)}
 .row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;margin-bottom:10px}
 .row img,.row .nb{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--bd);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{flex:1;font-weight:600}.mt span:last-child{text-align:right}.mt b{flex:none;font-size:1.3rem;color:var(--ac)}
-.live{color:var(--ac);font-weight:700}
+.live{color:#d7261e;font-weight:700}h1,.bh b{font-family:"Bebas Neue",sans-serif;letter-spacing:.04em;font-weight:400}.bh b{font-size:1.3rem}
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom);z-index:5}
 .tabs button{flex:1;padding:10px 4px;background:none;border:0;color:var(--mu);font-size:.8rem}.tabs button i{display:block;font-style:normal;font-size:1.4rem}.tabs .on{color:var(--ac);font-weight:700}
 .fab{position:fixed;right:18px;bottom:calc(80px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:2rem;box-shadow:0 4px 14px #0004;z-index:6}
@@ -24,13 +26,13 @@ main{max-width:720px;margin:0 auto;padding:12px 12px calc(150px + env(safe-area-
 .bb{padding:8px 16px;overflow:auto;flex:1}.bf{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--bd)}
 label{display:block;margin:14px 0 6px;font-weight:600;font-size:.9rem}
 input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;background:var(--bg)}
-.btn{flex:1;padding:14px;border-radius:12px;border:0;font-weight:700;background:var(--bd)}.pri{background:var(--ac);color:#fff}.dng{background:none;color:var(--ac);border:1px solid var(--ac);flex:none}.btn:disabled{opacity:.5}
+.btn{flex:1;padding:14px;border-radius:12px;border:0;font-weight:700;background:var(--bd)}.pri{background:var(--ac);color:#fff}.dng{background:none;color:#d7261e;border:1px solid #d7261e;flex:none}.btn:disabled{opacity:.5}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:9px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--bg)}.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .sc{display:flex;gap:12px}.sc>div{flex:1;text-align:center}.st{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.st button{width:52px;height:52px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);font-size:1.6rem}.st b{font-size:2rem}
 .ph{display:flex;gap:8px;flex-wrap:wrap}.ph div{position:relative}.ph img{width:80px;height:80px;object-fit:cover;border-radius:10px}.ph button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:24px;height:24px;background:var(--ac);color:#fff}
 .add{display:block;margin-top:10px;padding:14px;text-align:center;border:2px dashed var(--bd);border-radius:12px;color:var(--ac)}
 #toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);background:#222;color:#fff;padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90%}#toast.on{opacity:1;transform:translate(-50%,0)}
-.login{max-width:380px;margin:12vh auto;padding:24px}.login h1{margin:0 0 4px}.err{color:var(--ac)}
+.login{max-width:380px;margin:8vh auto;padding:24px;text-align:center}.login img{max-width:80%;max-height:110px;object-fit:contain;margin-bottom:8px}.login h1{margin:0 0 4px;font-size:2rem;color:var(--ac)}.login label,.login .mu{text-align:left}.err{color:#d7261e}
 </style></head><body>
 <div id="app"></div><div id="sheet"></div><div id="toast"></div>
 <script>
@@ -124,12 +126,12 @@ async function load(){
 }
 function shell(){
   const T=[["articles","📰","Articles"],["matchs","⚽","Matchs"],["flash","⚡","Flash infos"]];
-  $("#app").innerHTML=`<header><b>Masano243 <span>Admin</span></b><button id="out">Quitter</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">＋</button><nav class="tabs">${T.map(([k,i,l])=>`<button data-t="${k}" class="${k===tab?"on":""}"><i>${i}</i>${l}</button>`).join("")}</nav>`;
+  $("#app").innerHTML=`<header><span class="lg"><img src="https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak" alt="Masano243"><span class="tt">Admin</span></span><button id="out">Quitter</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">＋</button><nav class="tabs">${T.map(([k,i,l])=>`<button data-t="${k}" class="${k===tab?"on":""}"><i>${i}</i>${l}</button>`).join("")}</nav>`;
   $("#fab").onclick=()=>FORMS[tab]();$("#out").onclick=async()=>{await sb.auth.signOut();loginView()};
   $$(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;$$(".tabs button").forEach(x=>x.classList.toggle("on",x===b));load()});
 }
 function loginView(msg=""){
-  $("#app").innerHTML=`<form class="login" id="lf"><h1>Masano243</h1><p class="mu">Espace rédaction</p><label>Identifiant</label><input id="u" autocomplete="username" autocapitalize="none" required><label>Mot de passe</label><input id="p" type="password" autocomplete="current-password" required><p class="err" id="le">${esc(msg)}</p><button class="btn pri" style="width:100%">Se connecter</button></form>`;
+  $("#app").innerHTML=`<form class="login" id="lf"><img src="https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak" alt="Masano243"><h1>Espace rédaction</h1><p class="mu">Connectez-vous pour publier</p><label>Identifiant</label><input id="u" autocomplete="username" autocapitalize="none" required><label>Mot de passe</label><input id="p" type="password" autocomplete="current-password" required><p class="err" id="le">${esc(msg)}</p><button class="btn pri" style="width:100%">Se connecter</button></form>`;
   $("#lf").onsubmit=async e=>{e.preventDefault();const u=$("#u").value.trim();
     const{error}=await sb.auth.signInWithPassword({email:u.includes("@")?u:u+"@masano243.net",password:$("#p").value});
     if(error)$("#le").textContent="Identifiant ou mot de passe incorrect.";else boot()};
