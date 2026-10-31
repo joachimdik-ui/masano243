@@ -108,10 +108,34 @@ const categoryTokens = (value) => String(value || "")
   .map(normalizeCategory)
   .filter(Boolean);
 
-const articleMatchesCategory = (article, category) => {
+const tokenMatchesCategory = (token, category) => {
   const accepted = [...new Set([...(categoryGroups[category] || []), category, ...(categoryAliases[category] || [])])];
-  return categoryTokens(article.category).some((token) => accepted.some((slug) => token === slug || token.startsWith(`${slug}-`)));
+  return accepted.some((slug) => token === slug || token.startsWith(`${slug}-`));
 };
+
+const articleMatchesCategory = (article, category) => categoryTokens(article.category)
+  .some((token) => tokenMatchesCategory(token, category));
+
+// Rubriques sportives principales : un article n'est affiché que dans UNE seule d'entre elles,
+// celle de sa première catégorie reconnue (« Judo, Football » → Judo uniquement).
+const sportRubriques = ["football", "basket-ball", "judo", "omnisports"];
+
+const primaryRubrique = (article) => {
+  for (const token of categoryTokens(article.category)) {
+    const rubrique = sportRubriques.find((slug) => tokenMatchesCategory(token, slug));
+    if (rubrique) return rubrique;
+  }
+  return "";
+};
+
+const articleBelongsToRubrique = (article, category) => (
+  sportRubriques.includes(category)
+    ? primaryRubrique(article) === category
+    : articleMatchesCategory(article, category)
+);
+
+// Libellé affiché dans les listes : uniquement la catégorie principale de l'article.
+const primaryCategoryLabel = (article) => String(article.category || "").split(/[,;/|·>]+/)[0].trim();
 
 const renderSectionNavigation = (route) => {
   const section = route.split("/")[0];
@@ -403,14 +427,14 @@ const renderArticleCard = (article) => `<a class="post-mini" href="#read/${artic
 const renderArticleListItem = (article) => `<a class="article-list-item" href="#read/${escapeHtml(article.id)}" role="listitem">
   <img src="${escapeHtml(article.image || PLACEHOLDER_IMAGE)}" alt="${escapeHtml(article.title)}" loading="lazy">
   <span class="article-list-body">
-    <span class="article-list-meta">${escapeHtml(article.category)}${article.date ? ` · ${escapeHtml(formatArticleDate(article.date))}` : ""}</span>
+    <span class="article-list-meta">${escapeHtml(primaryCategoryLabel(article))}${article.date ? ` · ${escapeHtml(formatArticleDate(article.date))}` : ""}</span>
     <strong class="article-list-title">${escapeHtml(article.title)}</strong>
     <span class="article-list-excerpt">${escapeHtml(article.excerpt)}</span>
   </span>
 </a>`;
 
 const renderHomeCategorySections = (items) => homeCategorySections.map(({ slug, title }) => {
-  const categoryArticles = items.filter((article) => articleMatchesCategory(article, slug)).slice(0, 5);
+  const categoryArticles = items.filter((article) => articleBelongsToRubrique(article, slug)).slice(0, 5);
   const content = categoryArticles.length
     ? `<div class="posts-grid category-posts-grid" role="list">${categoryArticles.map(renderArticleCard).join("")}</div>`
     : `<p class="data-status empty-state">${EMPTY_NEWS_MESSAGE}</p>`;
@@ -554,7 +578,7 @@ const renderHome = (query = "") => {
 
   // Rubriques « Actualités » et recherche : simple liste, sans carrousel.
   const filtered = sortedArticles(articles.filter((article) => {
-    const matchesCategory = !category || articleMatchesCategory(article, category);
+    const matchesCategory = !category || articleBelongsToRubrique(article, category);
     const matchesQuery = !normalizedQuery || `${article.title} ${article.excerpt} ${article.category}`.toLowerCase().includes(normalizedQuery);
     return matchesCategory && matchesQuery;
   }));
