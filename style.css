@@ -1186,3 +1186,10 @@ body.has-player-modal { overflow: hidden; }
   .section-nav > * { flex: 0 0 auto; scroll-snap-align: start; }
   .nav-left a.is-active { scroll-margin-inline: 24px; }
 }
+
+/* L'attribut hidden doit toujours l'emporter sur les display: grid/flex ci-dessus. */
+#articleList[hidden],
+#homeCategorySections[hidden],
+#heroContainer[hidden],
+.photo-reportage[hidden],
+.scoop-widget[hidden] { display: none !important; }

@@ -557,6 +557,7 @@ const renderHome = (query = "") => {
   heroContainer.style.display = "none";
   articleList.hidden = true;
   homeSections.hidden = true;
+  homeSections.innerHTML = ""; // évite d'afficher les blocs de l'accueil (toutes rubriques) dans une page de rubrique
   laUneArticles = [];
 
   if (!articles.length) {
