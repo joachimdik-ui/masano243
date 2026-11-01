@@ -904,7 +904,7 @@ body {
 .match-detail-page-content {
   display: flex;
   flex-direction: column;
-  width: min(100%, 1100px);
+  width: min(100%, 1200px);
   min-height: 100%;
   margin: 0 auto;
   background: #fff;

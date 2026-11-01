@@ -82,8 +82,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-
 .btn{flex:1;padding:14px;border-radius:14px;border:0;font-weight:700;background:var(--sf);color:var(--ac);display:flex;align-items:center;justify-content:center;gap:8px}.pri{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:0 4px 12px rgba(66,21,143,0.25)}.dng{background:none;color:#d7261e;border:1px solid #d7261e;flex:none}.btn:disabled{opacity:.5}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:9px 14px;border-radius:99px;border:0;background:var(--sf);color:var(--ac);font-weight:600}.chip.on{background:var(--ac);color:#fff}
 .sc{display:flex;gap:12px}.sc>div{flex:1;text-align:center}.st{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.st button{width:52px;height:52px;border-radius:50%;border:0;background:var(--sf);color:var(--ac);font-size:1.6rem}.st b{font-size:2rem}
-.ph{display:flex;gap:8px;flex-wrap:wrap}.ph div{position:relative}.ph img{width:80px;height:80px;object-fit:cover;border-radius:12px}.ph button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:24px;height:24px;background:var(--ac);color:#fff}
-.add{display:block;margin-top:10px;padding:14px;text-align:center;border:2px dashed var(--bd);border-radius:14px;color:var(--ac)}
+.ph{display:grid;gap:10px}.article-photo-item{display:grid;grid-template-columns:minmax(0,1fr) 64px 36px;gap:8px;align-items:center}.article-photo-item img{width:64px;height:48px;object-fit:cover;border:1px solid var(--bd);border-radius:9px;background:var(--sf)}.article-photo-item img[hidden]{display:none}.article-photo-item button{width:36px;height:36px;border:0;border-radius:50%;background:var(--sf);color:var(--ac);font-size:1.1rem}
+.add{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;margin-top:10px;padding:14px;border:2px dashed var(--bd);border-radius:14px;background:none;color:var(--ac);font-weight:700}
 #toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);background:#1b1630;color:#fff;padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90%}#toast.on{opacity:1;transform:translate(-50%,0)}
 .lgn{min-height:100dvh;display:flex;flex-direction:column}.lgn .top{background:linear-gradient(160deg,var(--ac),var(--ac2));color:#fff;text-align:center;padding:40px 24px 60px;border-radius:0 0 32px 32px}.lgn .top img{max-width:70%;max-height:90px;object-fit:contain;background:#fff;border-radius:16px;padding:8px}.lgn h1{margin:12px 0 2px;font-size:2rem}
 .login{width:100%;max-width:380px;margin:-30px auto 0;background:var(--cd);border-radius:20px;padding:20px;box-shadow:0 8px 24px #2a0c631f}
@@ -181,42 +181,28 @@ const R={
  om:{t:"omnisports_evenements",n:"événement omnisports",o:["date_evenement",0],req:["titre","discipline"],ti:r=>r.titre,su:r=>`${r.discipline||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("discipline","Discipline"),T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultat","x")]}
 };
 
-const up=async f=>{
-  if(!f.type.startsWith("image/"))throw new Error("Sélectionnez uniquement des fichiers image.");
-  if(f.size>5*1024*1024)throw new Error("Chaque image doit faire 5 Mo maximum.");
-  const extension=({ "image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","image/avif":"avif" })[f.type];
-  if(!extension)throw new Error("Format accepté : JPG, PNG, WebP, GIF ou AVIF.");
-  const p=`articles/${Date.now()}-${Math.random().toString(36).slice(2,9)}.${extension}`;
-  const{error}=await sb.storage.from("photos").upload(p,f,{contentType:f.type});
-  if(error)throw error;
-  const{data}=sb.storage.from("photos").getPublicUrl(p);
-  if(!data?.publicUrl)throw new Error("L’URL publique de l’image n’a pas pu être créée.");
-  return data.publicUrl;
-};
 function articleForm(a={}){
   let ph=[1,2,3,4,5].map(i=>a["photo_"+i]).filter(Boolean);
   sheet(a.id?"Modifier l’article":"Nouvel article",`<label>Rubrique</label>${chips("cat",CATS.map(c=>[c,c]),a.categorie||"Football")}
   <label>Titre</label><input id="f_t" value="${esc(a.titre)}" placeholder="Un titre accrocheur">
   <label>Chapeau (résumé)</label><textarea id="f_c" rows="2">${esc(a.chapeau)}</textarea>
   <label>Texte</label><textarea id="f_x" rows="9">${esc(a.contenu)}</textarea>
-  <label>Photos (5 maximum, 5 Mo par image)</label><div class="ph" id="ph"></div>
-  <label class="add">Importer des images depuis votre appareil<input type="file" id="f_f" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple hidden></label>`,
+  <label>Liens des images (5 maximum)</label><div class="ph" id="ph"></div>
+  <button type="button" class="add" id="addPhotoLink">+ Ajouter un lien d’image</button>`,
   async()=>{
     const t=$("#f_t").value.trim(),x=$("#f_x").value.trim();if(!t||!x)throw new Error("Titre et texte obligatoires");
-    const urls=[];for(const p of ph)urls.push(typeof p==="string"?p:await up(p));
+    const urls=ph.map((_,i)=>$("#photo_"+i).value.trim()).filter(Boolean).map(value=>{
+      try{const url=new URL(value);if(!["http:","https:"].includes(url.protocol))throw new Error();return url.href}
+      catch{throw new Error("Chaque image doit avoir un lien HTTP ou HTTPS valide.")}
+    });
     const r={titre:t,chapeau:$("#f_c").value.trim()||null,contenu:x,categorie:cv("cat"),photos:urls,publie_par:a.publie_par||me.nom};
     [1,2,3,4,5].forEach(i=>r["photo_"+i]=urls[i-1]||null);
     await w(a.id?sb.from("articles").update(r).eq("id",a.id):sb.from("articles").insert(r));
   },a.id&&(()=>w(sb.from("articles").delete().eq("id",a.id))));
-  const draw=()=>{$("#ph").innerHTML=ph.map((p,i)=>`<div><img src="${typeof p==="string"?esc(p):URL.createObjectURL(p)}" alt=""><button type="button" data-i="${i}">✕</button></div>`).join("");$$("#ph button").forEach(b=>b.onclick=()=>{ph.splice(+b.dataset.i,1);draw()})};
-  $("#f_f").onchange=e=>{
-    const selected=[...e.target.files];
-    e.target.value="";
-    if(ph.length+selected.length>5){toast("Vous pouvez ajouter 5 images maximum.");return}
-    if(selected.some(file=>!["image/jpeg","image/png","image/webp","image/gif","image/avif"].includes(file.type))){toast("Formats acceptés : JPG, PNG, WebP, GIF ou AVIF.");return}
-    if(selected.some(file=>file.size>5*1024*1024)){toast("Chaque image doit faire 5 Mo maximum.");return}
-    ph=[...ph,...selected];draw();
-  };draw();
+  const draw=()=>{$("#ph").innerHTML=ph.map((url,i)=>`<div class="article-photo-item"><input type="url" inputmode="url" id="photo_${i}" data-photo-index="${i}" value="${esc(url)}" placeholder="https://exemple.com/image.jpg" aria-label="Lien de l’image ${i+1}"><img src="${esc(url)}" alt="Aperçu de l’image ${i+1}"${url?"":" hidden"}><button type="button" data-i="${i}" aria-label="Supprimer l’image ${i+1}">×</button></div>`).join("");$$("#ph button").forEach(b=>b.onclick=()=>{ph.splice(+b.dataset.i,1);draw()});$$("#ph input").forEach(input=>input.oninput=()=>{const preview=input.parentElement.querySelector("img");preview.hidden=!input.value.trim();preview.src=input.value.trim()})};
+  $("#addPhotoLink").onclick=()=>{if(ph.length>=5){toast("Vous pouvez ajouter 5 liens d’image maximum.");return}ph.push("");draw();$("#photo_"+(ph.length-1)).focus()};
+  $("#ph").addEventListener("error",event=>{if(event.target instanceof HTMLImageElement)event.target.hidden=true},true);
+  draw();
 }
 const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<label>Message</label><textarea id="f_i" rows="3" placeholder="Ex. : Les Léopards s’imposent 2-0 !">${esc(f.info)}</textarea>`,
   async()=>{const info=$("#f_i").value.trim();if(!info)throw new Error("Message vide");await w(f.id?sb.from("flash").update({info}).eq("id",f.id):sb.from("flash").insert({info}))},
