@@ -28,13 +28,7 @@ const parseCsvRow = (line) => {
   return fields;
 };
 
-const main = async () => {
-  const response = await fetch(SOURCE_URL, {
-    headers: { "User-Agent": "Masano243-international-history-sync" }
-  });
-  if (!response.ok) throw new Error(`International results source returned HTTP ${response.status}.`);
-
-  const csv = await response.text();
+const parseInternationalResults = (csv) => {
   const lines = csv.replace(/^\uFEFF/, "").trimEnd().split(/\r?\n/);
   const headers = parseCsvRow(lines.shift() || "");
   const indexes = Object.fromEntries(headers.map((header, index) => [header, index]));
@@ -73,15 +67,46 @@ const main = async () => {
 
   const payload = {
     source: "Mart Jürisoo / openfootball international results",
+    source_url: "https://github.com/martj42/international_results",
+    coverage: "Men's senior international results; excludes Olympic Games and youth or B-team fixtures.",
+    verification: "Community-curated secondary dataset; source records are not independently verified.",
     updated_through: updatedThrough,
     matches
   };
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-  fs.writeFileSync(OUTPUT_PATH, `${JSON.stringify(payload)}\n`);
-  console.log(`Saved ${matches.length} international results through ${updatedThrough}.`);
+  return payload;
 };
 
-main().catch((error) => {
-  console.error("Could not update international results.", error);
-  process.exitCode = 1;
-});
+const fetchInternationalResults = async () => {
+  const response = await fetch(SOURCE_URL, {
+    headers: { "User-Agent": "Masano243-international-history-sync" }
+  });
+  if (!response.ok) throw new Error(`International results source returned HTTP ${response.status}.`);
+  return parseInternationalResults(await response.text());
+};
+
+const main = async () => {
+  const payload = await fetchInternationalResults();
+  let previous = {};
+  try {
+    previous = JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf8"));
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  const output = {
+    ...payload,
+    updated_at: new Date().toISOString(),
+    api_snapshots: previous.api_snapshots || {}
+  };
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+  fs.writeFileSync(OUTPUT_PATH, `${JSON.stringify(output)}\n`);
+  console.log(`Saved ${payload.matches.length} international results through ${payload.updated_through}.`);
+};
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Could not update international results.", error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { fetchInternationalResults, parseInternationalResults };
