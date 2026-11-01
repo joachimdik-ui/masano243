@@ -40,6 +40,7 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .dashboard-team{display:flex;min-width:0;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .dashboard-team b{max-width:100%;font-size:.82rem;line-height:1.25}
 .dashboard-team .club-row-logo{width:52px;height:52px;border-radius:16px;background:#fff;padding:7px}
+.dashboard-team .club-row-initials{font-size:.9rem}
 .dashboard-score>strong{font-size:1.55rem;font-weight:800;white-space:nowrap}
 .dashboard-match>small{margin-top:14px;color:#e5ddf3;text-align:center}
 .dashboard-action{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;margin-top:18px;padding:12px 16px;border:0;border-radius:12px;background:#fff;color:var(--ac);font-weight:800;box-shadow:0 6px 16px #15063030}
@@ -61,9 +62,9 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 @media(max-width:700px){main{padding:8px 14px calc(130px + env(safe-area-inset-bottom))}.dashboard-hero{grid-template-columns:1fr;gap:20px;padding:24px;border-radius:22px}.dashboard-hero h1{font-size:2.9rem}.dashboard-match{padding:18px}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{min-height:118px;padding:14px}}
 @media(max-width:380px){.dashboard-hero h1{font-size:2.45rem}.tiles{gap:8px}.tile{padding:12px}.dashboard-score{gap:7px}.dashboard-team b{font-size:.75rem}}
 .row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:0;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 1px 8px #2a0c630f}
-.row img,.row .nb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--sf);flex:none}
+.row img:not(.club-row-logo),.row .nb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--sf);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{display:flex;align-items:center;gap:6px;flex:1;font-weight:600;font-size:.88rem}.mt span:last-child{justify-content:flex-end;text-align:right}.mt b{flex:none;font-size:1.25rem;color:var(--ac)}
+.mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{display:flex;align-items:center;gap:6px;flex:1;font-weight:600;font-size:.88rem}.mt span:last-child{justify-content:flex-end;text-align:right}.mt b{flex:none;font-size:1.25rem;color:var(--ac)}.row .mt b{font-size:1rem}
 .live{color:#d7261e;font-weight:700}h1,.bh b{font-family:"Bebas Neue",sans-serif;letter-spacing:.04em;font-weight:400}.bh b{font-size:1.35rem}
 .note{background:var(--cd);border-radius:16px;padding:20px;text-align:center;color:var(--mu)}.note code{background:var(--sf);color:var(--ac);padding:2px 6px;border-radius:6px}
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--cd);border-radius:22px 22px 0 0;box-shadow:0 -4px 20px #2a0c6314;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
@@ -71,6 +72,9 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .fab{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:1.8rem;box-shadow:0 6px 16px #42158f55;z-index:6;display:grid;place-items:center}.fab[hidden]{display:none}
 #sheet{position:fixed;inset:0;background:#1b163088;display:none;align-items:flex-end;justify-content:center;z-index:20}#sheet.on{display:flex}
 .box{background:var(--cd);width:100%;max-width:640px;max-height:94dvh;display:flex;flex-direction:column;border-radius:24px 24px 0 0}
+#sheet .box.fullscreen{width:100%;max-width:none;height:100dvh;max-height:none;border-radius:0}
+#sheet .box.fullscreen .bh{padding-top:calc(16px + env(safe-area-inset-top))}
+#sheet .box.fullscreen .bf{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
 .bh{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--bd)}.x{background:none;border:0;font-size:1.3rem}
 .bb{padding:8px 16px;overflow:auto;flex:1}.bf{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--bd)}
 label{display:block;margin:14px 0 6px;font-weight:600;font-size:.88rem}
@@ -83,9 +87,11 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-
 #toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);background:#1b1630;color:#fff;padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90%}#toast.on{opacity:1;transform:translate(-50%,0)}
 .lgn{min-height:100dvh;display:flex;flex-direction:column}.lgn .top{background:linear-gradient(160deg,var(--ac),var(--ac2));color:#fff;text-align:center;padding:40px 24px 60px;border-radius:0 0 32px 32px}.lgn .top img{max-width:70%;max-height:90px;object-fit:contain;background:#fff;border-radius:16px;padding:8px}.lgn h1{margin:12px 0 2px;font-size:2rem}
 .login{width:100%;max-width:380px;margin:-30px auto 0;background:var(--cd);border-radius:20px;padding:20px;box-shadow:0 8px 24px #2a0c631f}
-.club-row-logo { width: 32px; height: 32px; object-fit: contain; border-radius: 50%; background: var(--sf); padding: 2px; flex: none; }
+.club-row-logo { display:inline-grid;width:32px;height:32px;place-items:center;overflow:hidden;object-fit:contain;border-radius:50%;background:var(--sf);color:var(--ac);padding:2px;flex:none;font-size:.66rem;font-weight:800;letter-spacing:.02em;line-height:1;text-transform:uppercase; }
+.club-row-initials { border:1px solid var(--bd); }
 .event-match-header { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; color: var(--tx); }
 .event-match-header img { width: 24px; height: 24px; object-fit: contain; }
+.event-match-header .club-row-logo { width:24px;height:24px;border-radius:50%; }
 </style></head><body>
 <div id="app"></div><div id="sheet"></div><div id="toast"></div>
 <script>
@@ -116,18 +122,24 @@ const loc=d=>{if(!d)return"";const t=new Date(d);t.setMinutes(t.getMinutes()-t.g
 let sec="home",sub={},me={},clubs=[],eclubs=[],rows=[];
 const cn=id=>[...clubs,...eclubs].find(c=>c.id===id)?.nom||"?";
 const clogo=id=>[...clubs,...eclubs].find(c=>c.id===id)?.logo_url||"";
+const cshort=(id,name)=>[...clubs,...eclubs].find(c=>c.id===id)?.sigle||name;
+const initials=name=>{const words=String(name||"").trim().split(/\s+/).filter(Boolean);if(!words.length)return"?";return(words.length===1?Array.from(words[0]).slice(0,3):words.slice(0,2).map(part=>Array.from(part)[0]||"")).join("").toLocaleUpperCase("fr-FR")};
+const clubMark=(name,url)=>url
+  ?`<img src="${esc(url)}" class="club-row-logo" data-initials="${esc(initials(name))}" alt="">`
+  :`<span class="club-row-logo club-row-initials" aria-hidden="true">${esc(initials(name))}</span>`;
 const mn=(r,s)=>r["equipe_"+s]||cn(r["club_"+s+"_id"]);
 const mlogo=(r,s)=>r["logo_"+s]||clogo(r["club_"+s+"_id"]) || "";
 
 const w=async q=>{const{data,error}=await q.select();if(error)throw error;if(!data.length)throw new Error("Droits insuffisants");return data};
 const miss=e=>/42P01|PGRST205|does not exist|schema cache/.test((e.code||"")+(e.message||""));
+document.addEventListener("error",e=>{const image=e.target;if(!(image instanceof HTMLImageElement)||!image.classList.contains("club-row-logo"))return;const fallback=document.createElement("span");fallback.className="club-row-logo club-row-initials";fallback.setAttribute("aria-hidden","true");fallback.textContent=image.dataset.initials||"?";image.replaceWith(fallback)},true);
 const chips=(n,o,v)=>`<div class="chips" data-n="${n}">${o.map(([k,l])=>`<button type="button" class="chip${k==v?" on":""}" data-v="${esc(k)}">${esc(l)}</button>`).join("")}</div>`;
 const cv=n=>$(`.chips[data-n="${n}"] .on`)?.dataset.v;
 document.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;$$(".chip",c.parentNode).forEach(x=>x.classList.remove("on"));c.classList.add("on");c.parentNode.dispatchEvent(new Event("change",{bubbles:true}))});
 
-function sheet(title,body,save,del,lbl){
+function sheet(title,body,save,del,lbl,options={}){
   const s=$("#sheet");
-  s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">${ic("plus")} ${lbl||"Enregistrer"}</button></div></div>`;
+  s.innerHTML=`<div class="box${options.fullscreen?" fullscreen":""}"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">${ic("plus")} ${lbl||"Enregistrer"}</button></div></div>`;
   s.classList.add("on");s.onchange=null;$("#ss").lastChild.textContent=lbl||"Enregistrer";
   const close=()=>s.classList.remove("on");
   $("#sx").onclick=close;s.onclick=e=>{if(e.target===s)close()};
@@ -141,13 +153,15 @@ function form(c,r={}){
     if(t==="c")return`<label>${l}</label>${chips(k,o,x??o[0][0])}`;
     if(t==="s")return`<label>${l}</label><select id="f_${k}"><option value="">—</option>${o().map(([a,b])=>`<option value="${esc(a)}"${a==x?" selected":""}>${esc(b)}</option>`).join("")}</select>`;
     if(t==="x")return`<label>${l}</label><textarea id="f_${k}" rows="5">${esc(x)}</textarea>`;
-    return`<label>${l}</label><input id="f_${k}" ${t==="n"?'type="number" inputmode="numeric" min="0"':t==="d"?'type="datetime-local"':""} value="${esc(t==="d"?loc(x):x)}">`}).join("");
+    return`<label>${l}</label><input id="f_${k}" ${t==="n"?'type="number" inputmode="numeric" min="0"':t==="d"?'type="datetime-local"':t==="u"?'type="url" inputmode="url" placeholder="https://…"':""} value="${esc(t==="d"?loc(x):x)}">`}).join("");
   sheet(r.id?"Modifier · "+c.n:"Ajouter · "+c.n,body,async()=>{
-    const o={};for(const[k,,t]of c.f){const e=$("#f_"+k),a=e?.value;
-      o[k]=t==="c"?cv(k):t==="n"?(a===""?null:+a):t==="d"?(a?new Date(a).toISOString():null):(a?.trim()||null)}
+    const o={};for(const[k,l,t]of c.f){const e=$("#f_"+k),a=e?.value;
+      o[k]=t==="c"?cv(k):t==="n"?(a===""?null:+a):t==="d"?(a?new Date(a).toISOString():null):(a?.trim()||null);
+      if(t==="u"&&o[k]){try{const url=new URL(o[k]);if(!["http:","https:"].includes(url.protocol))throw new Error();o[k]=url.href}catch{throw new Error(`Le lien du résumé vidéo n’est pas valide : ${l}.`)}}
+    }
     for(const k of c.req||[])if(o[k]==null)throw new Error("Champ obligatoire manquant");
     await w(r.id?sb.from(c.t).update(o).eq("id",r.id):sb.from(c.t).insert(o))},
-    r.id&&(()=>w(sb.from(c.t).delete().eq("id",r.id))));
+    r.id&&(()=>w(sb.from(c.t).delete().eq("id",r.id))),undefined,c.mt?{fullscreen:true}:undefined);
   if(r.id&&c.ev)$(".bb").insertAdjacentHTML("afterbegin",`<button type="button" class="btn pri" id="b_ev" style="width:100%;margin-top:10px">${ic("ball")} Événements du match</button>`),$("#b_ev").onclick=()=>c.ev(r);
 }
 const T=(k,l,t="t",o)=>[k,l,t,o],CL=()=>clubs.map(c=>[c.id,c.nom]),EC=()=>eclubs.map(c=>[c.id,c.nom]);
@@ -159,23 +173,34 @@ const R={
  es:{t:"epf_kin_scorers",n:"buteur EPF-KIN",o:["buts",0],d:{saison:"2026-2027",matches_joues:0,buts:0,penaltys:0},req:["nom","club_id","saison"],ti:r=>r.nom,su:r=>`${cn(r.club_id)} · ${r.buts} buts · ${r.saison}`,f:[T("nom","Joueur"),T("club_id","Club","s",EC),T("saison","Saison"),T("matches_joues","Matchs joués","n"),T("buts","Buts","n"),T("penaltys","Dont penaltys","n")]},
  er:{t:"epf_kin_standings",ro:1,o:["points",0],ti:r=>`${r.position}. ${r.nom}`,su:r=>`Série ${r.serie} · ${r.points} pts · ${r.joues} J · calcul automatique`},
  em:{t:"epf_kin_matches",n:"match EPF-KIN",o:["date_match",0],d:{saison:"2026-2027",statut:"upcoming",serie:"A"},req:["club_domicile_id","club_visiteur_id","date_match","journee"],mt:1,ev:r=>epfEvents(r),
-  f:[T("serie","Série","c",SR),T("journee","Journée","n"),T("club_domicile_id","Domicile","s",EC),T("club_visiteur_id","Visiteur","s",EC),T("date_match","Date et heure","d"),T("stade","Stade"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST),T("saison","Saison")]},
+  f:[T("serie","Série","c",SR),T("journee","Journée","n"),T("club_domicile_id","Domicile","s",EC),T("club_visiteur_id","Visiteur","s",EC),T("date_match","Date et heure","d"),T("stade","Stade"),T("resume_video_url","Lien du résumé vidéo","u"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST),T("saison","Saison")]},
  ma:{t:"matchs",n:"match",o:["date_match",0],d:{statut:"upcoming"},req:["competition","equipe_domicile","equipe_visiteur"],mt:1,
-  f:[T("competition","Compétition (Léopards, Interclubs CAF, International…)"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("stade","Stade"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
+ f:[T("competition","Compétition (Léopards, Interclubs CAF, International…)"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteuse"),T("date_match","Date et heure","d"),T("stade","Stade"),T("resume_video_url","Lien du résumé vidéo","u"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
  bk:{t:"basket_matchs",n:"match de basket",o:["date_match",0],d:{statut:"upcoming"},req:["equipe_domicile","equipe_visiteur"],mt:1,f:[T("competition","Compétition"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("lieu","Lieu"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
  ju:{t:"judo_evenements",n:"événement de judo",o:["date_evenement",0],req:["titre"],ti:r=>r.titre,su:r=>`${r.categorie||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("titre","Titre"),T("categorie","Catégorie / poids"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultats","x")]},
  om:{t:"omnisports_evenements",n:"événement omnisports",o:["date_evenement",0],req:["titre","discipline"],ti:r=>r.titre,su:r=>`${r.discipline||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("discipline","Discipline"),T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultat","x")]}
 };
 
-const up=async f=>{const p=`articles/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${(f.name.split(".").pop()||"jpg").toLowerCase()}`;const{error}=await sb.storage.from("photos").upload(p,f,{contentType:f.type});if(error)throw error;return sb.storage.from("photos").getPublicUrl(p).data.publicUrl};
+const up=async f=>{
+  if(!f.type.startsWith("image/"))throw new Error("Sélectionnez uniquement des fichiers image.");
+  if(f.size>5*1024*1024)throw new Error("Chaque image doit faire 5 Mo maximum.");
+  const extension=({ "image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","image/avif":"avif" })[f.type];
+  if(!extension)throw new Error("Format accepté : JPG, PNG, WebP, GIF ou AVIF.");
+  const p=`articles/${Date.now()}-${Math.random().toString(36).slice(2,9)}.${extension}`;
+  const{error}=await sb.storage.from("photos").upload(p,f,{contentType:f.type});
+  if(error)throw error;
+  const{data}=sb.storage.from("photos").getPublicUrl(p);
+  if(!data?.publicUrl)throw new Error("L’URL publique de l’image n’a pas pu être créée.");
+  return data.publicUrl;
+};
 function articleForm(a={}){
   let ph=[1,2,3,4,5].map(i=>a["photo_"+i]).filter(Boolean);
   sheet(a.id?"Modifier l’article":"Nouvel article",`<label>Rubrique</label>${chips("cat",CATS.map(c=>[c,c]),a.categorie||"Football")}
   <label>Titre</label><input id="f_t" value="${esc(a.titre)}" placeholder="Un titre accrocheur">
   <label>Chapeau (résumé)</label><textarea id="f_c" rows="2">${esc(a.chapeau)}</textarea>
   <label>Texte</label><textarea id="f_x" rows="9">${esc(a.contenu)}</textarea>
-  <label>Photos (5 maximum)</label><div class="ph" id="ph"></div>
-  <label class="add">Ajouter des photos<input type="file" id="f_f" accept="image/*" multiple hidden></label>`,
+  <label>Photos (5 maximum, 5 Mo par image)</label><div class="ph" id="ph"></div>
+  <label class="add">Importer des images depuis votre appareil<input type="file" id="f_f" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple hidden></label>`,
   async()=>{
     const t=$("#f_t").value.trim(),x=$("#f_x").value.trim();if(!t||!x)throw new Error("Titre et texte obligatoires");
     const urls=[];for(const p of ph)urls.push(typeof p==="string"?p:await up(p));
@@ -184,7 +209,14 @@ function articleForm(a={}){
     await w(a.id?sb.from("articles").update(r).eq("id",a.id):sb.from("articles").insert(r));
   },a.id&&(()=>w(sb.from("articles").delete().eq("id",a.id))));
   const draw=()=>{$("#ph").innerHTML=ph.map((p,i)=>`<div><img src="${typeof p==="string"?esc(p):URL.createObjectURL(p)}" alt=""><button type="button" data-i="${i}">✕</button></div>`).join("");$$("#ph button").forEach(b=>b.onclick=()=>{ph.splice(+b.dataset.i,1);draw()})};
-  $("#f_f").onchange=e=>{ph=[...ph,...e.target.files].slice(0,5);draw()};draw();
+  $("#f_f").onchange=e=>{
+    const selected=[...e.target.files];
+    e.target.value="";
+    if(ph.length+selected.length>5){toast("Vous pouvez ajouter 5 images maximum.");return}
+    if(selected.some(file=>!["image/jpeg","image/png","image/webp","image/gif","image/avif"].includes(file.type))){toast("Formats acceptés : JPG, PNG, WebP, GIF ou AVIF.");return}
+    if(selected.some(file=>file.size>5*1024*1024)){toast("Chaque image doit faire 5 Mo maximum.");return}
+    ph=[...ph,...selected];draw();
+  };draw();
 }
 const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<label>Message</label><textarea id="f_i" rows="3" placeholder="Ex. : Les Léopards s’imposent 2-0 !">${esc(f.info)}</textarea>`,
   async()=>{const info=$("#f_i").value.trim();if(!info)throw new Error("Message vide");await w(f.id?sb.from("flash").update({info}).eq("id",f.id):sb.from("flash").insert({info}))},
@@ -199,14 +231,17 @@ function matchForm(m={}){
   <label>Score</label><div class="sc">${[0,1].map(i=>`<div><small>${nw?(i?"Visiteur":"Domicile"):esc(i?m.equipe_visiteur:m.equipe_domicile)}</small><div class="st"><button type="button" data-i="${i}" data-d="-1">−</button><b id="s${i}">${sc[i]}</b><button type="button" data-i="${i}" data-d="1">+</button></div></div>`).join("")}</div>
   <label>État du match</label>${chips("st",ST,m.statut||"upcoming")}
   <label>Date et heure</label><input type="datetime-local" id="f_d" value="${loc(m.date_match)}">
-  <label>Stade</label><input id="f_s" value="${esc(m.stade)}"><label>Journée</label><input type="number" min="1" id="f_j" value="${m.journee??""}">`,
+  <label>Stade</label><input id="f_s" value="${esc(m.stade)}"><label>Lien du résumé vidéo (facultatif)</label><input type="url" inputmode="url" id="f_video" value="${esc(m.resume_video_url)}" placeholder="https://…"><label>Journée</label><input type="number" min="1" id="f_j" value="${m.journee??""}">`,
   async()=>{
     const st=cv("st"),up0=st==="upcoming";
-    const r={statut:st,score_domicile:up0?null:sc[0],score_visiteur:up0?null:sc[1],date_match:$("#f_d").value?new Date($("#f_d").value).toISOString():null,stade:$("#f_s").value.trim()||null,journee:+$("#f_j").value||null};
+    const videoUrl=$("#f_video").value.trim();
+    let resume_video_url=null;
+    if(videoUrl){try{const url=new URL(videoUrl);if(!["http:","https:"].includes(url.protocol))throw new Error();resume_video_url=url.href}catch{throw new Error("Saisissez un lien de résumé vidéo valide (http ou https).")}}
+    const r={statut:st,score_domicile:up0?null:sc[0],score_visiteur:up0?null:sc[1],date_match:$("#f_d").value?new Date($("#f_d").value).toISOString():null,stade:$("#f_s").value.trim()||null,journee:+$("#f_j").value||null,resume_video_url};
     if(nw){const h=clubs.find(c=>c.id===$("#f_h").value),v=clubs.find(c=>c.id===$("#f_v").value);if(!h||!v||h.id===v.id)throw new Error("Choisissez deux clubs différents");
       Object.assign(r,{club_domicile_id:h.id,club_visiteur_id:v.id,ligue:lg,groupe:gp,equipe_domicile:h.nom,equipe_visiteur:v.nom,competition:lg==="L1"?"Linafoot Ligue 1":"Linafoot Ligue 2"})}
     await w(nw?sb.from("matchs").insert(r):sb.from("matchs").update(r).eq("id",m.id));
-  },m.id&&(()=>w(sb.from("matchs").delete().eq("id",m.id))));
+  },m.id&&(()=>w(sb.from("matchs").delete().eq("id",m.id))),undefined,{fullscreen:true});
   $$(".st button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sc[i]=Math.max(0,sc[i]+ +b.dataset.d);$("#s"+i).textContent=sc[i]});
   if(!nw){$("#b_ev").onclick=()=>eventsSheet(m);$("#b_lu").onclick=()=>lineupSheet(m)}
   if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
@@ -215,7 +250,7 @@ function matchForm(m={}){
 function eventsSheet(m){
   const dLogo = mlogo(m, "domicile");
   const vLogo = mlogo(m, "visiteur");
-  sheet("Événements du match",`<div class="event-match-header">${dLogo ? `<img src="${esc(dLogo)}" alt="">` : ""}<span>${esc(m.equipe_domicile)}</span><span>–</span><span>${esc(m.equipe_visiteur)}</span>${vLogo ? `<img src="${esc(vLogo)}" alt="">` : ""}</div><div id="ev" style="margin-top:10px"></div>
+  sheet("Événements du match",`<div class="event-match-header">${clubMark(cshort(m.club_domicile_id,m.equipe_domicile),dLogo)}<span>${esc(m.equipe_domicile)}</span><span>–</span><span>${esc(m.equipe_visiteur)}</span>${clubMark(cshort(m.club_visiteur_id,m.equipe_visiteur),vLogo)}</div><div id="ev" style="margin-top:10px"></div>
   <label>Nouvel événement</label>${chips("et",[["goal","But"],["penalty","Penalty"],["own_goal","CSC"],["yellow_card","Jaune"],["red_card","Rouge"],["substitution","Remplacement"],["other","Autre"]],"goal")}<label>Équipe</label>${chips("tm",[["h",m.equipe_domicile],["v",m.equipe_visiteur]],"h")}
   <div style="display:flex;gap:8px"><div style="flex:1"><label>Minute</label><input id="e_m" type="number" min="0" max="150" inputmode="numeric"></div><div style="flex:1"><label>+ Arrêts de jeu</label><input id="e_a" type="number" min="0" max="30" inputmode="numeric"></div></div>
   <label>Joueur</label><input id="e_j"><label>Passeur (facultatif)</label><input id="e_p"><label>Détail (facultatif)</label><input id="e_d" placeholder="Ex. : remplace Mukendi">
@@ -235,7 +270,7 @@ async function lineupSheet(m){
   const ids=(lu||[]).map(l=>l.id);
   const{data:pl}=ids.length?await sb.from("match_lineup_players").select("*").in("lineup_id",ids).order("ordre"):{data:[]};
   const D=cid=>{const l=(lu||[]).find(x=>x.club_id===cid)||{},p=(pl||[]).filter(x=>x.lineup_id===l.id),f=s=>p.filter(x=>!!x.est_remplacant===s).map(x=>(x.numero?x.numero+" ":"")+x.nom).join("\n");return{l,t:f(false),s:f(true)}};
-  sheet("Compositions",T2.map(([cid,nom],i)=>{const d=D(cid);const cLogo=clogo(cid);return `<label style="display:flex;align-items:center;gap:8px;font-size:1.1rem;color:var(--ac)">${cLogo?`<img src="${esc(cLogo)}" style="width:24px;height:24px;object-fit:contain;" alt="">`:""}${esc(nom)}</label>
+  sheet("Compositions",T2.map(([cid,nom],i)=>{const d=D(cid);const cLogo=clogo(cid);return `<label style="display:flex;align-items:center;gap:8px;font-size:1.1rem;color:var(--ac)">${clubMark(cshort(cid,nom),cLogo)}${esc(nom)}</label>
   <input id="l_f${i}" placeholder="Formation (ex. 4-3-3)" value="${esc(d.l.formation)}"><input id="l_e${i}" placeholder="Entraîneur" style="margin-top:8px" value="${esc(d.l.entraineur)}">
   <label>Titulaires — un joueur par ligne : numéro puis nom</label><textarea id="l_t${i}" rows="7" placeholder="1 Mpasi&#10;2 Kasongo">${esc(d.t)}</textarea>
   <label>Remplaçants</label><textarea id="l_s${i}" rows="4">${esc(d.s)}</textarea>`}).join("<hr>"),
@@ -251,7 +286,7 @@ async function epfEvents(m){
   const opts=()=>(sc||[]).filter(s=>s.club_id===(cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id)).map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")||"<option value=''>Aucun buteur : ajoutez-le dans Équipes › Buteurs EPF</option>";
   const dLogo = clogo(m.club_domicile_id);
   const vLogo = clogo(m.club_visiteur_id);
-  sheet("Buts du match",`<div class="event-match-header">${dLogo ? `<img src="${esc(dLogo)}" alt="">` : ""}<span>${esc(cn(m.club_domicile_id))}</span><span>–</span><span>${esc(cn(m.club_visiteur_id))}</span>${vLogo ? `<img src="${esc(vLogo)}" alt="">` : ""}</div><div id="ev" style="margin-top:10px"></div>
+  sheet("Buts du match",`<div class="event-match-header">${clubMark(cshort(m.club_domicile_id,cn(m.club_domicile_id)),dLogo)}<span>${esc(cn(m.club_domicile_id))}</span><span>–</span><span>${esc(cn(m.club_visiteur_id))}</span>${clubMark(cshort(m.club_visiteur_id,cn(m.club_visiteur_id)),vLogo)}</div><div id="ev" style="margin-top:10px"></div>
   <label>Type</label>${chips("et",[["goal","But"],["penalty","Penalty"],["own_goal","CSC"]],"goal")}<label>Équipe du buteur</label>${chips("tm",[["h",cn(m.club_domicile_id)],["v",cn(m.club_visiteur_id)]],"h")}
   <label>Buteur</label><select id="e_b">${opts()}</select>
   <div style="display:flex;gap:8px"><div style="flex:1"><label>Minute</label><input id="e_m" type="number" min="0" max="150" inputmode="numeric"></div><div style="flex:1"><label>+ Arrêts de jeu</label><input id="e_a" type="number" min="0" max="30" inputmode="numeric"></div></div>
@@ -277,10 +312,12 @@ function rowWithLogo(r,k) {
   if (!logoUrl && (k === "lb" || k === "es")) logoUrl = clogo(r.club_id);
   const titleText = esc(R[k].ti(r));
   const subText = esc(R[k].su(r));
-  if (logoUrl) {
-    return `<img src="${esc(logoUrl)}" class="club-row-logo" alt=""><div><b>${titleText}</b><small>${subText}</small></div>`;
-  }
-  return `<div><b>${titleText}</b><small>${subText}</small></div>`;
+  const isClub = k === "lc" || k === "ec";
+  const isScorer = k === "lb" || k === "es";
+  const mark = isClub || isScorer
+    ? clubMark(isScorer ? cshort(r.club_id,cn(r.club_id)) : (r.sigle||r.nom),logoUrl)
+    : logoUrl ? `<img src="${esc(logoUrl)}" class="club-row-logo" alt="">` : "";
+  return `${mark}<div><b>${titleText}</b><small>${subText}</small></div>`;
 }
 
 const mRow=r=>{
@@ -288,7 +325,7 @@ const mRow=r=>{
   const vName = esc(mn(r,"visiteur"));
   const dLogo = mlogo(r, "domicile");
   const vLogo = mlogo(r, "visiteur");
-  return `<div><div class="mt"><span>${dLogo?`<img src="${esc(dLogo)}" class="club-row-logo" alt="">`:""}<b>${dName}</b></span><b>${r.score_domicile??"–"} : ${r.score_visiteur??"–"}</b><span><b>${vName}</b>${vLogo?`<img src="${esc(vLogo)}" class="club-row-logo" alt="">`:""}</span></div><small>${r.statut==="live"?'<span class="live">● En direct</span>':esc((ST.find(s=>s[0]===r.statut)||[0,r.statut])[1])} · ${fmt(r.date_match)}${r.ligue?" · "+esc(r.ligue+" "+(r.groupe||"")):r.serie?" · Série "+esc(r.serie):r.competition?" · "+esc(r.competition):""}</small></div>`;
+  return `<div><div class="mt"><span>${clubMark(cshort(r.club_domicile_id,mn(r,"domicile")),dLogo)}<b>${dName}</b></span><b>${r.score_domicile??"–"} : ${r.score_visiteur??"–"}</b><span><b>${vName}</b>${clubMark(cshort(r.club_visiteur_id,mn(r,"visiteur")),vLogo)}</span></div><small>${r.statut==="live"?'<span class="live">● En direct</span>':esc((ST.find(s=>s[0]===r.statut)||[0,r.statut])[1])} · ${fmt(r.date_match)}${r.ligue?" · "+esc(r.ligue+" "+(r.groupe||"")):r.serie?" · Série "+esc(r.serie):r.competition?" · "+esc(r.competition):""}</small></div>`;
 };
 
 function V(){const s=cur();
@@ -325,7 +362,7 @@ async function dash(L){
       <div class="dashboard-hero-copy"><span class="dashboard-eyebrow">Masano243 · Espace rédaction</span><h1>Le sport, en direct.<span>Votre rédaction, en action.</span></h1><p>Bonjour ${esc(me.nom)}. Retrouvez vos contenus, vos clubs et vos rencontres au même endroit.</p></div>
       <div class="dashboard-match">
         <div class="dashboard-match-heading"><strong>${lm?"Le match à suivre":"À vous de jouer"}</strong><span class="dashboard-live-pill${lm?"":" is-idle"}">${lm?"En direct":"Centre de commande"}</span></div>
-        ${lm?`<div class="dashboard-score"><div class="dashboard-team">${dLogo?`<img src="${esc(dLogo)}" class="club-row-logo" alt="">`:""}<b>${dName}</b></div><strong>${lm.score_domicile??0} : ${lm.score_visiteur??0}</strong><div class="dashboard-team">${vLogo?`<img src="${esc(vLogo)}" class="club-row-logo" alt="">`:""}<b>${vName}</b></div></div><small>${esc(lm.competition||"EPF-KIN")}</small><button class="dashboard-action" id="hm">${ic("ball")} Mettre à jour le match</button>`
+        ${lm?`<div class="dashboard-score"><div class="dashboard-team">${clubMark(cshort(lm.club_domicile_id,mn(lm,"domicile")),dLogo)}<b>${dName}</b></div><strong>${lm.score_domicile??0} : ${lm.score_visiteur??0}</strong><div class="dashboard-team">${clubMark(cshort(lm.club_visiteur_id,mn(lm,"visiteur")),vLogo)}<b>${vName}</b></div></div><small>${esc(lm.competition||"EPF-KIN")}</small><button class="dashboard-action" id="hm">${ic("ball")} Mettre à jour le match</button>`
           :`<div class="dashboard-score"><div class="dashboard-team"><span class="tile-icon">${ic("ball")}</span><b>Votre prochain match</b></div><strong>—</strong><div class="dashboard-team"><span class="tile-icon">${ic("news")}</span><b>Votre prochaine actu</b></div></div><small>Tout est prêt pour couvrir l’actualité sportive.</small><button class="dashboard-action" id="hn">${ic("plus")} Programmer un match</button>`}
       </div>
     </section>

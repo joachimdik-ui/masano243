@@ -275,7 +275,7 @@ export const fetchMatchsEpfKin = async () => {
   const { data, error } = await supabase
     .from("epf_kin_matches")
     .select(`
-      id, date_match, saison, journee, serie, stade, statut,
+      id, date_match, saison, journee, serie, stade, statut, resume_video_url,
       score_domicile, score_visiteur,
       club_domicile:epf_kin_clubs!epf_kin_matches_club_domicile_id_fkey(nom, logo_url),
       club_visiteur:epf_kin_clubs!epf_kin_matches_club_visiteur_id_fkey(nom, logo_url)

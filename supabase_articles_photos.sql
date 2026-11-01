@@ -1,6 +1,31 @@
 -- Execute this script in the Supabase SQL Editor.
 -- `photos` is retained for compatibility with articles created before photo_1..photo_5.
 
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'photos',
+  'photos',
+  true,
+  5242880,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']::text[]
+)
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Public can read article images" on storage.objects;
+create policy "Public can read article images"
+  on storage.objects for select
+  to public
+  using (bucket_id = 'photos');
+
+drop policy if exists "Authenticated users can upload article images" on storage.objects;
+create policy "Authenticated users can upload article images"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'photos' and (storage.foldername(name))[1] = 'articles');
+
 create table if not exists public.articles (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),

@@ -1,10 +1,13 @@
 -- Linafoot match detail tables.
--- Run after supabase_resultats.sql and schema.sql in the Supabase SQL Editor.
+-- Run after supabase_resultats.sql, schema.sql, and supabase_epf_kin.sql in the Supabase SQL Editor.
 
 alter table public.matchs
   add column if not exists arbitre text,
   add column if not exists resume_video_url text,
   add column if not exists resume_video_thumbnail text;
+
+alter table public.epf_kin_matches
+  add column if not exists resume_video_url text;
 
 create table if not exists public.match_events (
   id uuid primary key default gen_random_uuid(),
