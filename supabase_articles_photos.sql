@@ -40,7 +40,7 @@ set
   contenu = coalesce(nullif(article.contenu, ''), nullif(to_jsonb(article)->>'content', ''), nullif(to_jsonb(article)->>'body', ''), ''),
   categorie = coalesce(article.categorie, to_jsonb(article)->>'category'),
   publie_par = coalesce(article.publie_par, to_jsonb(article)->>'author'),
-  photo_1 = coalesce(article.photo_1, to_jsonb(article)->>'image', to_jsonb(article)->>'image_url'),
+  photo_1 = coalesce(article.photo_1, to_jsonb(article)->>'photo', to_jsonb(article)->>'image', to_jsonb(article)->>'image_url'),
   photos = coalesce(article.photos, '[]'::jsonb),
   created_at = coalesce(article.created_at, now());
 
@@ -107,3 +107,5 @@ create policy "Authenticated users can delete articles"
   on public.articles for delete
   to authenticated
   using (true);
+
+notify pgrst, 'reload schema';

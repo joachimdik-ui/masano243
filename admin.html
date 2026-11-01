@@ -64,7 +64,7 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:0;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 1px 8px #2a0c630f}
 .row img:not(.club-row-logo),.row .nb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--sf);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{display:flex;align-items:center;gap:6px;flex:1;font-weight:600;font-size:.88rem}.mt span:last-child{justify-content:flex-end;text-align:right}.mt b{flex:none;font-size:1.25rem;color:var(--ac)}.row .mt b{font-size:1rem}
+.mt{display:grid;grid-template-columns:minmax(0,1fr) minmax(56px,auto) minmax(0,1fr);gap:8px;align-items:center}.mt span{display:flex;min-width:0;align-items:center;gap:6px;font-weight:600;font-size:.88rem}.mt span>b{min-width:0;overflow:hidden;color:var(--ac);font-size:1rem;text-overflow:ellipsis;white-space:nowrap}.mt span:last-child{justify-content:flex-end;text-align:right}.mt>b{min-width:56px;text-align:center;font-size:1.25rem;color:var(--ac);font-variant-numeric:tabular-nums;white-space:nowrap}.row .mt>b{font-size:1rem}
 .live{color:#d7261e;font-weight:700}h1,.bh b{font-family:"Bebas Neue",sans-serif;letter-spacing:.04em;font-weight:400}.bh b{font-size:1.35rem}
 .note{background:var(--cd);border-radius:16px;padding:20px;text-align:center;color:var(--mu)}.note code{background:var(--sf);color:var(--ac);padding:2px 6px;border-radius:6px}
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--cd);border-radius:22px 22px 0 0;box-shadow:0 -4px 20px #2a0c6314;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
@@ -72,9 +72,6 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .fab{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:1.8rem;box-shadow:0 6px 16px #42158f55;z-index:6;display:grid;place-items:center}.fab[hidden]{display:none}
 #sheet{position:fixed;inset:0;background:#1b163088;display:none;align-items:flex-end;justify-content:center;z-index:20}#sheet.on{display:flex}
 .box{background:var(--cd);width:100%;max-width:640px;max-height:94dvh;display:flex;flex-direction:column;border-radius:24px 24px 0 0}
-#sheet .box.fullscreen{width:100%;max-width:none;height:100dvh;max-height:none;border-radius:0}
-#sheet .box.fullscreen .bh{padding-top:calc(16px + env(safe-area-inset-top))}
-#sheet .box.fullscreen .bf{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
 .bh{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--bd)}.x{background:none;border:0;font-size:1.3rem}
 .bb{padding:8px 16px;overflow:auto;flex:1}.bf{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--bd)}
 label{display:block;margin:14px 0 6px;font-weight:600;font-size:.88rem}
@@ -137,9 +134,9 @@ const chips=(n,o,v)=>`<div class="chips" data-n="${n}">${o.map(([k,l])=>`<button
 const cv=n=>$(`.chips[data-n="${n}"] .on`)?.dataset.v;
 document.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;$$(".chip",c.parentNode).forEach(x=>x.classList.remove("on"));c.classList.add("on");c.parentNode.dispatchEvent(new Event("change",{bubbles:true}))});
 
-function sheet(title,body,save,del,lbl,options={}){
+function sheet(title,body,save,del,lbl){
   const s=$("#sheet");
-  s.innerHTML=`<div class="box${options.fullscreen?" fullscreen":""}"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">${ic("plus")} ${lbl||"Enregistrer"}</button></div></div>`;
+  s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">${ic("plus")} ${lbl||"Enregistrer"}</button></div></div>`;
   s.classList.add("on");s.onchange=null;$("#ss").lastChild.textContent=lbl||"Enregistrer";
   const close=()=>s.classList.remove("on");
   $("#sx").onclick=close;s.onclick=e=>{if(e.target===s)close()};
@@ -161,7 +158,7 @@ function form(c,r={}){
     }
     for(const k of c.req||[])if(o[k]==null)throw new Error("Champ obligatoire manquant");
     await w(r.id?sb.from(c.t).update(o).eq("id",r.id):sb.from(c.t).insert(o))},
-    r.id&&(()=>w(sb.from(c.t).delete().eq("id",r.id))),undefined,c.mt?{fullscreen:true}:undefined);
+    r.id&&(()=>w(sb.from(c.t).delete().eq("id",r.id))));
   if(r.id&&c.ev)$(".bb").insertAdjacentHTML("afterbegin",`<button type="button" class="btn pri" id="b_ev" style="width:100%;margin-top:10px">${ic("ball")} Événements du match</button>`),$("#b_ev").onclick=()=>c.ev(r);
 }
 const T=(k,l,t="t",o)=>[k,l,t,o],CL=()=>clubs.map(c=>[c.id,c.nom]),EC=()=>eclubs.map(c=>[c.id,c.nom]);
@@ -172,11 +169,11 @@ const R={
  ec:{t:"epf_kin_clubs",n:"club EPF-KIN",o:["nom",1],d:{serie:"A"},req:["nom"],ti:r=>r.nom,su:r=>"Série "+r.serie,f:[T("nom","Nom du club"),T("serie","Série","c",SR),T("logo_url","Logo (lien)")]},
  es:{t:"epf_kin_scorers",n:"buteur EPF-KIN",o:["buts",0],d:{saison:"2026-2027",matches_joues:0,buts:0,penaltys:0},req:["nom","club_id","saison"],ti:r=>r.nom,su:r=>`${cn(r.club_id)} · ${r.buts} buts · ${r.saison}`,f:[T("nom","Joueur"),T("club_id","Club","s",EC),T("saison","Saison"),T("matches_joues","Matchs joués","n"),T("buts","Buts","n"),T("penaltys","Dont penaltys","n")]},
  er:{t:"epf_kin_standings",ro:1,o:["points",0],ti:r=>`${r.position}. ${r.nom}`,su:r=>`Série ${r.serie} · ${r.points} pts · ${r.joues} J · calcul automatique`},
- em:{t:"epf_kin_matches",n:"match EPF-KIN",o:["date_match",0],d:{saison:"2026-2027",statut:"upcoming",serie:"A"},req:["club_domicile_id","club_visiteur_id","date_match","journee"],mt:1,ev:r=>epfEvents(r),
+ em:{t:"epf_kin_matches",n:"match EPF-KIN",o:["date_match",0],d:{saison:"2026-2027",statut:"upcoming",serie:"A"},req:["club_domicile_id","club_visiteur_id","date_match","journee"],ev:r=>epfEvents(r),
   f:[T("serie","Série","c",SR),T("journee","Journée","n"),T("club_domicile_id","Domicile","s",EC),T("club_visiteur_id","Visiteur","s",EC),T("date_match","Date et heure","d"),T("stade","Stade"),T("resume_video_url","Lien du résumé vidéo","u"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST),T("saison","Saison")]},
- ma:{t:"matchs",n:"match",o:["date_match",0],d:{statut:"upcoming"},req:["competition","equipe_domicile","equipe_visiteur"],mt:1,
+ ma:{t:"matchs",n:"match",o:["date_match",0],d:{statut:"upcoming"},req:["competition","equipe_domicile","equipe_visiteur"],
  f:[T("competition","Compétition (Léopards, Interclubs CAF, International…)"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteuse"),T("date_match","Date et heure","d"),T("stade","Stade"),T("resume_video_url","Lien du résumé vidéo","u"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
- bk:{t:"basket_matchs",n:"match de basket",o:["date_match",0],d:{statut:"upcoming"},req:["equipe_domicile","equipe_visiteur"],mt:1,f:[T("competition","Compétition"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("lieu","Lieu"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
+ bk:{t:"basket_matchs",n:"match de basket",o:["date_match",0],d:{statut:"upcoming"},req:["equipe_domicile","equipe_visiteur"],f:[T("competition","Compétition"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("lieu","Lieu"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
  ju:{t:"judo_evenements",n:"événement de judo",o:["date_evenement",0],req:["titre"],ti:r=>r.titre,su:r=>`${r.categorie||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("titre","Titre"),T("categorie","Catégorie / poids"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultats","x")]},
  om:{t:"omnisports_evenements",n:"événement omnisports",o:["date_evenement",0],req:["titre","discipline"],ti:r=>r.titre,su:r=>`${r.discipline||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("discipline","Discipline"),T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultat","x")]}
 };
@@ -227,7 +224,7 @@ function matchForm(m={}){
     if(nw){const h=clubs.find(c=>c.id===$("#f_h").value),v=clubs.find(c=>c.id===$("#f_v").value);if(!h||!v||h.id===v.id)throw new Error("Choisissez deux clubs différents");
       Object.assign(r,{club_domicile_id:h.id,club_visiteur_id:v.id,ligue:lg,groupe:gp,equipe_domicile:h.nom,equipe_visiteur:v.nom,competition:lg==="L1"?"Linafoot Ligue 1":"Linafoot Ligue 2"})}
     await w(nw?sb.from("matchs").insert(r):sb.from("matchs").update(r).eq("id",m.id));
-  },m.id&&(()=>w(sb.from("matchs").delete().eq("id",m.id))),undefined,{fullscreen:true});
+  },m.id&&(()=>w(sb.from("matchs").delete().eq("id",m.id))));
   $$(".st button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sc[i]=Math.max(0,sc[i]+ +b.dataset.d);$("#s"+i).textContent=sc[i]});
   if(!nw){$("#b_ev").onclick=()=>eventsSheet(m);$("#b_lu").onclick=()=>lineupSheet(m)}
   if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
@@ -360,7 +357,7 @@ async function dash(L){
 function go(s,p){sec=s;if(p)sub[s]=p;shell();load()}
 function shell(){
   const d=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-  $("#app").innerHTML=`<header><span class="av">${esc(me.nom[0]?.toUpperCase())}</span><div class="who"><b>${sec==="home"?"Bonjour, "+esc(me.nom):SECS[sec][0]}</b><small>${d}</small></div><button class="ib" id="rf" aria-label="Actualiser">${ic("ref")}</button><button class="ib" id="out" aria-label="Quitter">${ic("out")}</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">${ic("plus")}</button><nav class="tabs">${Object.entries(SECS).map(([k,[l,i]])=>`<button data-t="${k}" class="${k===sec?"on":""}">${ic(i)}${l}</button>`).join("")}</nav>`;
+  $("#app").innerHTML=`<header><span class="av">${esc(me.nom[0]?.toUpperCase())}</span><div class="who"><b>${sec==="home"?"Bonjour, "+esc(me.nom):SECS[sec][0]}</b><small>${d}</small></div><button class="ib" id="rf" aria-label="Actualiser">${ic("ref")}</button><button class="ib" id="out" aria-label="Quitter">${ic("out")}</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">${ic("plus")}</button><nav class="tabs" aria-label="Navigation admin">${Object.entries(SECS).map(([k,[l,i]])=>`<button data-t="${k}" class="${k===sec?"on":""}">${ic(i)}${l}</button>`).join("")}</nav>`;
   $("#fab").onclick=()=>V().add?.();$("#rf").onclick=()=>boot();$("#out").onclick=async()=>{await sb.auth.signOut();loginView()};
   $$(".tabs button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 }
