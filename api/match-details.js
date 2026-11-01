@@ -1,3 +1,10 @@
+const {
+  list: sportsDbList,
+  listFirst: sportsDbListFirst,
+  numeric: sportsDbNumber,
+  request: requestSportsDb
+} = require("../lib/thesportsdb");
+
 const isValidId = (value) => /^\d{1,12}$/.test(String(value || ""));
 
 const hasApiErrors = (errors) => {
@@ -34,6 +41,102 @@ const footballDataEvent = (item, type) => ({
   assist: item.assist?.name || item.playerOut?.name || "",
   detail: item.card || (item.playerOut?.name && item.playerIn?.name ? `${item.playerOut.name} remplacé par ${item.playerIn.name}` : item.type || "")
 });
+
+const sportsDbEventType = (item) => {
+  const label = `${item.strTimeline || ""} ${item.strEvent || ""} ${item.strDetail || ""}`.toLowerCase();
+  if (label.includes("goal")) return "goal";
+  if (label.includes("card") || label.includes("booking")) return "booking";
+  if (label.includes("substitution") || label.includes("sub ")) return "substitution";
+  return item.strTimeline || item.strEvent || "";
+};
+
+const sportsDbTimelineEvent = (item) => {
+  const time = String(item.strTime || item.intTime || "");
+  const parsedTime = time.match(/(\d+)(?:\+(\d+))?/);
+  return {
+    ...eventMinute(parsedTime?.[1], parsedTime?.[2]),
+    type: sportsDbEventType(item),
+    team: item.strTeam || "",
+    player: item.strPlayer || item.strPlayer1 || "",
+    assist: item.strAssist || item.strPlayer2 || "",
+    detail: item.strDetail || item.strEvent || ""
+  };
+};
+
+const sportsDbDetails = async (eventId) => {
+  const eventPayload = await requestSportsDb("lookupevent.php", { id: eventId });
+  const [event] = sportsDbListFirst(eventPayload, ["events", "event"]);
+  if (!event) throw new Error("TheSportsDB n'a pas trouvé ce match.");
+
+  const warnings = [];
+  const optionalList = async (endpoint, key) => {
+    try {
+      return sportsDbList(await requestSportsDb(endpoint, { id: eventId }), key);
+    } catch (error) {
+      console.error(`TheSportsDB ${endpoint} request failed.`, error);
+      warnings.push(endpoint);
+      return [];
+    }
+  };
+  const [lineupRows, timelineRows, statistics] = await Promise.all([
+    optionalList("lookuplineup.php", "lineup"),
+    optionalList("lookuptimeline.php", "timeline"),
+    optionalList("lookupeventstats.php", "eventstats")
+  ]);
+  const homeName = String(event.strHomeTeam || "").toLowerCase();
+  const awayName = String(event.strAwayTeam || "").toLowerCase();
+  const lineups = { home: [], away: [] };
+  lineupRows.forEach((item) => {
+    const team = String(item.strTeam || "").toLowerCase();
+    const target = team === homeName || String(item.idTeam || "") === String(event.idHomeTeam)
+      ? "home"
+      : team === awayName || String(item.idTeam || "") === String(event.idAwayTeam)
+        ? "away"
+        : null;
+    if (!target) return;
+    lineups[target].push({
+      name: item.strPlayer || item.strPlayer1 || "",
+      number: sportsDbNumber(item.intLineupNumber ?? item.intNumber),
+      position: item.strPosition || "",
+      grid: item.strFormation || "",
+      substitute: /sub/i.test(String(item.strSubstitute || item.strType || ""))
+    });
+  });
+  const events = timelineRows.map(sportsDbTimelineEvent);
+  const scorers = events.filter((item) => item.type === "goal");
+  const homeScore = sportsDbNumber(event.intHomeScore);
+  const awayScore = sportsDbNumber(event.intAwayScore);
+  const hasFinalScore = homeScore !== null && awayScore !== null;
+  const status = String(event.strStatus || "").toUpperCase();
+  const isLive = /\b(1H|HT|2H|ET|BT|LIVE|IN PLAY|IN PROGRESS|HALF TIME)\b/.test(status);
+  const isFinished = /\b(FT|AET|PEN|FINISHED|FULL TIME|MATCH FINISHED)\b/.test(status)
+    || (hasFinalScore && !isLive
+      && new Date(event.strTimestamp || event.dateEvent || "").getTime() < Date.now());
+
+  return {
+    venue: event.strVenue || "",
+    referee: event.strOfficial || "",
+    events,
+    scorers,
+    scorers_status: scorers.length
+      ? "available"
+      : hasFinalScore && homeScore + awayScore === 0 && isFinished
+        ? "none"
+        : hasFinalScore && isFinished
+          ? "unavailable"
+          : "pending",
+    lineups: {
+      home: lineups.home.length ? { formation: "", coach: "", players: lineups.home } : null,
+      away: lineups.away.length ? { formation: "", coach: "", players: lineups.away } : null
+    },
+    history: [],
+    rankings: [],
+    top_scorers: [],
+    statistics,
+    highlights_url: event.strVideo || "",
+    warnings
+  };
+};
 
 const footballDataDetails = async (match, apiKey) => {
   const goals = Array.isArray(match.goals) ? match.goals : [];
@@ -327,12 +430,70 @@ const apiFootballDetails = async (fixtureId, apiKey) => {
   };
 };
 
+const findTheSportsDbEvent = async (match) => {
+  const date = String(match.utcDate || "").slice(0, 10);
+  if (!date || !match.homeTeam?.name || !match.awayTeam?.name) return null;
+  const payload = await requestSportsDb("searchevents.php", {
+    e: `${match.homeTeam.name}_vs_${match.awayTeam.name}`,
+    d: date
+  });
+  const events = sportsDbListFirst(payload, ["events", "event"]);
+  const namesMatch = (event) => {
+    const home = normalizeTeamName(event.strHomeTeam);
+    const away = normalizeTeamName(event.strAwayTeam);
+    const expectedHome = normalizeTeamName(match.homeTeam.name);
+    const expectedAway = normalizeTeamName(match.awayTeam.name);
+    return (home === expectedHome && away === expectedAway)
+      || (home === expectedAway && away === expectedHome);
+  };
+  return events.find((event) => event.dateEvent === date && namesMatch(event)) || null;
+};
+
+const enrichFromTheSportsDb = async (match, details) => {
+  const hasLineups = details.lineups.home || details.lineups.away;
+  const isFinished = ["FINISHED", "AET", "PEN"].includes(String(match.status || "").toUpperCase());
+  if (!isFinished) return;
+  if (details.scorers_status !== "unavailable" && hasLineups) return;
+  try {
+    const event = await findTheSportsDbEvent(match);
+    if (!event?.idEvent) return;
+    const additional = await sportsDbDetails(String(event.idEvent));
+    if (additional.events.length) details.events = additional.events;
+    if (additional.scorers.length) details.scorers = additional.scorers;
+    if (additional.scorers_status !== "pending") details.scorers_status = additional.scorers_status;
+    details.lineups.home ||= additional.lineups.home;
+    details.lineups.away ||= additional.lineups.away;
+    details.venue ||= additional.venue;
+    details.referee ||= additional.referee;
+    details.highlights_url ||= additional.highlights_url;
+    details.warnings.push(...additional.warnings);
+  } catch (error) {
+    console.error("TheSportsDB fallback for international match failed.", error);
+    details.warnings.push("thesportsdb-fallback");
+  }
+};
+
 module.exports = async function handler(request, response) {
   if (request.method !== "GET") {
     response.setHeader("Allow", "GET");
     return response.status(405).json({ error: "Méthode non autorisée." });
   }
   const matchId = String(request.query?.id || "");
+  if (matchId.startsWith("thesportsdb-")) {
+    const eventId = matchId.slice("thesportsdb-".length);
+    if (!isValidId(eventId)) {
+      return response.status(400).json({ error: "Identifiant de match TheSportsDB invalide." });
+    }
+    try {
+      const details = await sportsDbDetails(eventId);
+      response.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=3600");
+      return response.status(200).json(details);
+    } catch (error) {
+      console.error("TheSportsDB match detail request failed.", error);
+      return response.status(502).json({ error: "Impossible de charger les détails de ce match depuis TheSportsDB." });
+    }
+  }
+
   if (matchId.startsWith("api-football-")) {
     const fixtureId = matchId.slice("api-football-".length);
     if (!isValidId(fixtureId)) {
@@ -369,6 +530,7 @@ module.exports = async function handler(request, response) {
       );
       const match = payload.match || payload;
       const details = await footballDataDetails(match, apiKey);
+      await enrichFromTheSportsDb(match, details);
       if (details.scorers_status === "unavailable") {
         const apiFootballKey = process.env.API_FOOTBALL_API_KEY;
         if (!apiFootballKey) {

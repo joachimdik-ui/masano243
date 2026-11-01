@@ -1,86 +1,141 @@
 // Fonction serverless Vercel exposée sur /api/leopards-players.
 //   GET /api/leopards-players            -> effectif des Léopards
-//   GET /api/leopards-players?id=<api>   -> statistiques d'un joueur (sélection + clubs)
-// Source : API-Football. Chaque réponse réussie est sauvegardée dans Supabase (sauvegarde de secours),
-// à condition que SUPABASE_SERVICE_ROLE_KEY soit défini côté Vercel.
+//   GET /api/leopards-players?id=<id>    -> profil et statistiques disponibles d'un joueur
+// Source : TheSportsDB. Les données liées à un identifiant API-Football restent sauvegardées dans Supabase.
 
-const API_BASE = "https://v3.football.api-sports.io";
-const POSITIONS = { Goalkeeper: "Gardien", Defender: "Défenseur", Midfielder: "Milieu", Attacker: "Attaquant" };
+const { list, listFirst, numeric, request: requestTheSportsDB } = require("../lib/thesportsdb");
 
-const number = (value) => (Number.isFinite(Number(value)) ? Number(value) : 0);
+const NATIONAL_TEAM_ID = Number(process.env.THESPORTSDB_LEOPARDS_TEAM_ID || 136475);
+const positionLabels = {
+  goalkeeper: "Gardien",
+  defender: "Défenseur",
+  midfielder: "Milieu",
+  forward: "Attaquant",
+  attacker: "Attaquant",
+  "centre-forward": "Attaquant"
+};
+const teamNames = new Set(["dr congo", "congo dr", "democratic republic of the congo"]);
 
-const currentSeason = () => {
-  const forced = Number(process.env.API_FOOTBALL_SEASON);
-  if (Number.isInteger(forced) && forced > 2000) return forced;
-  const now = new Date();
-  return now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+const playerAge = (birthDate) => {
+  const birth = new Date(birthDate);
+  if (!birthDate || Number.isNaN(birth.getTime())) return null;
+  const today = new Date();
+  return today.getFullYear() - birth.getFullYear()
+    - (today.getMonth() < birth.getMonth()
+      || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate()) ? 1 : 0);
 };
 
-const apiGet = async (path, params, apiKey) => {
-  const upstream = await fetch(`${API_BASE}${path}?${new URLSearchParams(params)}`, {
-    headers: { "x-apisports-key": apiKey }
-  });
-  if (!upstream.ok) throw new Error(`API-Football a répondu HTTP ${upstream.status}.`);
-  const payload = await upstream.json();
-  if (payload.errors && Object.keys(payload.errors).length > 0) {
-    throw new Error(`API-Football a signalé une erreur : ${JSON.stringify(payload.errors)}`);
-  }
-  if (!Array.isArray(payload.response)) throw new Error("Réponse invalide d'API-Football.");
-  return payload.response;
-};
+const isNationalTeamPlayer = (player, teamId) => (
+  [player.idTeam, player.idTeam2, player.idTeamNational].some((id) => String(id || "") === String(teamId))
+  || [player.strTeam, player.strTeam2].some((name) => teamNames.has(String(name || "").toLowerCase()))
+);
 
 const normalizeSquadPlayer = (player) => ({
-  id: player.id,
-  api_player_id: player.id,
-  nom: player.name || "Joueur",
-  poste: POSITIONS[player.position] || player.position || "",
-  numero: player.number ?? null,
-  age: player.age ?? null,
-  photo_url: player.photo || "",
-  club: "",
-  source: "api"
+  id: player.idPlayer,
+  thesportsdb_player_id: player.idPlayer,
+  api_player_id: numeric(player.idAPIfootball),
+  nom: player.strPlayer || "Joueur",
+  poste: positionLabels[String(player.strPosition || "").toLowerCase()] || player.strPosition || "",
+  numero: numeric(player.strNumber),
+  age: playerAge(player.dateBorn),
+  date_naissance: player.dateBorn || null,
+  photo_url: player.strThumb || player.strCutout || "",
+  club: teamNames.has(String(player.strTeam || "").toLowerCase()) ? player.strTeam2 || "" : player.strTeam || "",
+  championnat: "",
+  source: "thesportsdb"
 });
 
-const normalizeDetails = (entry, teamId, season) => {
-  const statistics = Array.isArray(entry.statistics) ? entry.statistics : [];
-  const national = statistics.filter((item) => item.team?.id === teamId);
-  const clubs = statistics.filter((item) => item.team?.id !== teamId && number(item.games?.appearences) > 0);
-  const sum = (items, read) => items.reduce((total, item) => total + number(read(item)), 0);
-  const mainClub = [...clubs].sort((a, b) => number(b.games?.minutes) - number(a.games?.minutes))[0];
-  const rawPosition = (mainClub || national[0] || statistics[0])?.games?.position;
+const statValue = (row, aliases) => {
+  for (const alias of aliases) {
+    const value = numeric(row[alias]);
+    if (value !== null) return value;
+  }
+  return null;
+};
+
+const normalizePlayerStats = (rows) => {
+  const groups = new Map();
+  const statAliases = {
+    matchs: ["appearances", "appearance", "apps", "matches played", "games played"],
+    minutes: ["minutes", "minutes played", "mins played"],
+    buts: ["goals", "goal"],
+    passes: ["assists", "assist"],
+    note: ["rating", "average rating"]
+  };
+  const directAliases = {
+    matchs: ["intAppearances", "intApps", "intGames"],
+    minutes: ["intMinutes"],
+    buts: ["intGoals"],
+    passes: ["intAssists"],
+    note: ["intRating", "strRating"]
+  };
+
+  rows.forEach((row) => {
+    const season = row.strSeason || "";
+    const club = row.strTeam || "";
+    const competition = row.strLeague || "";
+    const key = `${season}|${club}|${competition}`;
+    if (!groups.has(key)) {
+      groups.set(key, {
+        saison: season,
+        club,
+        competition,
+        matchs: null,
+        minutes: null,
+        buts: null,
+        passes: null,
+        note: null
+      });
+    }
+    const group = groups.get(key);
+    const statName = String(row.strStatistic || row.strStat || row.strName || "").toLowerCase();
+    const value = numeric(row.strValue ?? row.intValue);
+    Object.entries(statAliases).forEach(([field, names]) => {
+      if (value !== null && names.some((name) => statName.includes(name))) group[field] = value;
+      const directValue = statValue(row, directAliases[field]);
+      if (directValue !== null) group[field] = directValue;
+    });
+  });
+
+  return [...groups.values()].filter((row) => (
+    row.matchs !== null || row.minutes !== null || row.buts !== null || row.passes !== null || row.note !== null
+  ));
+};
+
+const normalizeDetails = (entry, statsPayload) => {
+  const player = entry.player || {};
+  const club = teamNames.has(String(player.strTeam || "").toLowerCase())
+    ? player.strTeam2 || ""
+    : player.strTeam || player.strTeam2 || "";
+  const stats = normalizePlayerStats(list(statsPayload, "playerstats"))
+    .filter((row) => row.club && row.club.toLowerCase() === club.toLowerCase());
+  const mainClub = stats[0] || {};
+  const dateBorn = player.dateBorn || null;
 
   return {
     player: {
-      api_player_id: entry.player?.id,
-      nom: entry.player?.name || "",
-      age: entry.player?.age ?? null,
-      date_naissance: entry.player?.birth?.date || null,
-      photo_url: entry.player?.photo || "",
-      poste: POSITIONS[rawPosition] || rawPosition || ""
+      thesportsdb_player_id: player.idPlayer,
+      api_player_id: numeric(player.idAPIfootball),
+      nom: player.strPlayer || "",
+      age: playerAge(dateBorn),
+      date_naissance: dateBorn,
+      photo_url: player.strThumb || player.strCutout || "",
+      poste: positionLabels[String(player.strPosition || "").toLowerCase()] || player.strPosition || ""
     },
-    season,
+    season: mainClub.saison || null,
     selection: {
-      selections: sum(national, (item) => item.games?.appearences),
-      buts_selection: sum(national, (item) => item.goals?.total),
-      passes_selection: sum(national, (item) => item.goals?.assists),
-      minutes_selection: sum(national, (item) => item.games?.minutes),
-      cartons_jaunes: sum(national, (item) => item.cards?.yellow),
-      cartons_rouges: sum(national, (item) => item.cards?.red)
+      selections: null,
+      buts_selection: null,
+      passes_selection: null,
+      minutes_selection: null,
+      cartons_jaunes: null,
+      cartons_rouges: null
     },
-    club_stats: clubs.map((item) => ({
-      saison: String(season),
-      club: item.team?.name || "",
-      club_logo: item.team?.logo || "",
-      competition: item.league?.name || "",
-      matchs: number(item.games?.appearences),
-      minutes: number(item.games?.minutes),
-      buts: number(item.goals?.total),
-      passes: number(item.goals?.assists),
-      note: item.games?.rating ? Number(Number.parseFloat(item.games.rating).toFixed(1)) : null
-    })),
-    club: mainClub?.team?.name || "",
-    championnat: mainClub?.league?.name || "",
-    source: "api"
+    club_stats: stats,
+    club: mainClub.club || club,
+    championnat: mainClub.competition || "",
+    source: "thesportsdb",
+    stats_available: stats.length > 0
   };
 };
 
@@ -113,16 +168,19 @@ const backupSafely = async (task) => {
   }
 };
 
-const backupSquad = (players) => upsert("joueurs_leopards", players.map((player) => ({
-  api_player_id: player.api_player_id,
-  nom: player.nom,
-  poste: player.poste || null,
-  numero: player.numero,
-  photo_url: player.photo_url || null,
-  actif: true
-})), "api_player_id");
+const backupSquad = (players) => upsert("joueurs_leopards", players
+  .filter((player) => player.api_player_id !== null)
+  .map((player) => ({
+    api_player_id: player.api_player_id,
+    nom: player.nom,
+    poste: player.poste || null,
+    numero: player.numero,
+    photo_url: player.photo_url || null,
+    actif: true
+  })), "api_player_id");
 
 const backupDetails = async (details) => {
+  if (details.player.api_player_id === null) return;
   const [row] = await upsert("joueurs_leopards", [{
     api_player_id: details.player.api_player_id,
     nom: details.player.nom,
@@ -131,7 +189,6 @@ const backupDetails = async (details) => {
     photo_url: details.player.photo_url || null,
     club: details.club || null,
     championnat: details.championnat || null,
-    ...details.selection,
     actif: true
   }], "api_player_id", true);
   if (!row?.id) return;
@@ -153,42 +210,44 @@ module.exports = async function handler(request, response) {
     response.setHeader("Allow", "GET");
     return response.status(405).json({ error: "Méthode non autorisée." });
   }
-  const apiKey = process.env.API_FOOTBALL_API_KEY;
-  if (!apiKey) {
-    return response.status(503).json({ error: "Configurez API_FOOTBALL_API_KEY dans les variables d’environnement Vercel." });
-  }
-  const teamId = Number(process.env.API_FOOTBALL_TEAM_ID || 12);
+  const teamId = Number(process.env.THESPORTSDB_LEOPARDS_TEAM_ID || NATIONAL_TEAM_ID);
   if (!Number.isInteger(teamId) || teamId <= 0) {
-    return response.status(500).json({ error: "API_FOOTBALL_TEAM_ID doit être un identifiant d’équipe valide." });
+    return response.status(500).json({ error: "THESPORTSDB_LEOPARDS_TEAM_ID doit être un identifiant TheSportsDB valide." });
   }
 
   const playerId = request.query?.id;
   try {
     if (playerId === undefined) {
-      const [squad] = await apiGet("/players/squads", { team: String(teamId) }, apiKey);
-      const players = (squad?.players || []).map(normalizeSquadPlayer);
+      const payload = await requestTheSportsDB("lookup_all_players.php", { id: teamId });
+      const players = list(payload, "player")
+        .filter((player) => isNationalTeamPlayer(player, teamId))
+        .map(normalizeSquadPlayer);
       if (!players.length) return response.status(502).json({ error: "L'effectif des Léopards est vide chez le fournisseur." });
       await backupSafely(() => backupSquad(players));
       response.setHeader("Cache-Control", "public, s-maxage=21600, stale-while-revalidate=3600");
-      return response.status(200).json({ players, source: "api", updated_at: new Date().toISOString() });
+      return response.status(200).json({ players, source: "thesportsdb", updated_at: new Date().toISOString() });
     }
 
     if (!/^\d{1,10}$/.test(String(playerId))) {
       return response.status(400).json({ error: "Identifiant de joueur invalide." });
     }
-    let season = currentSeason();
-    let [entry] = await apiGet("/players", { id: String(playerId), season: String(season) }, apiKey);
-    if (!entry?.statistics?.length) {
-      season -= 1;
-      [entry] = await apiGet("/players", { id: String(playerId), season: String(season) }, apiKey);
+    const entryPayload = await requestTheSportsDB("lookupplayer.php", { id: playerId });
+    const [entry] = listFirst(entryPayload, ["players", "player"]);
+    if (!entry) return response.status(404).json({ error: "Joueur introuvable chez TheSportsDB." });
+    const warnings = [];
+    let statsPayload = {};
+    try {
+      statsPayload = await requestTheSportsDB("lookupplayerstats.php", { id: playerId });
+    } catch (error) {
+      console.error("TheSportsDB player statistics request failed.", error);
+      warnings.push("player-stats");
     }
-    if (!entry) return response.status(404).json({ error: "Joueur introuvable chez le fournisseur." });
-    const details = normalizeDetails(entry, teamId, season);
-    await backupSafely(() => backupDetails(details));
+    const details = normalizeDetails(entry, statsPayload);
+    if (details.stats_available) await backupSafely(() => backupDetails(details));
     response.setHeader("Cache-Control", "public, s-maxage=21600, stale-while-revalidate=3600");
-    return response.status(200).json({ ...details, updated_at: new Date().toISOString() });
+    return response.status(200).json({ ...details, warnings, updated_at: new Date().toISOString() });
   } catch (error) {
-    console.error("Requête joueurs des Léopards échouée.", error);
-    return response.status(502).json({ error: "Impossible de joindre le fournisseur des joueurs des Léopards." });
+    console.error("Requête joueurs TheSportsDB échouée.", error);
+    return response.status(502).json({ error: "Impossible de joindre TheSportsDB pour les joueurs des Léopards." });
   }
 };

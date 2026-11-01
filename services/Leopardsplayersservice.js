@@ -1,6 +1,6 @@
 import { supabase } from "../supabaseClient.js";
 
-// Source principale : API-Football via la fonction Vercel /api/leopards-players.
+// Source principale : TheSportsDB via la fonction Vercel /api/leopards-players.
 // Secours : tables Supabase (joueurs_leopards, stats_club_joueurs), alimentées automatiquement par la fonction.
 const PLAYERS_ENDPOINT = "/api/leopards-players";
 
@@ -73,12 +73,12 @@ const fetchDetailsFromDatabase = async (player) => {
 
 const hasData = (details) => Boolean(details.club_stats?.length || details.selection?.selections);
 
-// Statistiques d'un joueur : API d'abord, sauvegarde Supabase si l'API échoue ou ne renvoie rien.
+// Statistiques d'un joueur : TheSportsDB d'abord, sauvegarde Supabase si les données manquent.
 export const fetchPlayerDetails = async (player) => {
   let apiDetails = null;
-  if (player.api_player_id) {
+  if (player.thesportsdb_player_id) {
     try {
-      apiDetails = await requestJson(`${PLAYERS_ENDPOINT}?id=${encodeURIComponent(player.api_player_id)}`);
+      apiDetails = await requestJson(`${PLAYERS_ENDPOINT}?id=${encodeURIComponent(player.thesportsdb_player_id)}`);
       if (hasData(apiDetails)) return apiDetails;
     } catch (error) {
       console.warn("API des statistiques indisponible, utilisation de la sauvegarde Supabase.", error);

@@ -529,7 +529,7 @@ export const mountResults = (root, competitionPage = null) => {
       const total = rankings.length;
       setDetailRank(homeRank, Number(homeRanking?.position), total);
       setDetailRank(awayRank, Number(awayRanking?.position), total);
-    } else if (["international", "leopards"].includes(match.competition_category)) {
+    } else if (["international", "leopards", "interclubs"].includes(match.competition_category)) {
       setDetailRank(homeRank, null, 0);
       setDetailRank(awayRank, null, 0);
     }
@@ -543,7 +543,11 @@ export const mountResults = (root, competitionPage = null) => {
         standings: "classement",
         "api-football-key-required": "buteurs (clé API-Football à configurer dans Vercel)",
         "api-football-fallback": "buteurs (correspondance API-Football impossible)",
-        "goal-scorers": "noms des buteurs"
+        "goal-scorers": "noms des buteurs",
+        "thesportsdb-fallback": "détails TheSportsDB",
+        "lookuplineup.php": "compositions (TheSportsDB)",
+        "lookuptimeline.php": "chronologie (TheSportsDB)",
+        "lookupeventstats.php": "statistiques du match (TheSportsDB)"
       })[key] || key).join(", ")}.`
       : "";
   };

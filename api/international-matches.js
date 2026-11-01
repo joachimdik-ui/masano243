@@ -1,3 +1,5 @@
+const { listFirst, normalizeEvent, request: requestTheSportsDB } = require("../lib/thesportsdb");
+
 const normalizeMatch = (match) => ({
   id: `international-${match.id}`,
   details_provider: "football-data",
@@ -27,6 +29,53 @@ const normalizeMatch = (match) => ({
   })) : []
 });
 
+const configuredIds = (value, defaults) => {
+  const parsed = String(value || defaults).split(",").map((id) => id.trim()).filter(Boolean);
+  return [...new Set(parsed.filter((id) => /^\d{1,12}$/.test(id)))];
+};
+
+const fetchCongoleseClubMatches = async () => {
+  const teamIds = new Set(configuredIds(
+    process.env.THESPORTSDB_CONGOLESE_CLUB_IDS,
+    "138139,141051,139093,141056"
+  ));
+  const leagueIds = configuredIds(
+    process.env.THESPORTSDB_CLUB_COMPETITION_IDS,
+    "4720,5057"
+  );
+  const warnings = [];
+  const requests = leagueIds.flatMap((leagueId) => [
+    { endpoint: "eventsnextleague.php", key: "events", leagueId },
+    { endpoint: "eventspastleague.php", key: "results", leagueId }
+  ]);
+  const eventLists = await Promise.all(requests.map(async ({ endpoint, key, leagueId }) => {
+    try {
+      const payload = await requestTheSportsDB(endpoint, { id: leagueId });
+      return listFirst(payload, [key, key === "events" ? "results" : "events"]);
+    } catch (error) {
+      console.error(`TheSportsDB ${endpoint} (${leagueId}) request failed.`, error);
+      warnings.push(`${endpoint}:${leagueId}`);
+      return [];
+    }
+  }));
+  const seen = new Set();
+  const matches = eventLists.flat()
+    .filter((event) => (
+      teamIds.has(String(event.idHomeTeam || ""))
+      || teamIds.has(String(event.idAwayTeam || ""))
+    ))
+    .filter((event) => {
+      if (!event.idEvent || seen.has(String(event.idEvent))) return false;
+      seen.add(String(event.idEvent));
+      return true;
+    })
+    .map((event) => ({
+      ...normalizeEvent(event, "international"),
+      competition_category: "interclubs"
+    }));
+  return { matches, warnings };
+};
+
 module.exports = async function handler(request, response) {
   if (request.method !== "GET") {
     response.setHeader("Allow", "GET");
@@ -53,13 +102,22 @@ module.exports = async function handler(request, response) {
       return response.status(502).json({ error: "Le fournisseur des scores internationaux est momentanément indisponible." });
     }
     const payload = await upstream.json();
-    response.setHeader("Cache-Control", "public, s-maxage=30, stale-while-revalidate=30");
     if (!Array.isArray(payload.matches)) {
       console.error("football-data.org returned an invalid matches response.");
       return response.status(502).json({ error: "Réponse invalide du fournisseur des scores internationaux." });
     }
+    const clubFixtures = await fetchCongoleseClubMatches();
+    const internationalMatches = payload.matches.map(normalizeMatch);
+    const existing = new Set(internationalMatches.map((match) => (
+      `${String(match.date_match || "").slice(0, 10)}|${match.equipe_domicile.toLowerCase()}|${match.equipe_visiteur.toLowerCase()}`
+    )));
+    const clubMatches = clubFixtures.matches.filter((match) => !existing.has(
+      `${String(match.date_match || "").slice(0, 10)}|${match.equipe_domicile.toLowerCase()}|${match.equipe_visiteur.toLowerCase()}`
+    ));
+    response.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
     return response.status(200).json({
-      matches: payload.matches.map(normalizeMatch),
+      matches: [...internationalMatches, ...clubMatches],
+      warnings: clubFixtures.warnings,
       updated_at: new Date().toISOString()
     });
   } catch (error) {

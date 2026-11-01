@@ -84,7 +84,7 @@ export const normalizeMatch = (match, source = "local") => {
     score_visiteur: awayScore === null || awayScore === undefined ? null : Number(awayScore),
     statut: normalizeStatus(match.statut || match.status),
     competition: competition.name,
-    competition_category: isLeopards ? "leopards" : competition.category,
+    competition_category: isLeopards ? "leopards" : match.competition_category || competition.category,
     date_match: date,
     minute: match.minute ?? match.elapsed ?? null,
     ligue: match.ligue || null,
