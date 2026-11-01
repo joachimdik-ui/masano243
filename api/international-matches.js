@@ -66,10 +66,8 @@ const isDomesticRdcMatch = (match) => {
   return isRdc && !/\bcaf\b/.test(competition);
 };
 
-const fetchFixturesPage = async (params, page, apiKey) => {
-  const query = new URLSearchParams(params);
-  query.set("page", String(page));
-  const upstream = await fetch(`https://v3.football.api-sports.io/fixtures?${query}`, {
+const fetchFixtures = async (params, apiKey) => {
+  const upstream = await fetch(`https://v3.football.api-sports.io/fixtures?${params}`, {
     headers: { "x-apisports-key": apiKey }
   });
   if (!upstream.ok) {
@@ -145,21 +143,12 @@ module.exports = async function handler(request, response) {
   const params = new URLSearchParams({
     from: from.toISOString().slice(0, 10),
     to: to.toISOString().slice(0, 10),
-    timezone: "UTC"
+    season: String(now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1)
   });
 
   try {
-    const firstPage = await fetchFixturesPage(params, 1, apiKey);
-    const totalPages = Number(firstPage.paging?.total);
-    const fixtures = [...firstPage.response];
-    if (Number.isInteger(totalPages) && totalPages > 1) {
-      for (let page = 2; page <= totalPages; page += 1) {
-        const nextPage = await fetchFixturesPage(params, page, apiKey);
-        fixtures.push(...nextPage.response);
-      }
-    }
-
-    const matches = fixtures
+    const payload = await fetchFixtures(params, apiKey);
+    const matches = payload.response
       .filter((match) => !isDomesticRdcMatch(match))
       .map(normalizeMatch);
     response.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=900");

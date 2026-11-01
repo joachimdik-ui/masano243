@@ -1,6 +1,10 @@
 const LIVE_STATUSES = new Set(["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"]);
 const FINISHED_STATUSES = new Set(["FT", "AET", "PEN", "AWD", "WO"]);
 
+const currentSeason = (date = new Date()) => (
+  date.getUTCMonth() >= 6 ? date.getUTCFullYear() : date.getUTCFullYear() - 1
+);
+
 const normalizeMatch = (match) => {
   const status = match.fixture?.status?.short;
   const homeScore = match.goals?.home;
@@ -55,7 +59,8 @@ module.exports = async function handler(request, response) {
   const params = new URLSearchParams({
     team: String(teamId),
     from: from.toISOString().slice(0, 10),
-    to: to.toISOString().slice(0, 10)
+    to: to.toISOString().slice(0, 10),
+    season: String(currentSeason(now))
   });
 
   try {
