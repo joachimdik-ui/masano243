@@ -1,0 +1,25 @@
+{
+  "id": "/admin",
+  "name": "Masano243 Admin",
+  "short_name": "Masano Admin",
+  "description": "Espace de gestion de Masano243",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#f3f2f8",
+  "theme_color": "#42158f",
+  "icons": [
+    {
+      "src": "/icons/admin-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/admin-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
