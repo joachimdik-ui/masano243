@@ -408,7 +408,8 @@ export const mountResults = (root, competitionPage = null) => {
     : `<li class="match-detail-empty match-history-empty">Aucune confrontation antérieure n’est recensée dans les archives pour ces équipes.</li>`;
 
   const renderHistorySummary = (summary, match, details) => {
-    if (!summary?.played) {
+    const played = Number(summary?.played);
+    if (!Number.isFinite(played) || played <= 0) {
       return `<div class="match-history-overview is-empty">
         <div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4>
         <p>Aucune rencontre antérieure entre ces sélections n’est recensée dans l’archive.</p></div>
@@ -416,12 +417,25 @@ export const mountResults = (root, competitionPage = null) => {
       </div>`;
     }
     const plural = (count, singular, pluralForm) => `${count} ${count === 1 ? singular : pluralForm}`;
+    const toCount = (value) => {
+      const count = Number(value);
+      return Number.isFinite(count) ? Math.max(0, count) : 0;
+    };
+    const metrics = [
+      { label: `Victoires ${match.equipe_domicile}`, count: toCount(summary.home_wins), className: "is-home" },
+      { label: "Matchs nuls", count: toCount(summary.draws), className: "is-draw" },
+      { label: `Victoires ${match.equipe_visiteur}`, count: toCount(summary.away_wins), className: "is-away" }
+    ];
     return `<div class="match-history-overview">
-      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4></div><div class="match-history-total"><strong>${summary.played}</strong><span>${plural(summary.played, "match recensé", "matchs recensés")}</span></div></div>
-      <div class="match-history-record" aria-label="${summary.played} rencontres recensées">
-        <div class="match-history-record-item is-home"><strong>${summary.home_wins}</strong><span>Victoires</span><small>${escapeHtml(match.equipe_domicile)}</small></div>
-        <div class="match-history-record-item is-draw"><strong>${summary.draws}</strong><span>${summary.draws === 1 ? "Nul" : "Nuls"}</span><small>Égalités</small></div>
-        <div class="match-history-record-item is-away"><strong>${summary.away_wins}</strong><span>Victoires</span><small>${escapeHtml(match.equipe_visiteur)}</small></div>
+      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4></div><div class="match-history-total"><strong>${played}</strong><span>${plural(played, "match recensé", "matchs recensés")}</span></div></div>
+      <div class="match-history-chart" aria-label="Répartition des résultats sur ${played} confrontations">
+        ${metrics.map(({ label, count, className }) => {
+          const percentage = Math.round(Math.max(0, Math.min(played, count)) / played * 100);
+          return `<div class="match-history-meter ${className}">
+            <div class="match-history-meter-label"><span>${escapeHtml(label)}</span><strong>${count} <small>${percentage}%</small></strong></div>
+            <div class="match-history-meter-track" aria-hidden="true"><span style="width:${percentage}%"></span></div>
+          </div>`;
+        }).join("")}
       </div>
       <p class="match-history-source">Les ${details.history.length} confrontations les plus récentes sont affichées. Source : ${escapeHtml(details.history_source || "Open Football")} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</p>
     </div>`;
