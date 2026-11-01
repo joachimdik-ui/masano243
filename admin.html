@@ -64,6 +64,8 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:0;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 1px 8px #2a0c630f}
 .row img:not(.club-row-logo),.row .nb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--sf);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scorer-row-heading{display:flex;align-items:center;gap:12px}.scorer-row-heading>b{flex:1;min-width:0}
+.scorer-goals{display:grid;width:36px;height:36px;flex:0 0 36px;place-items:center;border-radius:50%;background:var(--ac);color:#fff;font-size:.88rem;font-weight:800;font-variant-numeric:tabular-nums}
 .mt{display:grid;grid-template-columns:minmax(0,1fr) minmax(56px,auto) minmax(0,1fr);gap:8px;align-items:center}.mt span{display:flex;min-width:0;align-items:center;gap:6px;font-weight:600;font-size:.88rem}.mt span>b{min-width:0;overflow:hidden;color:var(--ac);font-size:1rem;text-overflow:ellipsis;white-space:nowrap}.mt span:last-child{justify-content:flex-end;text-align:right}.mt>b{min-width:56px;text-align:center;font-size:1.25rem;color:var(--ac);font-variant-numeric:tabular-nums;white-space:nowrap}.row .mt>b{font-size:1rem}
 .live{color:#d7261e;font-weight:700}h1,.bh b{font-family:"Bebas Neue",sans-serif;letter-spacing:.04em;font-weight:400}.bh b{font-size:1.35rem}
 .note{background:var(--cd);border-radius:16px;padding:20px;text-align:center;color:var(--mu)}.note code{background:var(--sf);color:var(--ac);padding:2px 6px;border-radius:6px}
@@ -300,7 +302,10 @@ function rowWithLogo(r,k) {
   const mark = isClub || isScorer
     ? clubMark(isScorer ? cshort(r.club_id,cn(r.club_id)) : (r.sigle||r.nom),logoUrl)
     : logoUrl ? `<img src="${esc(logoUrl)}" class="club-row-logo" alt="">` : "";
-  return `${mark}<div><b>${titleText}</b><small>${subText}</small></div>`;
+  const heading = isScorer
+    ? `<div class="scorer-row-heading"><b>${titleText}</b><span class="scorer-goals" aria-label="${esc(r.buts??0)} buts marqués">${esc(r.buts??0)}</span></div>`
+    : `<b>${titleText}</b>`;
+  return `${mark}<div>${heading}<small>${subText}</small></div>`;
 }
 
 const mRow=r=>{
