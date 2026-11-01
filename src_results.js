@@ -557,9 +557,10 @@ export const mountResults = (root, competitionPage = null) => {
     detailModal.querySelector("#matchDetailStandings").innerHTML = `<p class="match-detail-empty">Chargement du classement…</p>`;
     const homeLogo = detailModal.querySelector("#matchDetailHomeLogo");
     const awayLogo = detailModal.querySelector("#matchDetailAwayLogo");
-    const logoMarkup = (name, url) => url
-      ? `<img src="${escapeHtml(url)}" alt="" />`
-      : `<span aria-hidden="true">${escapeHtml(name.slice(0, 1).toUpperCase())}</span>`;
+    const logoMarkup = (name, url) => {
+      const initials = escapeHtml(name.slice(0, 1).toUpperCase());
+      return `<span aria-hidden="true"${url ? " hidden" : ""}>${initials}</span>${url ? `<img class="match-detail-club-logo" src="${escapeHtml(url)}" alt="" decoding="async" />` : ""}`;
+    };
     detailModal.querySelector("#matchDetailTitle").textContent = match.competition;
     detailModal.querySelector("#matchDetailHomeName").textContent = match.equipe_domicile;
     detailModal.querySelector("#matchDetailAwayName").textContent = match.equipe_visiteur;
@@ -755,6 +756,12 @@ export const mountResults = (root, competitionPage = null) => {
       highlightImage.hidden = true;
       highlightFallback.hidden = false;
     }, { signal });
+    detailPage.addEventListener("error", (event) => {
+      const image = event.target;
+      if (!(image instanceof HTMLImageElement) || !image.classList.contains("match-detail-club-logo")) return;
+      image.hidden = true;
+      if (image.previousElementSibling) image.previousElementSibling.hidden = false;
+    }, { capture: true, signal });
     list.addEventListener("click", (event) => {
       const trigger = event.target.closest("[data-match-detail]");
       if (!trigger) return;

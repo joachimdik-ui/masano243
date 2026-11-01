@@ -2,65 +2,171 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Admin · Masano243</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--cd:#fff;--tx:#1a1a1a;--mu:#6c757d;--ac:#42158f;--ac2:#6d45b2;--bd:#e9ecef;color-scheme:light}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 "Montserrat",system-ui,sans-serif;padding:env(safe-area-inset-top) 0 0}
-button,input,select,textarea{font:inherit;color:inherit}
-header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--cd);border-bottom:1px solid var(--bd)}
-header{border-bottom:3px solid var(--ac)}header img{height:38px;width:auto;display:block}header .tt{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--ac);margin-left:10px}header .lg{display:flex;align-items:center}header button{background:none;border:0;color:var(--mu)}
-main{max-width:720px;margin:0 auto;padding:12px 12px calc(150px + env(safe-area-inset-bottom))}
-.mu{color:var(--mu)}small{display:block;color:var(--mu)}
-.row{box-shadow:0 2px 10px #0000000d;display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;margin-bottom:10px}
-.row img,.row .nb{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--bd);flex:none}
+:root{--bg:#f3f2f8;--cd:#fff;--tx:#1b1630;--mu:#7b7893;--ac:#42158f;--ac2:#2a0c63;--sf:#ece8f7;--bd:#e7e4f1;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 "Montserrat",system-ui,sans-serif;padding:env(safe-area-inset-top) 0 0}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg)}
+.av{width:44px;height:44px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+header .who{flex:1;min-width:0}header b{display:block;font-weight:700}header small{display:block;color:var(--mu);font-size:.78rem}
+.ib{width:42px;height:42px;border-radius:50%;border:0;background:var(--cd);box-shadow:0 1px 6px #2a0c6314;display:grid;place-items:center}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area-inset-bottom))}
+.pills{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;padding:9px 16px;border-radius:99px;border:0;background:var(--sf);color:var(--ac);font-weight:600;font-size:.85rem}.pill.on{background:var(--ac);color:#fff}
+.mu{color:var(--mu)}small{display:block;color:var(--mu)}.err{color:#d7261e}
+.hero{background:linear-gradient(160deg,var(--ac),var(--ac2));color:#fff;border-radius:20px;padding:16px;margin-bottom:16px;box-shadow:0 8px 22px #42158f3d}
+.hero .tg{display:inline-block;font-size:.72rem;font-weight:700;background:#ffffff26;border-radius:99px;padding:4px 10px}
+.hero .mt{margin:14px 0;display:flex;align-items:center;justify-content:space-between;gap:8px}.hero .mt b{color:#fff;font-size:2.2rem}
+.hero small{color:#ffffffb3;text-align:center}
+.hero button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(66,21,143,0.3);display:flex;align-items:center;justify-content:center;gap:8px}
+.dashboard-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:24px;align-items:center;overflow:hidden;margin:8px 0 26px;padding:clamp(24px,5vw,46px);border:1px solid #ffffff24;border-radius:28px;background:radial-gradient(ellipse at 92% 10%,#8c66df80,transparent 34%),linear-gradient(135deg,#261050,#42158f 60%,#6032aa);color:#fff;box-shadow:0 18px 42px #2a0c6328}
+.dashboard-hero:after{position:absolute;right:32%;bottom:-110px;width:280px;height:280px;border:1px solid #ffffff20;border-radius:50%;content:"";pointer-events:none}
+.dashboard-hero-copy,.dashboard-match{position:relative;z-index:1}
+.dashboard-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#e3d8ff;font-size:.74rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.dashboard-eyebrow:before{width:7px;height:7px;border-radius:50%;background:#c9ff73;content:""}
+.dashboard-hero h1{max-width:560px;margin:16px 0 10px;font:400 clamp(2.4rem,5vw,4rem)/.98 "Bebas Neue",sans-serif;letter-spacing:.025em}
+.dashboard-hero h1 span{display:block;color:#d9c8ff}
+.dashboard-hero-copy>p{max-width:440px;margin:0;color:#e5ddf3;font-size:.95rem}
+.dashboard-match{padding:22px;border:1px solid #ffffff30;border-radius:20px;background:#ffffff12;backdrop-filter:blur(8px)}
+.dashboard-match-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.dashboard-match-heading strong{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase}
+.dashboard-live-pill{padding:5px 10px;border-radius:99px;background:#ffeff0;color:#b51f3b;font-size:.68rem;font-weight:800;text-transform:uppercase}
+.dashboard-live-pill:before{display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#da2544;content:"";vertical-align:1px}
+.dashboard-live-pill.is-idle{background:#eee7fa;color:var(--ac)}
+.dashboard-live-pill.is-idle:before{background:#7b55bd}
+.dashboard-score{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px}
+.dashboard-team{display:flex;min-width:0;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.dashboard-team b{max-width:100%;font-size:.82rem;line-height:1.25}
+.dashboard-team .club-row-logo{width:52px;height:52px;border-radius:16px;background:#fff;padding:7px}
+.dashboard-score>strong{font-size:1.55rem;font-weight:800;white-space:nowrap}
+.dashboard-match>small{margin-top:14px;color:#e5ddf3;text-align:center}
+.dashboard-action{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;margin-top:18px;padding:12px 16px;border:0;border-radius:12px;background:#fff;color:var(--ac);font-weight:800;box-shadow:0 6px 16px #15063030}
+.dashboard-action:hover{background:#eee7fc}
+.dashboard-section-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:0 2px 14px}
+.dashboard-section-heading h2{margin:0;color:var(--tx);font:400 1.65rem/1 "Bebas Neue",sans-serif;letter-spacing:.04em}
+.dashboard-section-heading p{margin:4px 0 0;color:var(--mu);font-size:.82rem}
+.dashboard-section-heading>span{color:var(--mu);font-size:.75rem;font-weight:700}
+.sh{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 10px}.sh b{font-size:1.05rem;font-weight:800}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.tile{position:relative;min-height:130px;border:1px solid var(--bd);text-align:left;background:var(--cd);border-radius:18px;padding:18px;box-shadow:0 5px 16px #2a0c630a;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.tile:hover{transform:translateY(-3px);border-color:#cfc1e8;box-shadow:0 12px 24px #2a0c6314}
+.tile b{display:block;margin-bottom:2px;font-size:2rem;color:var(--ac);font-family:"Bebas Neue",sans-serif;letter-spacing:.03em;font-weight:400;line-height:1.1}
+.tile span{color:var(--mu);font-size:.82rem;font-weight:700}
+.tile-icon{display:grid;width:36px;height:36px;place-items:center;margin-bottom:10px;border-radius:11px;background:var(--sf);color:var(--ac)}
+.tile-icon svg{width:19px;height:19px}
+.tile .tile-icon{color:var(--ac)}
+@media(max-width:700px){main{padding:8px 14px calc(130px + env(safe-area-inset-bottom))}.dashboard-hero{grid-template-columns:1fr;gap:20px;padding:24px;border-radius:22px}.dashboard-hero h1{font-size:2.9rem}.dashboard-match{padding:18px}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{min-height:118px;padding:14px}}
+@media(max-width:380px){.dashboard-hero h1{font-size:2.45rem}.tiles{gap:8px}.tile{padding:12px}.dashboard-score{gap:7px}.dashboard-team b{font-size:.75rem}}
+.row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:0;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 1px 8px #2a0c630f}
+.row img,.row .nb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--sf);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{flex:1;font-weight:600}.mt span:last-child{text-align:right}.mt b{flex:none;font-size:1.3rem;color:var(--ac)}
-.live{color:#d7261e;font-weight:700}h1,.bh b{font-family:"Bebas Neue",sans-serif;letter-spacing:.04em;font-weight:400}.bh b{font-size:1.3rem}
-.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom);z-index:5}
-.tabs button{flex:1;padding:10px 4px;background:none;border:0;color:var(--mu);font-size:.8rem}.tabs button i{display:block;font-style:normal;font-size:1.4rem}.tabs .on{color:var(--ac);font-weight:700}
-.fab{position:fixed;right:18px;bottom:calc(80px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:2rem;box-shadow:0 4px 14px #0004;z-index:6}
-#sheet{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:20}#sheet.on{display:flex}
-.box{background:var(--cd);width:100%;max-width:640px;max-height:94dvh;display:flex;flex-direction:column;border-radius:20px 20px 0 0}
-.bh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--bd)}.x{background:none;border:0;font-size:1.3rem}
+.mt{display:flex;justify-content:space-between;gap:8px;align-items:center}.mt span{display:flex;align-items:center;gap:6px;flex:1;font-weight:600;font-size:.88rem}.mt span:last-child{justify-content:flex-end;text-align:right}.mt b{flex:none;font-size:1.25rem;color:var(--ac)}
+.live{color:#d7261e;font-weight:700}h1,.bh b{font-family:"Bebas Neue",sans-serif;letter-spacing:.04em;font-weight:400}.bh b{font-size:1.35rem}
+.note{background:var(--cd);border-radius:16px;padding:20px;text-align:center;color:var(--mu)}.note code{background:var(--sf);color:var(--ac);padding:2px 6px;border-radius:6px}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--cd);border-radius:22px 22px 0 0;box-shadow:0 -4px 20px #2a0c6314;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
+.tabs button{flex:1;max-width:120px;padding:8px 2px;background:none;border:0;color:var(--mu);font-size:.72rem;font-weight:600}.tabs svg{display:block;margin:0 auto 3px}.tabs .on{color:var(--ac);font-weight:800}
+.fab{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:1.8rem;box-shadow:0 6px 16px #42158f55;z-index:6;display:grid;place-items:center}.fab[hidden]{display:none}
+#sheet{position:fixed;inset:0;background:#1b163088;display:none;align-items:flex-end;justify-content:center;z-index:20}#sheet.on{display:flex}
+.box{background:var(--cd);width:100%;max-width:640px;max-height:94dvh;display:flex;flex-direction:column;border-radius:24px 24px 0 0}
+.bh{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--bd)}.x{background:none;border:0;font-size:1.3rem}
 .bb{padding:8px 16px;overflow:auto;flex:1}.bf{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--bd)}
-label{display:block;margin:14px 0 6px;font-weight:600;font-size:.9rem}
+label{display:block;margin:14px 0 6px;font-weight:600;font-size:.88rem}
 input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;background:var(--bg)}
-.btn{flex:1;padding:14px;border-radius:12px;border:0;font-weight:700;background:var(--bd)}.pri{background:var(--ac);color:#fff}.dng{background:none;color:#d7261e;border:1px solid #d7261e;flex:none}.btn:disabled{opacity:.5}
-.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:9px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--bg)}.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
-.sc{display:flex;gap:12px}.sc>div{flex:1;text-align:center}.st{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.st button{width:52px;height:52px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);font-size:1.6rem}.st b{font-size:2rem}
-.ph{display:flex;gap:8px;flex-wrap:wrap}.ph div{position:relative}.ph img{width:80px;height:80px;object-fit:cover;border-radius:10px}.ph button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:24px;height:24px;background:var(--ac);color:#fff}
-.add{display:block;margin-top:10px;padding:14px;text-align:center;border:2px dashed var(--bd);border-radius:12px;color:var(--ac)}
-#toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);background:#222;color:#fff;padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90%}#toast.on{opacity:1;transform:translate(-50%,0)}
-.login{max-width:380px;margin:8vh auto;padding:24px;text-align:center}.login img{max-width:80%;max-height:110px;object-fit:contain;margin-bottom:8px}.login h1{margin:0 0 4px;font-size:2rem;color:var(--ac)}.login label,.login .mu{text-align:left}.err{color:#d7261e}
+.btn{flex:1;padding:14px;border-radius:14px;border:0;font-weight:700;background:var(--sf);color:var(--ac);display:flex;align-items:center;justify-content:center;gap:8px}.pri{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:0 4px 12px rgba(66,21,143,0.25)}.dng{background:none;color:#d7261e;border:1px solid #d7261e;flex:none}.btn:disabled{opacity:.5}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:9px 14px;border-radius:99px;border:0;background:var(--sf);color:var(--ac);font-weight:600}.chip.on{background:var(--ac);color:#fff}
+.sc{display:flex;gap:12px}.sc>div{flex:1;text-align:center}.st{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.st button{width:52px;height:52px;border-radius:50%;border:0;background:var(--sf);color:var(--ac);font-size:1.6rem}.st b{font-size:2rem}
+.ph{display:flex;gap:8px;flex-wrap:wrap}.ph div{position:relative}.ph img{width:80px;height:80px;object-fit:cover;border-radius:12px}.ph button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:24px;height:24px;background:var(--ac);color:#fff}
+.add{display:block;margin-top:10px;padding:14px;text-align:center;border:2px dashed var(--bd);border-radius:14px;color:var(--ac)}
+#toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);background:#1b1630;color:#fff;padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90%}#toast.on{opacity:1;transform:translate(-50%,0)}
+.lgn{min-height:100dvh;display:flex;flex-direction:column}.lgn .top{background:linear-gradient(160deg,var(--ac),var(--ac2));color:#fff;text-align:center;padding:40px 24px 60px;border-radius:0 0 32px 32px}.lgn .top img{max-width:70%;max-height:90px;object-fit:contain;background:#fff;border-radius:16px;padding:8px}.lgn h1{margin:12px 0 2px;font-size:2rem}
+.login{width:100%;max-width:380px;margin:-30px auto 0;background:var(--cd);border-radius:20px;padding:20px;box-shadow:0 8px 24px #2a0c631f}
+.club-row-logo { width: 32px; height: 32px; object-fit: contain; border-radius: 50%; background: var(--sf); padding: 2px; flex: none; }
+.event-match-header { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; color: var(--tx); }
+.event-match-header img { width: 24px; height: 24px; object-fit: contain; }
 </style></head><body>
 <div id="app"></div><div id="sheet"></div><div id="toast"></div>
 <script>
+const LOGO="https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak";
 const sb=supabase.createClient("https://cisgavepcswtgnpomlyg.supabase.co","sb_publishable_ImWO2pVSsT9DjXAv9_gq2g_gPFAUxC5");
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2800)};
+const IC={
+  home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  news:'<path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM18 8h2v10a2 2 0 0 1-2 2M8 8h7M8 12h7M8 16h4"/>',
+  ball:'<circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 5h-5L8 10z"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  grid:'<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>',
+  out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  ref:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  events:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  lineup:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'
+};
+const ic=n=>`<svg viewBox="0 0 24 24">${IC[n]}</svg>`;
 const CATS=["Football","Basket-ball","Judo","Omnisports"];
 const GROUPS={L1:[["A","Groupe A"],["B","Groupe B"]],L2:[["A","Zone Est"],["B","Zone Ouest"],["C","Zone Centre-Sud"]]};
 const ST=[["upcoming","À venir"],["live","En direct"],["paused","Mi-temps"],["finished","Terminé"]];
+const LG=[["L1","Ligue 1"],["L2","Ligue 2"]],SR=[["A","Série A"],["B","Série B"],["C","Série C"]];
 const fmt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"";
 const loc=d=>{if(!d)return"";const t=new Date(d);t.setMinutes(t.getMinutes()-t.getTimezoneOffset());return t.toISOString().slice(0,16)};
-let tab="articles",me={},clubs=[],rows=[];
-const w=async q=>{const{data,error}=await q.select();if(error)throw error;if(!data.length)throw new Error("Droits insuffisants (exécutez supabase_admin.sql)");return data};
+let sec="home",sub={},me={},clubs=[],eclubs=[],rows=[];
+const cn=id=>[...clubs,...eclubs].find(c=>c.id===id)?.nom||"?";
+const clogo=id=>[...clubs,...eclubs].find(c=>c.id===id)?.logo_url||"";
+const mn=(r,s)=>r["equipe_"+s]||cn(r["club_"+s+"_id"]);
+const mlogo=(r,s)=>r["logo_"+s]||clogo(r["club_"+s+"_id"]) || "";
+
+const w=async q=>{const{data,error}=await q.select();if(error)throw error;if(!data.length)throw new Error("Droits insuffisants");return data};
+const miss=e=>/42P01|PGRST205|does not exist|schema cache/.test((e.code||"")+(e.message||""));
 const chips=(n,o,v)=>`<div class="chips" data-n="${n}">${o.map(([k,l])=>`<button type="button" class="chip${k==v?" on":""}" data-v="${esc(k)}">${esc(l)}</button>`).join("")}</div>`;
 const cv=n=>$(`.chips[data-n="${n}"] .on`)?.dataset.v;
 document.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;$$(".chip",c.parentNode).forEach(x=>x.classList.remove("on"));c.classList.add("on");c.parentNode.dispatchEvent(new Event("change",{bubbles:true}))});
 
 function sheet(title,body,save,del,lbl){
   const s=$("#sheet");
-  s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">Enregistrer</button></div></div>`;
-  s.classList.add("on");s.onchange=null;$("#ss").textContent=lbl||"Enregistrer";
+  s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">${ic("plus")} ${lbl||"Enregistrer"}</button></div></div>`;
+  s.classList.add("on");s.onchange=null;$("#ss").lastChild.textContent=lbl||"Enregistrer";
   const close=()=>s.classList.remove("on");
   $("#sx").onclick=close;s.onclick=e=>{if(e.target===s)close()};
   $("#ss").onclick=async e=>{e.target.disabled=true;try{await save();close();if(!lbl)toast("Enregistré ✓");load()}catch(err){toast("Erreur : "+(err.message||err))}e.target.disabled=false};
   if(del)$("#sd").onclick=async()=>{if(!confirm("Supprimer définitivement ?"))return;try{await del();close();toast("Supprimé");load()}catch(err){toast("Erreur : "+err.message)}};
 }
 
-/* ---------- Articles ---------- */
+function form(c,r={}){
+  const v={...c.d,...r};
+  const body=c.f.map(([k,l,t,o])=>{const x=v[k];
+    if(t==="c")return`<label>${l}</label>${chips(k,o,x??o[0][0])}`;
+    if(t==="s")return`<label>${l}</label><select id="f_${k}"><option value="">—</option>${o().map(([a,b])=>`<option value="${esc(a)}"${a==x?" selected":""}>${esc(b)}</option>`).join("")}</select>`;
+    if(t==="x")return`<label>${l}</label><textarea id="f_${k}" rows="5">${esc(x)}</textarea>`;
+    return`<label>${l}</label><input id="f_${k}" ${t==="n"?'type="number" inputmode="numeric" min="0"':t==="d"?'type="datetime-local"':""} value="${esc(t==="d"?loc(x):x)}">`}).join("");
+  sheet(r.id?"Modifier · "+c.n:"Ajouter · "+c.n,body,async()=>{
+    const o={};for(const[k,,t]of c.f){const e=$("#f_"+k),a=e?.value;
+      o[k]=t==="c"?cv(k):t==="n"?(a===""?null:+a):t==="d"?(a?new Date(a).toISOString():null):(a?.trim()||null)}
+    for(const k of c.req||[])if(o[k]==null)throw new Error("Champ obligatoire manquant");
+    await w(r.id?sb.from(c.t).update(o).eq("id",r.id):sb.from(c.t).insert(o))},
+    r.id&&(()=>w(sb.from(c.t).delete().eq("id",r.id))));
+  if(r.id&&c.ev)$(".bb").insertAdjacentHTML("afterbegin",`<button type="button" class="btn pri" id="b_ev" style="width:100%;margin-top:10px">${ic("ball")} Événements du match</button>`),$("#b_ev").onclick=()=>c.ev(r);
+}
+const T=(k,l,t="t",o)=>[k,l,t,o],CL=()=>clubs.map(c=>[c.id,c.nom]),EC=()=>eclubs.map(c=>[c.id,c.nom]);
+const R={
+ lc:{t:"clubs",n:"club",o:["nom",1],d:{ligue:"L1",groupe:"A"},req:["nom"],ti:r=>r.nom,su:r=>`${r.ligue} · groupe ${r.groupe}${r.sigle?" · "+r.sigle:""}`,f:[T("nom","Nom du club"),T("sigle","Sigle"),T("logo_url","Logo (lien)"),T("ligue","Ligue","c",LG),T("groupe","Groupe (L2 : A Est · B Ouest · C Centre-Sud)","c",[["A","A"],["B","B"],["C","C"]])]},
+ lb:{t:"buteurs",n:"buteur",o:["buts",0],d:{ligue:"L1",matches_joues:0,buts:0,penaltys:0},req:["nom","club_id"],ti:r=>r.nom,su:r=>`${cn(r.club_id)} · ${r.ligue} · ${r.buts} buts`,f:[T("nom","Joueur"),T("club_id","Club","s",CL),T("ligue","Ligue","c",LG),T("matches_joues","Matchs joués","n"),T("buts","Buts","n"),T("penaltys","Dont penaltys","n")]},
+ lr:{t:"classements",ro:1,o:["points",0],ti:r=>`${r.position}. ${r.equipe}`,su:r=>`${r.ligue||""} ${r.groupe||""} · ${r.points} pts · ${r.joues} J · calcul automatique`},
+ ec:{t:"epf_kin_clubs",n:"club EPF-KIN",o:["nom",1],d:{serie:"A"},req:["nom"],ti:r=>r.nom,su:r=>"Série "+r.serie,f:[T("nom","Nom du club"),T("serie","Série","c",SR),T("logo_url","Logo (lien)")]},
+ es:{t:"epf_kin_scorers",n:"buteur EPF-KIN",o:["buts",0],d:{saison:"2026-2027",matches_joues:0,buts:0,penaltys:0},req:["nom","club_id","saison"],ti:r=>r.nom,su:r=>`${cn(r.club_id)} · ${r.buts} buts · ${r.saison}`,f:[T("nom","Joueur"),T("club_id","Club","s",EC),T("saison","Saison"),T("matches_joues","Matchs joués","n"),T("buts","Buts","n"),T("penaltys","Dont penaltys","n")]},
+ er:{t:"epf_kin_standings",ro:1,o:["points",0],ti:r=>`${r.position}. ${r.nom}`,su:r=>`Série ${r.serie} · ${r.points} pts · ${r.joues} J · calcul automatique`},
+ em:{t:"epf_kin_matches",n:"match EPF-KIN",o:["date_match",0],d:{saison:"2026-2027",statut:"upcoming",serie:"A"},req:["club_domicile_id","club_visiteur_id","date_match","journee"],mt:1,ev:r=>epfEvents(r),
+  f:[T("serie","Série","c",SR),T("journee","Journée","n"),T("club_domicile_id","Domicile","s",EC),T("club_visiteur_id","Visiteur","s",EC),T("date_match","Date et heure","d"),T("stade","Stade"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST),T("saison","Saison")]},
+ ma:{t:"matchs",n:"match",o:["date_match",0],d:{statut:"upcoming"},req:["competition","equipe_domicile","equipe_visiteur"],mt:1,
+  f:[T("competition","Compétition (Léopards, Interclubs CAF, International…)"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("stade","Stade"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
+ bk:{t:"basket_matchs",n:"match de basket",o:["date_match",0],d:{statut:"upcoming"},req:["equipe_domicile","equipe_visiteur"],mt:1,f:[T("competition","Compétition"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("lieu","Lieu"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
+ ju:{t:"judo_evenements",n:"événement de judo",o:["date_evenement",0],req:["titre"],ti:r=>r.titre,su:r=>`${r.categorie||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("titre","Titre"),T("categorie","Catégorie / poids"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultats","x")]},
+ om:{t:"omnisports_evenements",n:"événement omnisports",o:["date_evenement",0],req:["titre","discipline"],ti:r=>r.titre,su:r=>`${r.discipline||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("discipline","Discipline"),T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultat","x")]}
+};
+
 const up=async f=>{const p=`articles/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${(f.name.split(".").pop()||"jpg").toLowerCase()}`;const{error}=await sb.storage.from("photos").upload(p,f,{contentType:f.type});if(error)throw error;return sb.storage.from("photos").getPublicUrl(p).data.publicUrl};
 function articleForm(a={}){
   let ph=[1,2,3,4,5].map(i=>a["photo_"+i]).filter(Boolean);
@@ -69,7 +175,7 @@ function articleForm(a={}){
   <label>Chapeau (résumé)</label><textarea id="f_c" rows="2">${esc(a.chapeau)}</textarea>
   <label>Texte</label><textarea id="f_x" rows="9">${esc(a.contenu)}</textarea>
   <label>Photos (5 maximum)</label><div class="ph" id="ph"></div>
-  <label class="add">📷 Ajouter des photos<input type="file" id="f_f" accept="image/*" multiple hidden></label>`,
+  <label class="add">Ajouter des photos<input type="file" id="f_f" accept="image/*" multiple hidden></label>`,
   async()=>{
     const t=$("#f_t").value.trim(),x=$("#f_x").value.trim();if(!t||!x)throw new Error("Titre et texte obligatoires");
     const urls=[];for(const p of ph)urls.push(typeof p==="string"?p:await up(p));
@@ -80,14 +186,16 @@ function articleForm(a={}){
   const draw=()=>{$("#ph").innerHTML=ph.map((p,i)=>`<div><img src="${typeof p==="string"?esc(p):URL.createObjectURL(p)}" alt=""><button type="button" data-i="${i}">✕</button></div>`).join("");$$("#ph button").forEach(b=>b.onclick=()=>{ph.splice(+b.dataset.i,1);draw()})};
   $("#f_f").onchange=e=>{ph=[...ph,...e.target.files].slice(0,5);draw()};draw();
 }
+const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<label>Message</label><textarea id="f_i" rows="3" placeholder="Ex. : Les Léopards s’imposent 2-0 !">${esc(f.info)}</textarea>`,
+  async()=>{const info=$("#f_i").value.trim();if(!info)throw new Error("Message vide");await w(f.id?sb.from("flash").update({info}).eq("id",f.id):sb.from("flash").insert({info}))},
+  f.id&&(()=>w(sb.from("flash").delete().eq("id",f.id))));
 
-/* ---------- Matchs ---------- */
 function matchForm(m={}){
   const nw=!m.id;let lg=m.ligue||"L1",gp=m.groupe||"A",sc=[m.score_domicile??0,m.score_visiteur??0];
   const fill=()=>{const o=clubs.filter(c=>c.ligue===lg&&c.groupe===gp).map(c=>`<option value="${c.id}">${esc(c.nom)}</option>`).join("");$("#f_h").innerHTML=o;$("#f_v").innerHTML=o};
   const drawG=()=>{$("#gp").innerHTML=chips("gp",GROUPS[lg],gp);fill()};
   sheet(nw?"Nouveau match":esc(m.equipe_domicile)+" – "+esc(m.equipe_visiteur),
-  `${nw?"":'<div style="display:flex;gap:8px;margin-top:10px"><button type="button" class="btn" id="b_ev">⚽ Événements</button><button type="button" class="btn" id="b_lu">📋 Compositions</button></div>'}${nw?`<label>Ligue</label>${chips("lg",[["L1","Ligue 1"],["L2","Ligue 2"]],lg)}<label>Groupe / Zone</label><div id="gp"></div><label>Domicile</label><select id="f_h"></select><label>Visiteur</label><select id="f_v"></select>`:""}
+  `${nw?"":`<div style="display:flex;gap:8px;margin-top:10px"><button type="button" class="btn pri" id="b_ev">${ic("ball")} Événements</button><button type="button" class="btn pri" id="b_lu">${ic("lineup")} Compositions</button></div>`}${nw?`<label>Ligue</label>${chips("lg",LG,lg)}<label>Groupe / Zone</label><div id="gp"></div><label>Domicile</label><select id="f_h"></select><label>Visiteur</label><select id="f_v"></select>`:""}
   <label>Score</label><div class="sc">${[0,1].map(i=>`<div><small>${nw?(i?"Visiteur":"Domicile"):esc(i?m.equipe_visiteur:m.equipe_domicile)}</small><div class="st"><button type="button" data-i="${i}" data-d="-1">−</button><b id="s${i}">${sc[i]}</b><button type="button" data-i="${i}" data-d="1">+</button></div></div>`).join("")}</div>
   <label>État du match</label>${chips("st",ST,m.statut||"upcoming")}
   <label>Date et heure</label><input type="datetime-local" id="f_d" value="${loc(m.date_match)}">
@@ -104,67 +212,137 @@ function matchForm(m={}){
   if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
 }
 
-/* ---------- Événements & compositions ---------- */
-const EV=[["goal","⚽ But"],["penalty","🎯 Penalty"],["own_goal","CSC"],["yellow_card","🟨 Jaune"],["red_card","🟥 Rouge"],["substitution","🔁 Remplacement"],["other","Autre"]];
 function eventsSheet(m){
-  sheet("Événements du match",`<small>${esc(m.equipe_domicile)} – ${esc(m.equipe_visiteur)}</small><div id="ev" style="margin-top:10px"></div>
-  <label>Nouvel événement</label>${chips("et",EV,"goal")}<label>Équipe</label>${chips("tm",[["h",m.equipe_domicile],["v",m.equipe_visiteur]],"h")}
+  const dLogo = mlogo(m, "domicile");
+  const vLogo = mlogo(m, "visiteur");
+  sheet("Événements du match",`<div class="event-match-header">${dLogo ? `<img src="${esc(dLogo)}" alt="">` : ""}<span>${esc(m.equipe_domicile)}</span><span>–</span><span>${esc(m.equipe_visiteur)}</span>${vLogo ? `<img src="${esc(vLogo)}" alt="">` : ""}</div><div id="ev" style="margin-top:10px"></div>
+  <label>Nouvel événement</label>${chips("et",[["goal","But"],["penalty","Penalty"],["own_goal","CSC"],["yellow_card","Jaune"],["red_card","Rouge"],["substitution","Remplacement"],["other","Autre"]],"goal")}<label>Équipe</label>${chips("tm",[["h",m.equipe_domicile],["v",m.equipe_visiteur]],"h")}
   <div style="display:flex;gap:8px"><div style="flex:1"><label>Minute</label><input id="e_m" type="number" min="0" max="150" inputmode="numeric"></div><div style="flex:1"><label>+ Arrêts de jeu</label><input id="e_a" type="number" min="0" max="30" inputmode="numeric"></div></div>
   <label>Joueur</label><input id="e_j"><label>Passeur (facultatif)</label><input id="e_p"><label>Détail (facultatif)</label><input id="e_d" placeholder="Ex. : remplace Mukendi">
-  <button type="button" class="btn pri" id="e_add" style="width:100%;margin:14px 0">Ajouter à la chronologie</button>`,async()=>{},null,"Fermer");
+  <button type="button" class="btn pri" id="e_add" style="width:100%;margin:14px 0">${ic("plus")} Ajouter à la chronologie</button>`,async()=>{},null,"Fermer");
   const ref=async()=>{const{data,error}=await sb.from("match_events").select("*").eq("match_id",m.id).order("minute").order("ordre");
-    $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc((EV.find(x=>x[0]===e.type)||[0,e.type])[1])} ${esc(e.joueur||"")}</b><small>${esc(e.club_id===m.club_domicile_id?m.equipe_domicile:m.equipe_visiteur)}${e.passeur?" · passe de "+esc(e.passeur):""}${e.detail?" · "+esc(e.detail):""}</small></div><button class="x" data-id="${e.id}">🗑</button></div>`).join(""):'<p class="mu">Aucun événement pour ce match.</p>';
+    $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc(e.type)} ${esc(e.joueur||"")}</b><small>${esc(e.club_id===m.club_domicile_id?m.equipe_domicile:m.equipe_visiteur)}${e.passeur?" · passe de "+esc(e.passeur):""}${e.detail?" · "+esc(e.detail):""}</small></div><button class="x" data-id="${e.id}">✕</button></div>`).join(""):'<p class="mu">Aucun événement pour ce match.</p>';
     $$("#ev .x").forEach(b=>b.onclick=async()=>{const{error}=await sb.from("match_events").delete().eq("id",b.dataset.id);if(error)toast("Erreur : "+error.message);ref()})};
   ref();
   $("#e_add").onclick=async e=>{e.target.disabled=true;try{const mn=$("#e_m").value;
     await w(sb.from("match_events").insert({match_id:m.id,club_id:cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id,type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,joueur:$("#e_j").value.trim()||null,passeur:$("#e_p").value.trim()||null,detail:$("#e_d").value.trim()||null,ordre:Date.now()%1e9}));
     ["e_m","e_a","e_j","e_p","e_d"].forEach(i=>$("#"+i).value="");toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
 }
+
 async function lineupSheet(m){
-  const T=[[m.club_domicile_id,m.equipe_domicile],[m.club_visiteur_id,m.equipe_visiteur]];
+  const T2=[[m.club_domicile_id,m.equipe_domicile],[m.club_visiteur_id,m.equipe_visiteur]];
   const{data:lu}=await sb.from("match_lineups").select("*").eq("match_id",m.id);
   const ids=(lu||[]).map(l=>l.id);
   const{data:pl}=ids.length?await sb.from("match_lineup_players").select("*").in("lineup_id",ids).order("ordre"):{data:[]};
   const D=cid=>{const l=(lu||[]).find(x=>x.club_id===cid)||{},p=(pl||[]).filter(x=>x.lineup_id===l.id),f=s=>p.filter(x=>!!x.est_remplacant===s).map(x=>(x.numero?x.numero+" ":"")+x.nom).join("\n");return{l,t:f(false),s:f(true)}};
-  sheet("Compositions",T.map(([cid,nom],i)=>{const d=D(cid);return `<label style="font-size:1.1rem;color:var(--ac)">${esc(nom)}</label>
+  sheet("Compositions",T2.map(([cid,nom],i)=>{const d=D(cid);const cLogo=clogo(cid);return `<label style="display:flex;align-items:center;gap:8px;font-size:1.1rem;color:var(--ac)">${cLogo?`<img src="${esc(cLogo)}" style="width:24px;height:24px;object-fit:contain;" alt="">`:""}${esc(nom)}</label>
   <input id="l_f${i}" placeholder="Formation (ex. 4-3-3)" value="${esc(d.l.formation)}"><input id="l_e${i}" placeholder="Entraîneur" style="margin-top:8px" value="${esc(d.l.entraineur)}">
   <label>Titulaires — un joueur par ligne : numéro puis nom</label><textarea id="l_t${i}" rows="7" placeholder="1 Mpasi&#10;2 Kasongo">${esc(d.t)}</textarea>
   <label>Remplaçants</label><textarea id="l_s${i}" rows="4">${esc(d.s)}</textarea>`}).join("<hr>"),
-  async()=>{for(const [i,[cid]] of T.entries()){
+  async()=>{for(const [i,[cid]] of T2.entries()){
     const [lr]=await w(sb.from("match_lineups").upsert({match_id:m.id,club_id:cid,formation:$("#l_f"+i).value.trim()||null,entraineur:$("#l_e"+i).value.trim()||null},{onConflict:"match_id,club_id"}));
     const{error}=await sb.from("match_lineup_players").delete().eq("lineup_id",lr.id);if(error)throw error;
     const P=(id,sub)=>$(id).value.split("\n").map(x=>x.trim()).filter(Boolean).map((x,k)=>{const y=x.match(/^(\d{1,2})[\s.\-–)]+(.+)$/);return{lineup_id:lr.id,nom:y?y[2]:x,numero:y?(+y[1]||null):null,est_remplacant:sub,ordre:k}});
-    const R=[...P("#l_t"+i,false),...P("#l_s"+i,true)];if(R.length)await w(sb.from("match_lineup_players").insert(R))}});
+    const R2=[...P("#l_t"+i,false),...P("#l_s"+i,true)];if(R2.length)await w(sb.from("match_lineup_players").insert(R2))}});
 }
 
-/* ---------- Flash infos ---------- */
-const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<label>Message</label><textarea id="f_i" rows="3" placeholder="Ex. : Les Léopards s’imposent 2-0 !">${esc(f.info)}</textarea>`,
-  async()=>{const info=$("#f_i").value.trim();if(!info)throw new Error("Message vide");await w(f.id?sb.from("flash").update({info}).eq("id",f.id):sb.from("flash").insert({info}))},
-  f.id&&(()=>w(sb.from("flash").delete().eq("id",f.id))));
+async function epfEvents(m){
+  const{data:sc}=await sb.from("epf_kin_scorers").select("id,nom,club_id").in("club_id",[m.club_domicile_id,m.club_visiteur_id]).eq("saison",m.saison);
+  const opts=()=>(sc||[]).filter(s=>s.club_id===(cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id)).map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")||"<option value=''>Aucun buteur : ajoutez-le dans Équipes › Buteurs EPF</option>";
+  const dLogo = clogo(m.club_domicile_id);
+  const vLogo = clogo(m.club_visiteur_id);
+  sheet("Buts du match",`<div class="event-match-header">${dLogo ? `<img src="${esc(dLogo)}" alt="">` : ""}<span>${esc(cn(m.club_domicile_id))}</span><span>–</span><span>${esc(cn(m.club_visiteur_id))}</span>${vLogo ? `<img src="${esc(vLogo)}" alt="">` : ""}</div><div id="ev" style="margin-top:10px"></div>
+  <label>Type</label>${chips("et",[["goal","But"],["penalty","Penalty"],["own_goal","CSC"]],"goal")}<label>Équipe du buteur</label>${chips("tm",[["h",cn(m.club_domicile_id)],["v",cn(m.club_visiteur_id)]],"h")}
+  <label>Buteur</label><select id="e_b">${opts()}</select>
+  <div style="display:flex;gap:8px"><div style="flex:1"><label>Minute</label><input id="e_m" type="number" min="0" max="150" inputmode="numeric"></div><div style="flex:1"><label>+ Arrêts de jeu</label><input id="e_a" type="number" min="0" max="30" inputmode="numeric"></div></div>
+  <button type="button" class="btn pri" id="e_add" style="width:100%;margin:14px 0">${ic("plus")} Ajouter le but</button>`,async()=>{},null,"Fermer");
+  $("#sheet").onchange=()=>{$("#e_b").innerHTML=opts()};
+  const ref=async()=>{const{data,error}=await sb.from("epf_kin_match_events").select("*").eq("match_id",m.id).order("minute").order("ordre");
+    $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc(e.joueur||"")}</b><small>${esc(cn(e.club_id))} · ${e.type}</small></div><button class="x" data-id="${e.id}">✕</button></div>`).join(""):'<p class="mu">Aucun but enregistré.</p>';
+    $$("#ev .x").forEach(b=>b.onclick=async()=>{const{error}=await sb.from("epf_kin_match_events").delete().eq("id",b.dataset.id);if(error)toast("Erreur : "+error.message);ref()})};
+  ref();
+  $("#e_add").onclick=async e=>{e.target.disabled=true;try{const id=$("#e_b").value;if(!id)throw new Error("Choisissez un buteur");const mn=$("#e_m").value;
+    await w(sb.from("epf_kin_match_events").insert({match_id:m.id,club_id:cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id,buteur_id:id,type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,ordre:Date.now()%1e9}));
+    ["e_m","e_a"].forEach(i=>$("#"+i).value="");toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
+}
 
-/* ---------- Liste & navigation ---------- */
-const FORMS={articles:articleForm,matchs:matchForm,flash:flashForm};
+const SECS={home:["Accueil","home"],news:["Actus","news",[["articles","Articles"],["flash","Flash infos"]]],match:["Matchs","ball",[["L1","Ligue 1"],["L2","Ligue 2"],["EPF","EPF-KIN"],["AUT","Autres matchs"]]],
+  team:["Équipes","shield",[["lc","Clubs Linafoot"],["lb","Buteurs Linafoot"],["lr","Classements"],["ec","Clubs EPF-KIN"],["es","Buteurs EPF-KIN"],["er","Classement EPF-KIN"]]],
+  sport:["Sports","grid",[["bk","Basketball"],["ju","Judo"],["om","Omnisports"]]]};
+const cur=()=>sub[sec]||SECS[sec][2]?.[0][0];
+const gen=k=>({t:R[k].t,o:R[k].o,open:r=>R[k].ro?0:form(R[k],r),add:R[k].ro?null:()=>form(R[k]),row:R[k].mt?mRow:r=>rowWithLogo(r,k),raw:!R[k].mt});
+
+function rowWithLogo(r,k) {
+  let logoUrl = r.logo_url || "";
+  if (!logoUrl && (k === "lb" || k === "es")) logoUrl = clogo(r.club_id);
+  const titleText = esc(R[k].ti(r));
+  const subText = esc(R[k].su(r));
+  if (logoUrl) {
+    return `<img src="${esc(logoUrl)}" class="club-row-logo" alt=""><div><b>${titleText}</b><small>${subText}</small></div>`;
+  }
+  return `<div><b>${titleText}</b><small>${subText}</small></div>`;
+}
+
+const mRow=r=>{
+  const dName = esc(mn(r,"domicile"));
+  const vName = esc(mn(r,"visiteur"));
+  const dLogo = mlogo(r, "domicile");
+  const vLogo = mlogo(r, "visiteur");
+  return `<div><div class="mt"><span>${dLogo?`<img src="${esc(dLogo)}" class="club-row-logo" alt="">`:""}<b>${dName}</b></span><b>${r.score_domicile??"–"} : ${r.score_visiteur??"–"}</b><span><b>${vName}</b>${vLogo?`<img src="${esc(vLogo)}" class="club-row-logo" alt="">`:""}</span></div><small>${r.statut==="live"?'<span class="live">● En direct</span>':esc((ST.find(s=>s[0]===r.statut)||[0,r.statut])[1])} · ${fmt(r.date_match)}${r.ligue?" · "+esc(r.ligue+" "+(r.groupe||"")):r.serie?" · Série "+esc(r.serie):r.competition?" · "+esc(r.competition):""}</small></div>`;
+};
+
+function V(){const s=cur();
+  if(sec==="news")return s==="flash"?{t:"flash",o:["id",0],open:flashForm,add:()=>flashForm(),row:r=>`<div><b style="white-space:normal">${esc(r.info)}</b></div>`}
+    :{t:"articles",o:["created_at",0],open:articleForm,add:()=>articleForm(),row:r=>`${r.photo_1?`<img src="${esc(r.photo_1)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(r.titre)}</b><small>${esc(r.categorie||"")} · ${fmt(r.created_at)}</small></div>`};
+  if(sec==="match"){if(s==="EPF"){const g=gen("em");return{...g,row:mRow}}
+    if(s==="AUT"){const g=gen("ma");return{...g,flt:q=>q.is("ligue",null)}}
+    return{t:"matchs",o:["date_match",0],flt:q=>q.eq("ligue",s),open:matchForm,add:()=>matchForm({ligue:s}),row:mRow}}
+  return gen(s)}
 async function load(){
-  const L=$("#list");L.innerHTML='<p class="mu">Chargement…</p>';
-  const q={articles:()=>sb.from("articles").select("*").order("created_at",{ascending:false}).limit(60),
-    matchs:()=>sb.from("matchs").select("*").order("date_match",{ascending:false}).limit(60),
-    flash:()=>sb.from("flash").select("*").order("id",{ascending:false}).limit(60)}[tab];
-  const{data,error}=await q();if(error){L.innerHTML=`<p class="err">${esc(error.message)}</p>`;return}
-  rows=data;
-  if(!rows.length){L.innerHTML='<p class="mu">Rien pour le moment. Touchez ＋ pour commencer.</p>';return}
-  L.innerHTML=rows.map((r,i)=>tab==="articles"?`<button class="row" data-i="${i}">${r.photo_1?`<img src="${esc(r.photo_1)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(r.titre)}</b><small>${esc(r.categorie||"")} · ${fmt(r.created_at)}</small></div></button>`
-    :tab==="matchs"?`<button class="row" data-i="${i}"><div><div class="mt"><span>${esc(r.equipe_domicile)}</span><b>${r.score_domicile??"–"} : ${r.score_visiteur??"–"}</b><span>${esc(r.equipe_visiteur)}</span></div><small>${r.statut==="live"?'<span class="live">● En direct</span>':esc((ST.find(s=>s[0]===r.statut)||[0,r.statut])[1])} · ${fmt(r.date_match)} · ${esc(r.ligue||"")} ${esc(r.groupe||"")}</small></div></button>`
-    :`<button class="row" data-i="${i}"><div><b style="white-space:normal">${esc(r.info)}</b></div></button>`).join("");
-  $$("#list .row").forEach(b=>b.onclick=()=>FORMS[tab](rows[+b.dataset.i]));
+  const L=$("#list");if(sec==="home")return dash(L);
+  const v=V();$("#fab").hidden=!v.add;
+  L.innerHTML=(SECS[sec][2]?`<div class="pills">${SECS[sec][2].map(([k,l])=>`<button class="pill${k===cur()?" on":""}" data-s="${k}">${l}</button>`).join("")}</div>`:"")+'<div id="rl"><p class="mu">Chargement…</p></div>';
+  $$(".pill").forEach(b=>b.onclick=()=>{sub[sec]=b.dataset.s;load()});
+  let q=sb.from(v.t).select("*");if(v.flt)q=v.flt(q);const{data,error}=await q.order(v.o[0],{ascending:!!v.o[1]}).limit(100);
+  if(error){$("#fab").hidden=true;$("#rl").innerHTML=miss(error)?`<div class="note"><b>Bientôt disponible</b><p>Cette rubrique est prête dans l’admin, mais la table <code>${v.t}</code> n’existe pas encore dans la base.</p></div>`:`<p class="err">${esc(error.message)}</p>`;return}
+  rows=data;if(!rows.length){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
+  $("#rl").innerHTML=rows.map((r,i)=>`<button class="row" data-i="${i}">${v.row(r)}</button>`).join("");
+  if(v.open)$$("#rl .row").forEach(b=>b.onclick=()=>v.open(rows[+b.dataset.i]));
 }
+async function dash(L){
+  $("#fab").hidden=true;
+  L.innerHTML='<p class="mu">Chargement…</p>';
+  const cnt=async t=>{try{const{count}=await sb.from(t).select("*",{count:"exact",head:true});return count??"–"}catch{return"–"}};
+  const[lv,ev,...c]=await Promise.all([sb.from("matchs").select("*").eq("statut","live").limit(1),sb.from("epf_kin_matches").select("*").eq("statut","live").limit(1),...["articles","matchs","clubs","buteurs","epf_kin_matches","epf_kin_clubs"].map(cnt)]);
+  const lm=lv.data?.[0]||ev.data?.[0],isE=!lv.data?.[0]&&!!lm;
+  const dName = lm ? esc(mn(lm,"domicile")) : "";
+  const vName = lm ? esc(mn(lm,"visiteur")) : "";
+  const dLogo = lm ? mlogo(lm, "domicile") : "";
+  const vLogo = lm ? mlogo(lm, "visiteur") : "";
+  const tiles=[["Articles",c[0],"news","articles","news"],["Matchs Linafoot",c[1],"match","L1","ball"],["Clubs Linafoot",c[2],"team","lc","shield"],["Buteurs Linafoot",c[3],"team","lb","grid"],["Matchs EPF-KIN",c[4],"match","EPF","ball"],["Clubs EPF-KIN",c[5],"team","ec","shield"]];
+  const today=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  L.innerHTML=`<section class="dashboard-hero">
+      <div class="dashboard-hero-copy"><span class="dashboard-eyebrow">Masano243 · Espace rédaction</span><h1>Le sport, en direct.<span>Votre rédaction, en action.</span></h1><p>Bonjour ${esc(me.nom)}. Retrouvez vos contenus, vos clubs et vos rencontres au même endroit.</p></div>
+      <div class="dashboard-match">
+        <div class="dashboard-match-heading"><strong>${lm?"Le match à suivre":"À vous de jouer"}</strong><span class="dashboard-live-pill${lm?"":" is-idle"}">${lm?"En direct":"Centre de commande"}</span></div>
+        ${lm?`<div class="dashboard-score"><div class="dashboard-team">${dLogo?`<img src="${esc(dLogo)}" class="club-row-logo" alt="">`:""}<b>${dName}</b></div><strong>${lm.score_domicile??0} : ${lm.score_visiteur??0}</strong><div class="dashboard-team">${vLogo?`<img src="${esc(vLogo)}" class="club-row-logo" alt="">`:""}<b>${vName}</b></div></div><small>${esc(lm.competition||"EPF-KIN")}</small><button class="dashboard-action" id="hm">${ic("ball")} Mettre à jour le match</button>`
+          :`<div class="dashboard-score"><div class="dashboard-team"><span class="tile-icon">${ic("ball")}</span><b>Votre prochain match</b></div><strong>—</strong><div class="dashboard-team"><span class="tile-icon">${ic("news")}</span><b>Votre prochaine actu</b></div></div><small>Tout est prêt pour couvrir l’actualité sportive.</small><button class="dashboard-action" id="hn">${ic("plus")} Programmer un match</button>`}
+      </div>
+    </section>
+    <div class="dashboard-section-heading"><div><h2>Vue d’ensemble</h2><p>Vos contenus et compétitions en un coup d’œil.</p></div><span>${esc(today)}</span></div>
+    <div class="tiles">${tiles.map((t,i)=>`<button class="tile" data-i="${i}"><span class="tile-icon">${ic(t[4])}</span><b>${t[1]}</b><span>${t[0]}</span></button>`).join("")}</div>`;
+  $$(".tile").forEach(b=>b.onclick=()=>{const t=tiles[+b.dataset.i];go(t[2],t[3])});
+  if(lm)$("#hm").onclick=()=>isE?form(R.em,lm):matchForm(lm);else $("#hn").onclick=()=>go("match","L1");
+}
+function go(s,p){sec=s;if(p)sub[s]=p;shell();load()}
 function shell(){
-  const T=[["articles","📰","Articles"],["matchs","⚽","Matchs"],["flash","⚡","Flash infos"]];
-  $("#app").innerHTML=`<header><span class="lg"><img src="https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak" alt="Masano243"><span class="tt">Admin</span></span><button id="out">Quitter</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">＋</button><nav class="tabs">${T.map(([k,i,l])=>`<button data-t="${k}" class="${k===tab?"on":""}"><i>${i}</i>${l}</button>`).join("")}</nav>`;
-  $("#fab").onclick=()=>FORMS[tab]();$("#out").onclick=async()=>{await sb.auth.signOut();loginView()};
-  $$(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;$$(".tabs button").forEach(x=>x.classList.toggle("on",x===b));load()});
+  const d=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  $("#app").innerHTML=`<header><span class="av">${esc(me.nom[0]?.toUpperCase())}</span><div class="who"><b>${sec==="home"?"Bonjour, "+esc(me.nom):SECS[sec][0]}</b><small>${d}</small></div><button class="ib" id="rf" aria-label="Actualiser">${ic("ref")}</button><button class="ib" id="out" aria-label="Quitter">${ic("out")}</button></header><main id="list"></main><button class="fab" id="fab" aria-label="Ajouter">${ic("plus")}</button><nav class="tabs">${Object.entries(SECS).map(([k,[l,i]])=>`<button data-t="${k}" class="${k===sec?"on":""}">${ic(i)}${l}</button>`).join("")}</nav>`;
+  $("#fab").onclick=()=>V().add?.();$("#rf").onclick=()=>boot();$("#out").onclick=async()=>{await sb.auth.signOut();loginView()};
+  $$(".tabs button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 }
 function loginView(msg=""){
-  $("#app").innerHTML=`<form class="login" id="lf"><img src="https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak" alt="Masano243"><h1>Espace rédaction</h1><p class="mu">Connectez-vous pour publier</p><label>Identifiant</label><input id="u" autocomplete="username" autocapitalize="none" required><label>Mot de passe</label><input id="p" type="password" autocomplete="current-password" required><p class="err" id="le">${esc(msg)}</p><button class="btn pri" style="width:100%">Se connecter</button></form>`;
+  $("#app").innerHTML=`<div class="lgn"><div class="top"><img src="${LOGO}" alt="Masano243"><h1>Espace rédaction</h1><div style="opacity:.8">Connectez-vous pour gérer le site</div></div><form class="login" id="lf"><label>Identifiant</label><input id="u" autocomplete="username" autocapitalize="none" required><label>Mot de passe</label><input id="p" type="password" autocomplete="current-password" required><p class="err" id="le">${esc(msg)}</p><button class="btn pri" style="width:100%">${ic("plus")} Se connecter</button></form></div>`;
   $("#lf").onsubmit=async e=>{e.preventDefault();const u=$("#u").value.trim();
     const{error}=await sb.auth.signInWithPassword({email:u.includes("@")?u:u+"@masano243.net",password:$("#p").value});
     if(error)$("#le").textContent="Identifiant ou mot de passe incorrect.";else boot()};
@@ -174,8 +352,8 @@ async function boot(){
   const{data:ok}=await sb.rpc("is_admin");
   if(!ok){await sb.auth.signOut();return loginView("Ce compte n’a pas les droits d’administration.")}
   me={nom:session.user.user_metadata?.nom||session.user.email.split("@")[0]};
-  clubs=(await sb.from("clubs").select("id,nom,ligue,groupe").order("nom")).data||[];
-  shell();load();
+  const[a,b]=await Promise.all([sb.from("clubs").select("id,nom,ligue,groupe,logo_url").order("nom"),sb.from("epf_kin_clubs").select("id,nom,serie,logo_url").order("nom")]);
+  clubs=a.data||[];eclubs=b.data||[];shell();load();
 }
 boot();
 </script></body></html>
