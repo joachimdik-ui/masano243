@@ -103,7 +103,7 @@ const normalizePlayerStats = (rows) => {
 };
 
 const normalizeDetails = (entry, statsPayload) => {
-  const player = entry.player || {};
+  const player = entry.player || entry;
   const club = teamNames.has(String(player.strTeam || "").toLowerCase())
     ? player.strTeam2 || ""
     : player.strTeam || player.strTeam2 || "";
