@@ -359,7 +359,7 @@ export const fetchMatchsLeopards = async () => {
   }
   const payload = await response.json();
   if (!Array.isArray(payload.matches)) throw new Error("Réponse invalide de l’API des Léopards.");
-  return payload.matches;
+  return payload.matches.map((match) => normalizeMatch(match, "leopards"));
 };
 
 const sortStandingsRows = (first, second) => {
