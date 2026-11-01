@@ -4,6 +4,7 @@ const {
   numeric: sportsDbNumber,
   request: requestSportsDb
 } = require("../lib/thesportsdb");
+const { attachInternationalHistory } = require("../lib/international-history");
 
 const isValidId = (value) => /^\d{1,12}$/.test(String(value || ""));
 
@@ -113,7 +114,7 @@ const sportsDbDetails = async (eventId) => {
     || (hasFinalScore && !isLive
       && new Date(event.strTimestamp || event.dateEvent || "").getTime() < Date.now());
 
-  return {
+  return attachInternationalHistory({
     venue: event.strVenue || "",
     referee: event.strOfficial || "",
     events,
@@ -135,7 +136,7 @@ const sportsDbDetails = async (eventId) => {
     statistics,
     highlights_url: event.strVideo || "",
     warnings
-  };
+  }, event.strHomeTeam, event.strAwayTeam, event.strTimestamp || event.dateEvent);
 };
 
 const footballDataDetails = async (match, apiKey) => {
@@ -216,7 +217,7 @@ const footballDataDetails = async (match, apiKey) => {
       : hasFinalScore
         ? "unavailable"
         : "pending";
-  return {
+  return attachInternationalHistory({
     venue: match.venue || "",
     referee: Array.isArray(match.referees)
       ? match.referees.map((referee) => referee.name).filter(Boolean).join(", ")
@@ -232,7 +233,7 @@ const footballDataDetails = async (match, apiKey) => {
     rankings,
     highlights_url: "",
     warnings
-  };
+  }, match.homeTeam?.name, match.awayTeam?.name, match.utcDate);
 };
 
 const normalizeTeamName = (value) => String(value || "")
@@ -367,7 +368,7 @@ const apiFootballDetails = async (fixtureId, apiKey) => {
       assist: event.assist?.name || "",
       detail: event.detail || ""
     }));
-  return {
+  return attachInternationalHistory({
     venue: fixture.fixture?.venue?.name || "",
     referee: fixture.fixture?.referee || "",
     events: events.map((event) => ({
@@ -427,7 +428,7 @@ const apiFootballDetails = async (fixtureId, apiKey) => {
     }),
     highlights_url: "",
     warnings
-  };
+  }, fixture.teams?.home?.name, fixture.teams?.away?.name, fixture.fixture?.date);
 };
 
 const findTheSportsDbEvent = async (match) => {

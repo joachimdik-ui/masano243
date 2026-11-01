@@ -983,6 +983,7 @@ body {
 .match-detail-player-list li { display: flex; align-items: center; gap: 7px; font-size: .75rem; }
 .match-detail-player-list li > span { display: grid; width: 22px; height: 22px; flex: 0 0 22px; place-items: center; border-radius: 50%; background: #f2eff7; color: var(--accent); font-size: .68rem; font-weight: 700; }
 .match-detail-player-list small { color: var(--muted); font-size: .66rem; }
+.match-detail-history-summary { margin: 0 0 12px; color: var(--muted); font-size: .82rem; line-height: 1.5; }
 .match-detail-history li:not(.match-detail-empty) { display: grid; gap: 4px; padding: 10px 12px; border-radius: 10px; background: #f7f7f8; list-style: none; }
 .match-detail-history time, .match-detail-history span { color: var(--muted); font-size: .72rem; }
 .match-detail-history strong { font-size: .8rem; }

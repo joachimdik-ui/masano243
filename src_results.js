@@ -379,6 +379,12 @@ export const mountResults = (root, competitionPage = null) => {
     }).join("")
     : `<li class="match-detail-empty">L’historique des confrontations n’est pas disponible pour ces équipes.</li>`;
 
+  const renderHistorySummary = (summary, match, details) => {
+    if (!summary?.played) return "";
+    const plural = (count, singular, pluralForm) => `${count} ${count === 1 ? singular : pluralForm}`;
+    return `${plural(summary.played, "confrontation masculine recensée", "confrontations masculines recensées")} : ${match.equipe_domicile} ${plural(summary.home_wins, "victoire", "victoires")}, ${plural(summary.draws, "nul", "nuls")}, ${match.equipe_visiteur} ${plural(summary.away_wins, "victoire", "victoires")}. ${details.history.length} plus récentes affichées. Source : ${details.history_source} · données jusqu’au ${details.history_updated_through}.`;
+  };
+
   const renderCompetitionStandings = (rankings, match) => {
     if (!rankings.length) {
       return `<p class="match-detail-empty">Le classement de cette compétition n’est pas disponible auprès de l’API pour le moment.</p>`;
@@ -511,6 +517,7 @@ export const mountResults = (root, competitionPage = null) => {
     renderScorers(match, scorers, details.scorers_status);
     detailModal.querySelector("#matchDetailHomeLineup").innerHTML = renderLineup(details.lineups?.home);
     detailModal.querySelector("#matchDetailAwayLineup").innerHTML = renderLineup(details.lineups?.away);
+    detailModal.querySelector("#matchDetailHistorySummary").textContent = renderHistorySummary(details.history_summary, match, details);
     detailModal.querySelector("#matchDetailHistory").innerHTML = renderHistory(details.history);
     const standingsPanel = detailModal.querySelector("#matchDetailStandings");
     const standings = Array.isArray(details.rankings) ? details.rankings : [];
@@ -590,6 +597,7 @@ export const mountResults = (root, competitionPage = null) => {
     detailModal.querySelector("#matchDetailAwayLineupName").textContent = match.equipe_visiteur;
     detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Chargement de la composition…</p>`;
     detailModal.querySelector("#matchDetailAwayLineup").innerHTML = `<p class="match-detail-empty">Chargement de la composition…</p>`;
+    detailModal.querySelector("#matchDetailHistorySummary").textContent = "";
     detailModal.querySelector("#matchDetailHistory").innerHTML = `<li class="match-detail-empty">Chargement des confrontations…</li>`;
     const apiNotice = detailModal.querySelector("#matchDetailApiNotice");
     apiNotice.hidden = true;
@@ -622,6 +630,7 @@ export const mountResults = (root, competitionPage = null) => {
         detailModal.querySelector("#matchDetailVenue").textContent = match.stade || "Lieu indisponible";
         detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Impossible de charger la composition.</p>`;
         detailModal.querySelector("#matchDetailAwayLineup").innerHTML = `<p class="match-detail-empty">Impossible de charger la composition.</p>`;
+        detailModal.querySelector("#matchDetailHistorySummary").textContent = "";
         detailModal.querySelector("#matchDetailHistory").innerHTML = `<li class="match-detail-empty">Impossible de charger les confrontations.</li>`;
         detailModal.querySelector("#matchDetailStandings").innerHTML = `<p class="match-detail-empty">Impossible de charger le classement de la compétition.</p>`;
         const warning = detailModal.querySelector("#matchDetailApiNotice");
