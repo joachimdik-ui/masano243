@@ -370,19 +370,61 @@ export const mountResults = (root, competitionPage = null) => {
       ${players.length ? `<ul class="match-detail-player-list">${players.map((player) => `<li>${player.number === null || player.number === undefined ? "" : `<span>${escapeHtml(player.number)}</span>`}${escapeHtml(player.name || "Joueur")}${player.position ? ` <small>${escapeHtml(player.position)}</small>` : ""}${player.substitute ? ` <small>Remplaçant</small>` : ""}</li>`).join("")}</ul>` : `<p class="match-detail-empty">Aucun joueur communiqué par le fournisseur.</p>`}`;
   };
 
-  const renderHistory = (history) => history.length
+  const normalizeHistoryTeam = (team) => {
+    const normalized = String(team || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+    return ["congo dr", "congo dem rep", "congo democratic republic", "democratic republic of congo", "democratic republic of the congo", "congo kinshasa", "drc", "zaire"].includes(normalized)
+      ? "dr congo"
+      : normalized;
+  };
+
+  const renderHistory = (history, match) => history.length
     ? history.map((item) => {
       const date = item.date ? formatMatchDate(item.date) : "Date non renseignée";
       const hasScore = item.home_score !== null && item.home_score !== undefined
         && item.away_score !== null && item.away_score !== undefined;
-      return `<li><time>${escapeHtml(date)}</time><strong>${escapeHtml(item.home || "Équipe à confirmer")} ${hasScore ? `${escapeHtml(item.home_score)} – ${escapeHtml(item.away_score)}` : "– : –"} ${escapeHtml(item.away || "Équipe à confirmer")}</strong>${item.competition ? `<span>${escapeHtml(item.competition)}</span>` : ""}</li>`;
+      const isDraw = hasScore && Number(item.home_score) === Number(item.away_score);
+      const selectedHome = normalizeHistoryTeam(match.equipe_domicile);
+      const recordHome = normalizeHistoryTeam(item.home);
+      const recordAway = normalizeHistoryTeam(item.away);
+      const selectedHomeWon = hasScore && !isDraw && (
+        (recordHome === selectedHome && Number(item.home_score) > Number(item.away_score))
+        || (recordAway === selectedHome && Number(item.away_score) > Number(item.home_score))
+      );
+      const resultClass = !hasScore ? "" : isDraw ? "is-draw" : selectedHomeWon ? "is-home-win" : "is-away-win";
+      const resultLabel = !hasScore ? "Score indisponible" : isDraw ? "Match nul" : selectedHomeWon
+        ? `Victoire ${match.equipe_domicile}`
+        : `Victoire ${match.equipe_visiteur}`;
+      return `<li class="match-history-card ${resultClass}">
+        <div class="match-history-meta"><time>${escapeHtml(date)}</time>${item.competition ? `<span>${escapeHtml(item.competition)}</span>` : ""}</div>
+        <div class="match-history-scoreline"><strong>${escapeHtml(item.home || "Équipe à confirmer")}</strong><span class="match-history-score">${hasScore ? `${escapeHtml(item.home_score)} <i>–</i> ${escapeHtml(item.away_score)}` : "– : –"}</span><strong>${escapeHtml(item.away || "Équipe à confirmer")}</strong></div>
+        <span class="match-history-outcome">${escapeHtml(resultLabel)}</span>
+      </li>`;
     }).join("")
-    : `<li class="match-detail-empty">L’historique des confrontations n’est pas disponible pour ces équipes.</li>`;
+    : `<li class="match-detail-empty match-history-empty">Aucune confrontation antérieure n’est recensée dans les archives pour ces équipes.</li>`;
 
   const renderHistorySummary = (summary, match, details) => {
-    if (!summary?.played) return "";
+    if (!summary?.played) {
+      return `<div class="match-history-overview is-empty">
+        <div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4>
+        <p>Aucune rencontre antérieure entre ces sélections n’est recensée dans l’archive.</p></div>
+        <small>Source : ${escapeHtml(details.history_source || "Open Football")} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</small>
+      </div>`;
+    }
     const plural = (count, singular, pluralForm) => `${count} ${count === 1 ? singular : pluralForm}`;
-    return `${plural(summary.played, "confrontation masculine recensée", "confrontations masculines recensées")} : ${match.equipe_domicile} ${plural(summary.home_wins, "victoire", "victoires")}, ${plural(summary.draws, "nul", "nuls")}, ${match.equipe_visiteur} ${plural(summary.away_wins, "victoire", "victoires")}. ${details.history.length} plus récentes affichées. Source : ${details.history_source} · données jusqu’au ${details.history_updated_through}.`;
+    return `<div class="match-history-overview">
+      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4></div><div class="match-history-total"><strong>${summary.played}</strong><span>${plural(summary.played, "match recensé", "matchs recensés")}</span></div></div>
+      <div class="match-history-record" aria-label="${summary.played} rencontres recensées">
+        <div class="match-history-record-item is-home"><strong>${summary.home_wins}</strong><span>Victoires</span><small>${escapeHtml(match.equipe_domicile)}</small></div>
+        <div class="match-history-record-item is-draw"><strong>${summary.draws}</strong><span>${summary.draws === 1 ? "Nul" : "Nuls"}</span><small>Égalités</small></div>
+        <div class="match-history-record-item is-away"><strong>${summary.away_wins}</strong><span>Victoires</span><small>${escapeHtml(match.equipe_visiteur)}</small></div>
+      </div>
+      <p class="match-history-source">Les ${details.history.length} confrontations les plus récentes sont affichées. Source : ${escapeHtml(details.history_source || "Open Football")} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</p>
+    </div>`;
   };
 
   const renderCompetitionStandings = (rankings, match) => {
@@ -517,8 +559,8 @@ export const mountResults = (root, competitionPage = null) => {
     renderScorers(match, scorers, details.scorers_status);
     detailModal.querySelector("#matchDetailHomeLineup").innerHTML = renderLineup(details.lineups?.home);
     detailModal.querySelector("#matchDetailAwayLineup").innerHTML = renderLineup(details.lineups?.away);
-    detailModal.querySelector("#matchDetailHistorySummary").textContent = renderHistorySummary(details.history_summary, match, details);
-    detailModal.querySelector("#matchDetailHistory").innerHTML = renderHistory(details.history);
+    detailModal.querySelector("#matchDetailHistorySummary").innerHTML = renderHistorySummary(details.history_summary, match, details);
+    detailModal.querySelector("#matchDetailHistory").innerHTML = renderHistory(details.history, match);
     const standingsPanel = detailModal.querySelector("#matchDetailStandings");
     const standings = Array.isArray(details.rankings) ? details.rankings : [];
     standingsPanel.innerHTML = renderCompetitionStandings(standings, match);
@@ -597,7 +639,7 @@ export const mountResults = (root, competitionPage = null) => {
     detailModal.querySelector("#matchDetailAwayLineupName").textContent = match.equipe_visiteur;
     detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Chargement de la composition…</p>`;
     detailModal.querySelector("#matchDetailAwayLineup").innerHTML = `<p class="match-detail-empty">Chargement de la composition…</p>`;
-    detailModal.querySelector("#matchDetailHistorySummary").textContent = "";
+    detailModal.querySelector("#matchDetailHistorySummary").innerHTML = "";
     detailModal.querySelector("#matchDetailHistory").innerHTML = `<li class="match-detail-empty">Chargement des confrontations…</li>`;
     const apiNotice = detailModal.querySelector("#matchDetailApiNotice");
     apiNotice.hidden = true;
@@ -630,7 +672,7 @@ export const mountResults = (root, competitionPage = null) => {
         detailModal.querySelector("#matchDetailVenue").textContent = match.stade || "Lieu indisponible";
         detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Impossible de charger la composition.</p>`;
         detailModal.querySelector("#matchDetailAwayLineup").innerHTML = `<p class="match-detail-empty">Impossible de charger la composition.</p>`;
-        detailModal.querySelector("#matchDetailHistorySummary").textContent = "";
+        detailModal.querySelector("#matchDetailHistorySummary").innerHTML = "";
         detailModal.querySelector("#matchDetailHistory").innerHTML = `<li class="match-detail-empty">Impossible de charger les confrontations.</li>`;
         detailModal.querySelector("#matchDetailStandings").innerHTML = `<p class="match-detail-empty">Impossible de charger le classement de la compétition.</p>`;
         const warning = detailModal.querySelector("#matchDetailApiNotice");
