@@ -1,4 +1,4 @@
-// Fonction serverless Vercel (à placer à côté de leopards-matches.js, dans le dossier api/).
+// Fonction serverless Vercel exposée sur /api/leopards-players.
 //   GET /api/leopards-players            -> effectif des Léopards
 //   GET /api/leopards-players?id=<api>   -> statistiques d'un joueur (sélection + clubs)
 // Source : API-Football. Chaque réponse réussie est sauvegardée dans Supabase (sauvegarde de secours),

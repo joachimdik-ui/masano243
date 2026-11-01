@@ -651,8 +651,8 @@ export const mountResults = (root, competitionPage = null) => {
     if (source === "epf_kin" && error.code === "PGRST205") {
       return "Les tables EPF-KIN ne sont pas encore créées. Exécutez supabase_epf_kin.sql dans le SQL Editor Supabase.";
     }
-    if (source === "international" && error.message?.includes("FOOTBALL_DATA_API_KEY")) {
-      return "Le flux international n’est pas configuré. Ajoutez FOOTBALL_DATA_API_KEY dans Vercel → Settings → Environment Variables.";
+    if (source === "international" && error.message?.includes("API_FOOTBALL_API_KEY")) {
+      return "Le flux international n’est pas configuré. Ajoutez API_FOOTBALL_API_KEY dans Vercel → Settings → Environment Variables.";
     }
     if (source === "leopards" && error.message?.includes("API_FOOTBALL_API_KEY")) {
       return "Le flux des Léopards n’est pas configuré. Ajoutez API_FOOTBALL_API_KEY dans Vercel → Settings → Environment Variables.";
