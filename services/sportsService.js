@@ -138,30 +138,44 @@ export const fetchLocalMatchDetails = async (match) => {
     .select("id, club_id, formation, entraineur")
     .eq("match_id", match.id);
   const hasClubIds = isUuid(match.club_domicile_id) && isUuid(match.club_visiteur_id);
-  let historyRequest;
+  const historyRequests = [];
+  const historyQuery = () => supabase
+    .from("matchs")
+    .select("id, date_match, competition, equipe_domicile, equipe_visiteur, score_domicile, score_visiteur")
+    .neq("id", match.id)
+    .in("statut", ["finished", "Terminé"])
+    .not("score_domicile", "is", null)
+    .not("score_visiteur", "is", null)
+    .order("date_match", { ascending: false })
+    .limit(10);
   if (hasClubIds) {
     const homeId = match.club_domicile_id;
     const awayId = match.club_visiteur_id;
-    historyRequest = supabase
-      .from("matchs")
-      .select("id, date_match, competition, equipe_domicile, equipe_visiteur, score_domicile, score_visiteur")
-      .neq("id", match.id)
-      .in("statut", ["finished", "Terminé"])
-      .not("score_domicile", "is", null)
-      .not("score_visiteur", "is", null)
-      .or(`and(club_domicile_id.eq.${homeId},club_visiteur_id.eq.${awayId}),and(club_domicile_id.eq.${awayId},club_visiteur_id.eq.${homeId})`)
-      .order("date_match", { ascending: false })
-      .limit(5);
+    historyRequests.push(historyQuery()
+      .or(`and(club_domicile_id.eq.${homeId},club_visiteur_id.eq.${awayId}),and(club_domicile_id.eq.${awayId},club_visiteur_id.eq.${homeId})`));
+  }
+  const homeName = String(match.equipe_domicile || "").trim();
+  const awayName = String(match.equipe_visiteur || "").trim();
+  if (homeName && awayName && homeName.toLocaleLowerCase() !== awayName.toLocaleLowerCase()) {
+    historyRequests.push(
+      historyQuery().eq("equipe_domicile", homeName).eq("equipe_visiteur", awayName),
+      historyQuery().eq("equipe_domicile", awayName).eq("equipe_visiteur", homeName)
+    );
   }
 
-  const [eventsResult, lineupsResult, historyResult] = await Promise.all([
+  const [eventsResult, lineupsResult, ...historyResults] = await Promise.all([
     eventsRequest,
     lineupsRequest,
-    historyRequest || Promise.resolve({ data: [], error: null })
+    ...historyRequests
   ]);
-  for (const result of [eventsResult, lineupsResult, historyResult]) {
+  for (const result of [eventsResult, lineupsResult, ...historyResults]) {
     if (result.error) throw result.error;
   }
+  const historyRows = new Map();
+  historyResults.forEach((result) => (result.data || []).forEach((item) => historyRows.set(item.id, item)));
+  const history = [...historyRows.values()]
+    .sort((first, second) => new Date(second.date_match).getTime() - new Date(first.date_match).getTime())
+    .slice(0, 5);
 
   const eventRows = eventsResult.data || [];
   const eventTeamName = (clubId, fallback = "") => {
@@ -242,7 +256,7 @@ export const fetchLocalMatchDetails = async (match) => {
       home: lineupFor(match.club_domicile_id),
       away: lineupFor(match.club_visiteur_id)
     },
-    history: (historyResult.data || []).map((item) => ({
+    history: history.map((item) => ({
       date: item.date_match || "",
       competition: item.competition || "",
       home: item.equipe_domicile || "",
