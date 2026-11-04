@@ -277,6 +277,18 @@ const formatArticleDate = (value) => {
     : String(value || "");
 };
 
+const formatArticleDetailDate = (value) => {
+  const parsed = new Date(value);
+  if (!value || Number.isNaN(parsed.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit"
+  }).formatToParts(parsed);
+  const dateParts = Object.fromEntries(parts.map(({ type, value: part }) => [type, part]));
+  return `${dateParts.day}-${dateParts.month}-${dateParts.year}`;
+};
+
 // Déplace la piste du carrousel : la transition « slide » est gérée en CSS (transform).
 const setLaUneIndex = (index) => {
   const track = document.getElementById("heroTrack");
@@ -487,7 +499,7 @@ const renderArticle = (article) => {
   document.getElementById("artBreadcrumbCat").textContent = article.category || "Sport";
   document.getElementById("artTitle").textContent = article.title;
   document.getElementById("artAuthor").textContent = article.author;
-  document.getElementById("artDate").textContent = `Publié le ${article.date}`;
+  document.getElementById("artDate").textContent = formatArticleDetailDate(article.date);
   const image = view.querySelector(".article-main-img");
   const imageWrap = image.closest(".article-main-img-wrap");
   const photos = articlePhotoItems(article.photos);
@@ -730,7 +742,7 @@ const initializeArticlePage = () => {
     }
   }
   if (author) author.textContent = article.author;
-  if (date) date.textContent = `Publié le ${article.date}`;
+  if (date) date.textContent = formatArticleDetailDate(article.date);
   if (body) {
     const photos = articlePhotoItems(article.photos);
     const primaryImage = article.image || photos[0]?.url || "";
