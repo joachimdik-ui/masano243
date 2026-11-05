@@ -89,7 +89,8 @@ const sectionNavigation = {
     ["Léopards", "#football/leopards"],
     ["EPF-KIN", "#football/epf-kin"],
     ["Interclubs (CAF)", "#football/interclubs"],
-    ["International", "#football/international"]
+    ["International", "#football/international"],
+    ["Live Center", "#resultats"]
   ],
   "basket-ball": [["Actualités", "#basket-ball/actualites"], ["Événements", "#basket-ball/evenements"]],
   judo: [["Actualités", "#judo/actualites"], ["Événements", "#judo/evenements"]],
@@ -533,7 +534,7 @@ const renderArticlesLoading = () => {
   articleList.hidden = false;
 };
 
-const renderHome = (query = "") => {
+const renderHome = (query = "", showAllArticles = false) => {
   const list = document.getElementById("listViewContainer");
   const view = document.getElementById("articleView");
   if (!list || !view) return;
@@ -556,7 +557,7 @@ const renderHome = (query = "") => {
   const normalizedQuery = query.trim().toLowerCase();
 
   // Les reportages photo (tous sports) ne s'affichent que sur l'accueil, pas dans une rubrique ni une recherche.
-  const onlyRubrique = Boolean(category || normalizedQuery);
+  const onlyRubrique = Boolean(category || normalizedQuery || showAllArticles);
   const photoReportage = document.querySelector(".photo-reportage");
   if (photoReportage) photoReportage.hidden = onlyRubrique;
   const scoopWidget = document.querySelector(".sidebar-column .scoop-widget");
@@ -568,8 +569,15 @@ const renderHome = (query = "") => {
   laUneArticles = [];
 
   if (!articles.length) {
-    pageTitle.textContent = categoryLabels[category] || "A la une";
+    pageTitle.textContent = showAllArticles ? "Articles" : categoryLabels[category] || "A la une";
     articleList.innerHTML = `<p class="data-status empty-state">${supabase ? EMPTY_NEWS_MESSAGE : "Configurez la connexion Supabase pour publier et afficher les articles."}</p>`;
+    articleList.hidden = false;
+    return;
+  }
+
+  if (showAllArticles) {
+    pageTitle.textContent = "Articles";
+    articleList.innerHTML = sortedArticles(articles).map(renderArticleListItem).join("");
     articleList.hidden = false;
     return;
   }
@@ -642,7 +650,8 @@ const initializeIndex = () => {
       || (footballRoute ? footballCompetitionRoutes[footballRoute[1]] : null)
       || disciplineEventRoutes[route];
     const isResultsRoute = route === "resultats" || Boolean(competitionPage);
-    if (window.location.pathname === "/resultats" || isResultsRoute) {
+    const isResultsPath = window.location.pathname === "/resultats" && !route;
+    if (isResultsPath || isResultsRoute) {
       if (resultsCleanup) resultsCleanup();
       document.querySelector("main.container").classList.add("has-results-view");
       document.getElementById("listViewContainer").style.display = "block";
@@ -660,14 +669,15 @@ const initializeIndex = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     else if (articlesLoading) renderArticlesLoading();
+    else if (route === "articles") renderHome("", true);
     else if (route.startsWith("read/")) renderArticle(getArticle(route.slice(5)));
     else renderHome(search.value);
   };
   search.addEventListener("input", () => {
     const route = normalizeRoute(window.location.hash.slice(1));
     const isFootballResultsPage = route.startsWith("football/") && Boolean(footballCompetitionRoutes[route.split("/")[1]]);
-    if (window.location.pathname !== "/resultats" && route !== "resultats" && route !== "tv" && !isFootballResultsPage && !footballEventRoutes[route] && !disciplineEventRoutes[route]) {
-      renderHome(search.value);
+    if (!(window.location.pathname === "/resultats" && !route) && route !== "resultats" && route !== "tv" && !isFootballResultsPage && !footballEventRoutes[route] && !disciplineEventRoutes[route]) {
+      renderHome(search.value, route === "articles" && !search.value.trim());
     }
   });
   homeLink.addEventListener("click", (event) => {

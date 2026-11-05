@@ -1,4 +1,5 @@
 import { mountTvHomePreview } from "./tv.js";
+import { supabase } from "./supabaseClient.js";
 
 const installButton = document.getElementById("pwaInstallButton");
 const installDialog = document.getElementById("pwaInstallDialog");
@@ -9,6 +10,16 @@ const searchPanel = document.getElementById("pwaSearchPanel");
 const pwaSearchInput = document.getElementById("pwaSearchInput");
 const siteSearch = document.getElementById("siteSearch");
 const menuDialog = document.getElementById("pwaMenuDialog");
+const accountButton = document.getElementById("pwaAccountButton");
+const accountDialog = document.getElementById("pwaAccountDialog");
+const accountForm = document.getElementById("pwaAccountForm");
+const accountEmail = document.getElementById("pwaAccountEmail");
+const accountPassword = document.getElementById("pwaAccountPassword");
+const accountGuest = document.getElementById("pwaAccountGuest");
+const accountSignedIn = document.getElementById("pwaAccountSignedIn");
+const accountIdentity = document.getElementById("pwaAccountIdentity");
+const accountMessage = document.getElementById("pwaAccountMessage");
+const accountSubmit = accountForm.querySelector('[type="submit"]');
 let installPrompt;
 let homeTvCleanup;
 
@@ -59,16 +70,23 @@ updateInstallButton();
 
 const isStandalone = isInstalled();
 document.body.classList.toggle("pwa-standalone", isStandalone);
+if (isStandalone && window.location.pathname === "/resultats" && !window.location.hash) {
+  window.location.hash = "football/l1";
+}
 if (isStandalone) homeTvCleanup = mountTvHomePreview(document.getElementById("pwaHomeTv"));
 
 const updateNavigation = () => {
   const hash = window.location.hash.slice(1).toLowerCase();
-  const route = window.location.pathname === "/resultats" || hash === "resultats"
+  const isResultsRoute = (window.location.pathname === "/resultats" && !hash) || hash === "resultats"
     || /^football\/(l1|l2|epf-kin|leopards|interclubs|international)(\/|$)/.test(hash)
+    || /^(basket-ball|judo|omnisports)\/evenements$/.test(hash);
+  const route = isResultsRoute
     ? "results"
     : hash === "tv"
       ? "tv"
-      : "home";
+      : hash === "articles" || hash.startsWith("read/")
+        ? "articles"
+        : "home";
   document.querySelectorAll("[data-pwa-route]").forEach((link) => {
     const active = link.dataset.pwaRoute === route;
     link.classList.toggle("is-active", active);
@@ -89,7 +107,8 @@ const updateNavigation = () => {
           : "";
   document.querySelectorAll(".pwa-sport-nav a").forEach((link) => {
     const href = link.getAttribute("href");
-    const active = href === "/" ? !hash : href.startsWith("#football") && activeSport === "football"
+    const active = href === "/" ? !hash : href === "#articles" && route === "articles"
+      || href.startsWith("#football") && activeSport === "football"
       || href.startsWith("#basket-ball") && activeSport === "basket-ball"
       || href.startsWith("#judo") && activeSport === "judo"
       || href.startsWith("#omnisports") && activeSport === "omnisports";
@@ -104,6 +123,96 @@ const updateNavigation = () => {
 const closeMenu = () => {
   if (menuDialog?.open) menuDialog.close();
 };
+
+const setAccountMessage = (message = "", isError = false) => {
+  accountMessage.textContent = message;
+  accountMessage.classList.toggle("is-error", isError);
+};
+
+const updateAccount = (session) => {
+  const user = session?.user;
+  accountGuest.hidden = Boolean(user);
+  accountSignedIn.hidden = !user;
+  accountIdentity.textContent = user?.email || user?.user_metadata?.nom || "";
+  accountButton.setAttribute("aria-label", user ? "Ouvrir mon compte" : "Se connecter");
+  accountButton.title = user ? "Mon compte" : "Se connecter";
+  document.getElementById("pwaAccountTitle").textContent = user ? "Mon compte" : "Connexion";
+};
+
+updateAccount(null);
+if (supabase) {
+  supabase.auth.onAuthStateChange((_event, session) => updateAccount(session));
+  void supabase.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      console.error("Impossible de vérifier la session du compte Masano243.", error);
+      setAccountMessage("La vérification de votre session est indisponible.", true);
+      return;
+    }
+    updateAccount(data.session);
+  }).catch((error) => {
+    console.error("Impossible de vérifier la session du compte Masano243.", error);
+    setAccountMessage("La vérification de votre session est indisponible.", true);
+  });
+}
+
+accountButton.addEventListener("click", () => {
+  setAccountMessage();
+  accountDialog.showModal();
+});
+document.getElementById("pwaAccountClose").addEventListener("click", () => accountDialog.close());
+accountDialog.addEventListener("click", (event) => {
+  if (event.target === accountDialog) accountDialog.close();
+});
+accountForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!supabase) {
+    setAccountMessage("La connexion au compte n’est pas disponible pour le moment.", true);
+    return;
+  }
+  accountSubmit.disabled = true;
+  setAccountMessage();
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: accountEmail.value.trim(),
+      password: accountPassword.value
+    });
+    if (error) {
+      setAccountMessage(error.message, true);
+      return;
+    }
+    accountPassword.value = "";
+    updateAccount(data.session);
+    setAccountMessage("Vous êtes connecté.");
+  } catch (error) {
+    console.error("Impossible de connecter le compte Masano243.", error);
+    setAccountMessage("La connexion est momentanément indisponible. Réessayez.", true);
+  } finally {
+    accountSubmit.disabled = false;
+  }
+});
+document.getElementById("pwaAccountSignOut").addEventListener("click", async () => {
+  if (!supabase) {
+    setAccountMessage("La déconnexion n’est pas disponible pour le moment.", true);
+    return;
+  }
+  const signOutButton = document.getElementById("pwaAccountSignOut");
+  signOutButton.disabled = true;
+  setAccountMessage();
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      setAccountMessage(error.message, true);
+      return;
+    }
+    updateAccount(null);
+    setAccountMessage("Vous êtes déconnecté.");
+  } catch (error) {
+    console.error("Impossible de déconnecter le compte Masano243.", error);
+    setAccountMessage("La déconnexion est momentanément indisponible. Réessayez.", true);
+  } finally {
+    signOutButton.disabled = false;
+  }
+});
 
 searchToggle.addEventListener("click", () => {
   const opening = searchPanel.hidden;

@@ -26,16 +26,41 @@
 <body>
   <header class="pwa-app-header">
     <a class="pwa-app-wordmark" href="/" aria-label="Masano243 accueil">MASANO243</a>
+    <button type="button" class="pwa-app-account-toggle" id="pwaAccountButton" aria-label="Se connecter" title="Se connecter">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>
+    </button>
     <button type="button" class="pwa-app-search-toggle" id="pwaSearchToggle" aria-label="Ouvrir la recherche" aria-expanded="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
     </button>
   </header>
+  <dialog class="pwa-account-dialog" id="pwaAccountDialog" aria-labelledby="pwaAccountTitle">
+    <form class="pwa-account-panel" id="pwaAccountForm">
+      <button type="button" class="pwa-account-close" id="pwaAccountClose" aria-label="Fermer">×</button>
+      <p class="pwa-account-eyebrow">MASANO243 · MON COMPTE</p>
+      <h2 id="pwaAccountTitle">Connexion</h2>
+      <p class="pwa-account-intro">Connectez-vous à votre compte Masano243 pour retrouver votre espace personnel.</p>
+      <div id="pwaAccountGuest">
+        <label for="pwaAccountEmail">Adresse e-mail</label>
+        <input id="pwaAccountEmail" name="email" type="email" autocomplete="username" required>
+        <label for="pwaAccountPassword">Mot de passe</label>
+        <input id="pwaAccountPassword" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit" class="pwa-account-submit">Se connecter</button>
+        <p class="pwa-account-note">La création de compte sera proposée prochainement.</p>
+      </div>
+      <div id="pwaAccountSignedIn" hidden>
+        <p class="pwa-account-identity">Connecté en tant que <strong id="pwaAccountIdentity"></strong></p>
+        <button type="button" class="pwa-account-submit" id="pwaAccountSignOut">Se déconnecter</button>
+      </div>
+      <p class="pwa-account-message" id="pwaAccountMessage" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
   <form class="pwa-app-search" id="pwaSearchPanel" role="search" hidden>
     <input type="search" id="pwaSearchInput" placeholder="Rechercher un article..." aria-label="Rechercher un article">
     <button type="submit">Rechercher</button>
   </form>
   <nav class="pwa-sport-nav" aria-label="Rubriques sportives">
     <a href="/">Accueil</a>
+    <a href="#articles">Articles</a>
     <a href="#football/actualites">Football</a>
     <a href="#basket-ball/actualites">Basketball</a>
     <a href="#judo/actualites">Judo</a>
@@ -371,7 +396,11 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"></path></svg>
       <span>Accueil</span>
     </a>
-    <a href="/resultats" data-pwa-route="results">
+    <a href="#articles" data-pwa-route="articles">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>
+      <span>Articles</span>
+    </a>
+    <a href="#football/l1" data-pwa-route="results">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7m7 7V4m7 16v-11"></path></svg>
       <span>Résultats</span>
     </a>
@@ -392,6 +421,16 @@
         <h2 id="pwaMenuTitle">Explorer Masano243</h2>
         <button type="button" id="pwaMenuClose" aria-label="Fermer le menu">×</button>
       </div>
+      <a href="#articles">Tous les articles <span aria-hidden="true">›</span></a>
+      <a href="#football/l1">Résultats · Linafoot L1 <span aria-hidden="true">›</span></a>
+      <a href="#football/l2">Résultats · Linafoot L2 <span aria-hidden="true">›</span></a>
+      <a href="#football/epf-kin">Résultats · EPF-KIN <span aria-hidden="true">›</span></a>
+      <a href="#football/leopards">Résultats · Léopards <span aria-hidden="true">›</span></a>
+      <a href="#football/interclubs">Résultats · Interclubs CAF <span aria-hidden="true">›</span></a>
+      <a href="#football/international">Résultats · International <span aria-hidden="true">›</span></a>
+      <a href="#basket-ball/evenements">Événements · Basketball <span aria-hidden="true">›</span></a>
+      <a href="#judo/evenements">Événements · Judo <span aria-hidden="true">›</span></a>
+      <a href="#omnisports/evenements">Événements · Omnisports <span aria-hidden="true">›</span></a>
       <a href="#football/actualites">Football <span aria-hidden="true">›</span></a>
       <a href="#basket-ball/actualites">Basketball <span aria-hidden="true">›</span></a>
       <a href="#judo/actualites">Judo <span aria-hidden="true">›</span></a>
