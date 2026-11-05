@@ -348,6 +348,27 @@ export const mountTv = (root) => {
       return;
     }
     contents = data || [];
+    let pendingContentId = "";
+    try {
+      pendingContentId = sessionStorage.getItem("masano-tv-pending-content-id") || "";
+    } catch (error) {
+      console.error("Impossible de récupérer le direct Masano TV demandé.", error);
+    }
+    if (pendingContentId) {
+      const pendingContent = contents.find((item) => item.id === pendingContentId && item.type === "direct");
+      if (pendingContent) {
+        activeContentType = "direct";
+        activeSport = "Toutes";
+        selectedId = pendingContent.id;
+      } else {
+        console.error("Le direct Masano TV demandé n’est plus disponible.", pendingContentId);
+      }
+      try {
+        sessionStorage.removeItem("masano-tv-pending-content-id");
+      } catch (error) {
+        console.error("Impossible d’effacer le direct Masano TV demandé.", error);
+      }
+    }
     render();
   };
 

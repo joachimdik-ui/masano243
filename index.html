@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#42158f" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/site-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/site-192.png" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,13 +26,15 @@
 </head>
 <body>
   <header class="pwa-app-header">
-    <a class="pwa-app-wordmark" href="/" aria-label="Masano243 accueil">MASANO243</a>
-    <button type="button" class="pwa-app-account-toggle" id="pwaAccountButton" aria-label="Se connecter" title="Se connecter">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>
-    </button>
-    <button type="button" class="pwa-app-search-toggle" id="pwaSearchToggle" aria-label="Ouvrir la recherche" aria-expanded="false">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
-    </button>
+    <a class="pwa-app-wordmark" href="/" aria-label="Masano243 accueil"><img src="/icons/site-logo-white.png" alt=""></a>
+    <div class="pwa-app-header-actions">
+      <button type="button" class="pwa-app-account-toggle" id="pwaAccountButton" aria-label="Se connecter" title="Se connecter">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>
+      </button>
+      <button type="button" class="pwa-app-search-toggle" id="pwaSearchToggle" aria-label="Ouvrir la recherche" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+      </button>
+    </div>
   </header>
   <dialog class="pwa-account-dialog" id="pwaAccountDialog" aria-labelledby="pwaAccountTitle">
     <form class="pwa-account-panel" id="pwaAccountForm">
@@ -60,7 +63,6 @@
   </form>
   <nav class="pwa-sport-nav" aria-label="Rubriques sportives">
     <a href="/">Accueil</a>
-    <a href="#articles">Articles</a>
     <a href="#football/actualites">Football</a>
     <a href="#basket-ball/actualites">Basketball</a>
     <a href="#judo/actualites">Judo</a>
@@ -74,7 +76,7 @@
       <div class="brand-search-row">
         <div class="logo-wrap">
           <a class="brand" href="#" id="homeLogoLink" aria-label="Masano243 accueil">
-            <img class="brand-logo" src=https://cisgavepcswtgnpomlyg.supabase.co/storage/v1/object/sign/logo/logo%20masano%20(2).png?token=eyJraWQiOiJlNGY5NTJhMS04NDM0LTRkNzktYjIzMy04ZGNhOTFlMTk0YTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28gbWFzYW5vICgyKS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjAzNzg5LCJleHAiOjE4MjIxMzk3ODl9.f6UO28jWZvBJJb9cfNLPS_RvXjERXdPicxsjfVbxQak>
+            <img class="brand-logo" src="/icons/site-logo-white.png" alt="Masano243">
           </a>
         </div>
         <div class="social-search-row">
@@ -396,13 +398,9 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"></path></svg>
       <span>Accueil</span>
     </a>
-    <a href="#articles" data-pwa-route="articles">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>
-      <span>Articles</span>
-    </a>
     <a href="#football/l1" data-pwa-route="results">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7m7 7V4m7 16v-11"></path></svg>
-      <span>Résultats</span>
+      <span>Rencontres</span>
     </a>
     <a href="#tv" data-pwa-route="tv">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 22h8m-4-4v4"></path></svg>
@@ -421,7 +419,6 @@
         <h2 id="pwaMenuTitle">Explorer Masano243</h2>
         <button type="button" id="pwaMenuClose" aria-label="Fermer le menu">×</button>
       </div>
-      <a href="#articles">Tous les articles <span aria-hidden="true">›</span></a>
       <a href="#football/l1">Résultats · Linafoot L1 <span aria-hidden="true">›</span></a>
       <a href="#football/l2">Résultats · Linafoot L2 <span aria-hidden="true">›</span></a>
       <a href="#football/epf-kin">Résultats · EPF-KIN <span aria-hidden="true">›</span></a>
@@ -447,7 +444,7 @@
       <section class="match-detail-page-content" aria-labelledby="matchDetailTitle" tabindex="-1">
         <header class="match-detail-header">
           <h2 class="match-detail-competition" id="matchDetailTitle"></h2>
-          <button type="button" class="match-detail-close" data-match-detail-close aria-label="Retour aux matchs"><span aria-hidden="true">←</span> Retour aux matchs</button>
+          <button type="button" class="match-detail-close" data-match-detail-close aria-label="Fermer le détail du match"><span aria-hidden="true">×</span> Retour aux matchs</button>
         </header>
 
         <div class="match-detail-scoreboard">
@@ -525,16 +522,11 @@
             </div>
           </section>
           <section id="matchPanelHighlights" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabHighlights" data-match-panel="highlights" hidden>
-            <p class="match-detail-empty" id="matchDetailHighlightMessage">Vidéo non fournie.</p>
-            <div class="match-detail-embedded-player" id="matchDetailEmbeddedPlayer" hidden>
-              <iframe id="matchDetailHighlightFrame" title="Résumé vidéo du match" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen hidden></iframe>
-              <video id="matchDetailHighlightVideo" controls playsinline preload="metadata" hidden></video>
-            </div>
             <a id="matchDetailHighlightLink" class="match-detail-highlight-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Lire le résumé vidéo" hidden>
               <span class="match-detail-video-poster">
                 <img id="matchDetailHighlightImage" alt="" hidden>
                 <span class="match-detail-video-fallback" id="matchDetailHighlightFallback"></span>
-                <span class="match-detail-play" aria-hidden="true">&#9654;</span>
+                <span class="match-detail-highlight-action" id="matchDetailHighlightAction"><span class="match-detail-play" aria-hidden="true">&#9654;</span><span>Voir le résumé du match</span></span>
               </span>
             </a>
           </section>

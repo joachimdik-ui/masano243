@@ -19,6 +19,7 @@ import {
   subscribeButeurs,
   unsubscribeButeurs
 } from "./services/linafootService.js";
+import { supabase } from "./supabaseClient.js";
 // Chargé à la demande (import dynamique) : si ce fichier manque ou échoue, seul l'onglet « Joueurs »
 // est touché, jamais le reste du site (articles, scores, boutons).
 const loadPlayersService = () => import("./services/leopardsPlayersService.js");
@@ -503,6 +504,7 @@ export const mountResults = (root, competitionPage = null) => {
   };
 
   const safeHttpUrl = (value) => {
+    if (typeof value !== "string" || !value.trim()) return "";
     try {
       const url = new URL(value, window.location.origin);
       return ["http:", "https:"].includes(url.protocol) ? url.href : "";
@@ -532,86 +534,67 @@ export const mountResults = (root, competitionPage = null) => {
     }
   };
 
-  const matchVideoEmbed = (value) => {
-    const safeUrl = safeHttpUrl(value);
-    if (!safeUrl) return null;
-    const url = new URL(safeUrl);
-    const youtubeHost = url.hostname === "youtube.com" || url.hostname.endsWith(".youtube.com")
-      || url.hostname === "youtu.be" || url.hostname.endsWith(".youtu.be");
-    if (youtubeHost) {
-      const videoId = url.hostname.endsWith("youtu.be")
-        ? url.pathname.split("/").filter(Boolean)[0]
-        : url.searchParams.get("v") || url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1];
-      return /^[A-Za-z0-9_-]{11}$/.test(videoId || "")
-        ? { type: "iframe", url: `https://www.youtube-nocookie.com/embed/${videoId}` }
-        : null;
-    }
-    if (url.hostname === "vimeo.com" || url.hostname === "www.vimeo.com" || url.hostname === "player.vimeo.com") {
-      const videoId = url.pathname.match(/\/(?:video\/)?(\d+)(?:\/|$)/)?.[1];
-      return videoId ? { type: "iframe", url: `https://player.vimeo.com/video/${videoId}` } : null;
-    }
-    if (/\.(?:mp4|webm|ogg)$/i.test(url.pathname)) return { type: "video", url: safeUrl };
-    return null;
-  };
-
-  const stopMatchHighlightPlayback = () => {
-    const frame = detailModal.querySelector("#matchDetailHighlightFrame");
-    const video = detailModal.querySelector("#matchDetailHighlightVideo");
-    frame.removeAttribute("src");
-    frame.hidden = true;
-    video.pause();
-    video.removeAttribute("src");
-    video.load();
-    video.hidden = true;
-    detailModal.querySelector("#matchDetailEmbeddedPlayer").hidden = true;
-  };
-
-  const renderMatchHighlights = (match, details = {}) => {
+  let matchVideoRequestId = 0;
+  const renderMatchHighlights = async (match, details = {}) => {
+    const requestId = ++matchVideoRequestId;
     const highlightLink = detailModal.querySelector("#matchDetailHighlightLink");
-    const highlightMessage = detailModal.querySelector("#matchDetailHighlightMessage");
     const highlightImage = detailModal.querySelector("#matchDetailHighlightImage");
     const fallback = detailModal.querySelector("#matchDetailHighlightFallback");
-    const embeddedPlayer = detailModal.querySelector("#matchDetailEmbeddedPlayer");
-    const frame = detailModal.querySelector("#matchDetailHighlightFrame");
-    const video = detailModal.querySelector("#matchDetailHighlightVideo");
     const videoUrl = safeHttpUrl(details.highlights_url || match.resume_video_url);
-    const embed = matchVideoEmbed(videoUrl);
-    const thumbnailUrl = safeHttpUrl(
-      details.highlights_thumbnail_url
-      || details.thumbnail_url
-      || match.resume_video_thumbnail
-    ) || videoThumbnailFromUrl(videoUrl);
-    stopMatchHighlightPlayback();
-    if (!videoUrl) {
-      highlightLink.hidden = true;
-      highlightImage.hidden = true;
-      highlightImage.removeAttribute("src");
-      fallback.hidden = true;
-      highlightMessage.textContent = "Vidéo non fournie.";
-      highlightMessage.hidden = false;
-      return;
-    }
-    if (embed) {
-      embeddedPlayer.hidden = false;
-      highlightLink.hidden = true;
-      highlightMessage.hidden = true;
-      if (embed.type === "iframe") {
-        frame.src = embed.url;
-        frame.hidden = false;
-      } else {
-        video.src = embed.url;
-        video.hidden = false;
+    const action = detailModal.querySelector("#matchDetailHighlightAction");
+    highlightLink.hidden = true;
+    highlightLink.removeAttribute("href");
+    highlightLink.removeAttribute("target");
+    delete highlightLink.dataset.tvLiveId;
+    highlightImage.hidden = true;
+    highlightImage.removeAttribute("src");
+    fallback.hidden = true;
+
+    let liveContent = null;
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from("tv_contenus")
+          .select("id,miniature_url")
+          .eq("match_id", String(match.id))
+          .eq("type", "direct")
+          .eq("statut", "en_direct")
+          .eq("publie", true)
+          .order("debut", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false })
+          .limit(1);
+        if (error) console.error("Impossible de vérifier le direct Masano TV lié au match.", error);
+        else liveContent = data?.[0] || null;
+      } catch (error) {
+        console.error("Impossible de vérifier le direct Masano TV lié au match.", error);
       }
-      return;
     }
-    highlightLink.href = videoUrl;
-    highlightLink.hidden = false;
+    if (requestId !== matchVideoRequestId || activeDetailMatchId !== match.id || detailModal.hidden) return;
+
+    const isLive = Boolean(liveContent);
+    const thumbnailUrl = isLive
+      ? safeHttpUrl(liveContent.miniature_url)
+      : safeHttpUrl(details.highlights_thumbnail_url || details.thumbnail_url || match.resume_video_thumbnail)
+        || videoThumbnailFromUrl(videoUrl);
+    const displayUrl = isLive ? "#tv" : videoUrl;
+    if (!displayUrl) return;
+
+    highlightLink.href = displayUrl;
+    if (isLive) {
+      highlightLink.dataset.tvLiveId = String(liveContent.id);
+      highlightLink.setAttribute("aria-label", `Regarder le match : ${match.equipe_domicile} contre ${match.equipe_visiteur}`);
+      action.textContent = "Regarder le match";
+    } else {
+      highlightLink.target = "_blank";
+      highlightLink.setAttribute("rel", "noopener noreferrer");
+      highlightLink.setAttribute("aria-label", "Ouvrir le résumé du match");
+      action.textContent = "Voir le résumé du match";
+    }
     highlightImage.hidden = !thumbnailUrl;
     if (thumbnailUrl) highlightImage.src = thumbnailUrl;
-    else highlightImage.removeAttribute("src");
     fallback.hidden = Boolean(thumbnailUrl);
     fallback.textContent = `${match.equipe_domicile} · ${match.equipe_visiteur}`;
-    highlightMessage.hidden = true;
+    highlightLink.hidden = false;
   };
 
   const renderMatchDetails = (match, details) => {
@@ -631,7 +614,7 @@ export const mountResults = (root, competitionPage = null) => {
     const standings = Array.isArray(details.rankings) ? details.rankings : [];
     standingsPanel.innerHTML = renderCompetitionStandings(standings, match);
     detailModal.querySelector("#matchDetailStandingsTitle").textContent = `Classement · ${match.competition}`;
-    renderMatchHighlights(match, details);
+    void renderMatchHighlights(match, details);
     const homeRank = detailModal.querySelector("#matchDetailHomeRank");
     const awayRank = detailModal.querySelector("#matchDetailAwayRank");
     const rankings = details.rankings || [];
@@ -709,7 +692,7 @@ export const mountResults = (root, competitionPage = null) => {
     detailModal.querySelector("#matchDetailHistory").innerHTML = `<li class="match-detail-empty">Chargement des confrontations…</li>`;
     const apiNotice = detailModal.querySelector("#matchDetailApiNotice");
     apiNotice.hidden = true;
-    renderMatchHighlights(match);
+    void renderMatchHighlights(match);
     detailModal.querySelectorAll("[data-match-tab]").forEach((tab) => {
       const active = tab.dataset.matchTab === "lineup";
       tab.classList.toggle("is-active", active);
@@ -752,7 +735,6 @@ export const mountResults = (root, competitionPage = null) => {
   const closeMatchDetail = () => {
     if (!detailModal || detailModal.hidden) return;
     detailModal.hidden = true;
-    stopMatchHighlightPlayback();
     activeDetailMatchId = null;
     document.body.classList.remove("has-match-detail-page");
     window.scrollTo(0, previousPageScrollY);
@@ -900,6 +882,14 @@ export const mountResults = (root, competitionPage = null) => {
     }, { signal });
     detailPage.addEventListener("click", (event) => {
       if (event.target.closest("[data-match-detail-close]")) closeMatchDetail();
+      const liveLink = event.target.closest("[data-tv-live-id]");
+      if (liveLink) {
+        try {
+          sessionStorage.setItem("masano-tv-pending-content-id", liveLink.dataset.tvLiveId);
+        } catch (error) {
+          console.error("Impossible de mémoriser le direct Masano TV à ouvrir.", error);
+        }
+      }
       const tab = event.target.closest("[data-match-tab]");
       if (!tab) return;
       detailPage.querySelectorAll("[data-match-tab]").forEach((item) => {
