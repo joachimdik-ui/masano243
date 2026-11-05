@@ -72,7 +72,8 @@ document.body.classList.toggle("pwa-standalone", isStandalone);
 if (isStandalone && window.location.pathname === "/resultats" && !window.location.hash) {
   window.location.hash = "football/l1";
 }
-if (isStandalone) homeTvCleanup = mountTvHomePreview(document.getElementById("pwaHomeTv"));
+// La bande « En direct » s’affiche aussi sur le site web, pas seulement dans l’application installée.
+homeTvCleanup = mountTvHomePreview(document.getElementById("pwaHomeTv"));
 
 const updateNavigation = () => {
   const hash = window.location.hash.slice(1).toLowerCase();
@@ -95,6 +96,8 @@ const updateNavigation = () => {
   document.body.classList.toggle("pwa-tv-route", route === "tv");
   document.body.classList.toggle("pwa-results-route", route === "results");
   document.body.classList.toggle("pwa-home-route", route === "home");
+  // Vrai uniquement sur l’accueil lui-même (pas sur les pages de rubriques).
+  document.body.classList.toggle("is-home-root", (hash === "" || hash === "home") && window.location.pathname !== "/resultats");
   const activeSport = hash.startsWith("football/")
     ? "football"
     : hash.startsWith("basket-ball/")
@@ -324,7 +327,6 @@ window.addEventListener("appinstalled", () => {
   installButton.hidden = true;
   if (installDialog.open) installDialog.close();
   document.body.classList.add("pwa-standalone");
-  if (!homeTvCleanup) homeTvCleanup = mountTvHomePreview(document.getElementById("pwaHomeTv"));
 });
 
 if ("serviceWorker" in navigator) {

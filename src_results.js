@@ -851,6 +851,30 @@ export const mountResults = (root, competitionPage = null) => {
         `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
       ))
       .join("");
+    openPendingHomeMatch();
+  };
+
+  // Un match cliqué sur l'accueil (bande « En direct ») s'ouvre directement dans le Live Center.
+  const openPendingHomeMatch = () => {
+    let pending = "";
+    try {
+      pending = sessionStorage.getItem("masano-open-match-id") || "";
+    } catch (error) {
+      console.error("Impossible de lire le match demandé depuis l’accueil.", error);
+      return;
+    }
+    if (!pending) return;
+    const [pendingId, requestedAt] = pending.split("|");
+    if (!Number.isFinite(Number(requestedAt)) || Date.now() - Number(requestedAt) > 120000) {
+      try { sessionStorage.removeItem("masano-open-match-id"); } catch { /* ignoré */ }
+      return;
+    }
+    const pendingMatch = matches.find((item) => String(item.id) === pendingId);
+    if (!pendingMatch) return;
+    try { sessionStorage.removeItem("masano-open-match-id"); } catch { /* ignoré */ }
+    const trigger = [...list.querySelectorAll("[data-match-detail]")]
+      .find((element) => element.dataset.matchDetail === String(pendingMatch.id)) || null;
+    openMatchDetail(pendingMatch, trigger);
   };
 
   if (detailPage && detailPageContent) {

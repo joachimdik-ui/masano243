@@ -2128,3 +2128,225 @@ body.has-player-modal { overflow: hidden; }
   body.pwa-standalone .source-international { background: #1c2d48; color: #c6dcff; }
   body.pwa-standalone .live-match-badge { color: #ff9aa5; }
 }
+
+/* =====================================================================
+   MASANO243 — correctifs v2
+   1) Bande « En direct » de l'accueil (liste horizontale cliquable)
+   2) Tableaux / cartes lisibles : fini le blanc sur blanc (clair + sombre)
+   ===================================================================== */
+
+/* ---------- 1. Bande « En direct » ---------- */
+.pwa-home-tv:not([hidden]) { display: grid; gap: 22px; margin: 0 0 26px; min-width: 0; }
+body:not(.is-home-root) .pwa-home-tv { display: none !important; }
+/* Les aperçus « Sur Masano TV » ne sont stylés que dans l'application installée. */
+body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
+
+.home-live-strip { display: grid; gap: 12px; min-width: 0; }
+.home-live-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.home-live-head h2 {
+  display: flex; align-items: center; gap: 9px; margin: 0;
+  color: var(--text); font: 400 1.5rem/1 var(--font-title); letter-spacing: .02em;
+}
+.home-live-head a { color: var(--accent); font-size: .76rem; font-weight: 700; text-decoration: none; }
+.home-live-head a:hover { text-decoration: underline; }
+.home-live-pulse {
+  width: 9px; height: 9px; border-radius: 50%; background: #e5223c;
+  box-shadow: 0 0 0 4px #e5223c26; animation: homeLivePulse 1.8s ease-out infinite;
+}
+@keyframes homeLivePulse { 0% { box-shadow: 0 0 0 0 #e5223c66; } 100% { box-shadow: 0 0 0 9px #e5223c00; } }
+
+.home-live-track {
+  display: flex; align-items: stretch; gap: 12px; margin: 0 -2px; padding: 2px 2px 12px;
+  overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin; scrollbar-color: #c9bfe0 transparent;
+}
+.home-live-track:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
+
+.home-live-card {
+  display: grid; flex: 0 0 auto; align-content: start; gap: 8px; min-width: 0;
+  scroll-snap-align: start; color: var(--text); text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.home-live-card:hover { transform: translateY(-2px); }
+.home-live-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Carte match / événement */
+.home-live-card.is-match {
+  position: relative; width: 232px; gap: 9px; padding: 12px 13px 13px; overflow: hidden;
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  box-shadow: 0 2px 10px rgba(32, 21, 56, .06);
+}
+.home-live-card.is-match::before {
+  position: absolute; inset: 0 0 auto; height: 3px; content: "";
+  background: linear-gradient(90deg, #e5223c, #ff6a3d);
+}
+.home-live-card.is-match:hover { border-color: #c9b8ea; box-shadow: 0 8px 20px rgba(66, 21, 143, .14); }
+.home-live-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.home-live-comp {
+  overflow: hidden; color: var(--muted); font-size: .66rem; font-weight: 600;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.home-live-status {
+  flex: 0 0 auto; padding: 2px 7px; border-radius: 999px;
+  background: #e5223c1f; color: #c8182f; font-size: .64rem; font-weight: 800; letter-spacing: .02em;
+}
+.home-live-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 9px; }
+.home-live-logo {
+  position: relative; display: grid; width: 24px; height: 24px; place-items: center; overflow: hidden;
+  border: 1px solid var(--border); border-radius: 50%; background: #f2eef9;
+}
+.home-live-logo i { color: var(--accent); font-size: .56rem; font-style: normal; font-weight: 800; }
+.home-live-logo img { position: absolute; inset: 0; width: 100%; height: 100%; padding: 2px; background: #fff; object-fit: contain; }
+.home-live-name { overflow: hidden; font-size: .82rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.home-live-row b { min-width: 14px; color: var(--accent); font: 400 1.3rem/1 var(--font-title); text-align: right; }
+
+/* Carte Masano TV : grande miniature */
+.home-live-card.is-tv { width: 272px; gap: 7px; }
+.home-live-thumb {
+  position: relative; display: grid; aspect-ratio: 16 / 9; place-items: center; overflow: hidden;
+  border-radius: 14px; background: linear-gradient(135deg, #28104f, #642cc4);
+  box-shadow: 0 4px 14px rgba(40, 16, 79, .22);
+}
+.home-live-card.is-onair .home-live-thumb { box-shadow: 0 0 0 2px #e5223c, 0 6px 18px rgba(229, 34, 60, .28); }
+.home-live-thumb-fallback { color: #ffffffd9; font: 400 1.7rem/1 var(--font-title); letter-spacing: .06em; }
+.home-live-thumb-fallback b { color: #d3aeff; font-weight: 400; }
+.home-live-thumb-img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+.home-live-thumb::after {
+  position: absolute; inset: 0; z-index: 2; content: "";
+  background: linear-gradient(180deg, #08080a22 0%, #08080a00 38%, #08080a88 100%);
+}
+.home-live-badge {
+  position: absolute; z-index: 3; top: 9px; left: 9px; padding: 3px 8px; border-radius: 5px;
+  background: #e5223c; color: #fff; font-size: .62rem; font-weight: 800; letter-spacing: .05em;
+}
+.home-live-badge.is-soon { background: #f1e8ff; color: #35115e; }
+.home-live-play {
+  position: absolute; z-index: 3; right: 10px; bottom: 10px; display: grid; width: 36px; height: 36px; place-items: center;
+  border-radius: 50%; background: #ffffffee; box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+}
+.home-live-play::before {
+  width: 0; height: 0; margin-left: 3px; content: "";
+  border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid #42158f;
+}
+.home-live-card.is-tv strong {
+  display: -webkit-box; overflow: hidden; font-size: .88rem; line-height: 1.3;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+}
+.home-live-card.is-tv small { overflow: hidden; color: var(--muted); font-size: .7rem; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-live-pulse { animation: none; }
+  .home-live-card { transition: none; }
+  .home-live-card:hover { transform: none; }
+}
+
+/* ---------- 2a. Tableau des classements — version claire raffinée ---------- */
+.standings-table tbody th,
+.standings-table tbody td { color: var(--text); }
+.standings-table thead th { color: #6d6785; font-weight: 700; letter-spacing: .04em; }
+.standings-table tbody tr { transition: background-color .15s ease; }
+.standings-table tbody tr:hover { background: #f6f2fc; }
+.standing-position { background: #ede7f9; color: #3d1a82; }
+.qualification-place { background: #eefaf3; }
+.qualification-place:hover { background: #e3f6ec !important; }
+.qualification-place > :first-child { box-shadow: inset 3px 0 0 #2fa763; }
+.qualification-place .standing-position { background: #cdeedb; color: #14633d; }
+.relegation-place { background: #fdf1f1; }
+.relegation-place:hover { background: #fbe6e6 !important; }
+.relegation-place > :first-child { box-shadow: inset 3px 0 0 #d9534f; }
+.relegation-place .standing-position { background: #f8d6d6; color: #8f2424; }
+.club-logo-slot { background: #fff; }
+
+/* ---------- 2b. Mode sombre de l'application : tout est relu ---------- */
+@media (max-width: 700px) {
+  /* Classement du Live Center */
+  body.pwa-standalone .standings-table tbody th,
+  body.pwa-standalone .standings-table tbody td { color: #ece9f2; }
+  body.pwa-standalone .standings-table thead { background: #1d1d25; }
+  body.pwa-standalone .standings-table thead th { color: #b9b5c8; }
+  body.pwa-standalone .standings-table tbody tr:hover { background: #22222b; }
+  body.pwa-standalone .standing-position { background: #2c2740; color: #e7defa; }
+  body.pwa-standalone .standings-table tbody tr.qualification-place { background: #11281c; }
+  body.pwa-standalone .standings-table tbody tr.qualification-place:hover { background: #163424 !important; }
+  body.pwa-standalone .qualification-place > :first-child { box-shadow: inset 3px 0 0 #3ec27a; }
+  body.pwa-standalone .qualification-place .standing-position { background: #1f5238; color: #98f2bf; }
+  body.pwa-standalone .standings-table tbody tr.relegation-place { background: #2b1519; }
+  body.pwa-standalone .standings-table tbody tr.relegation-place:hover { background: #381b20 !important; }
+  body.pwa-standalone .relegation-place > :first-child { box-shadow: inset 3px 0 0 #ef5a5a; }
+  body.pwa-standalone .relegation-place .standing-position { background: #5c2229; color: #ffb9b9; }
+  body.pwa-standalone .club-logo-slot { border-color: #3a3a46; background: #23232c; color: #cfa9ff; }
+  body.pwa-standalone .scorer-goals { color: #c6a0fa; }
+  body.pwa-standalone .team-mark { background: #2a2338; color: #d9bcff; }
+  body.pwa-standalone .standings-legend { color: var(--pwa-muted); }
+
+  /* Classement dans le détail d'un match */
+  body.pwa-standalone .match-detail-standings-scroll { border-color: #303039; background: #15151b; }
+  body.pwa-standalone .match-detail-standings thead { background: #1d1d25; color: #b9b5c8; }
+  body.pwa-standalone .match-detail-standings thead th { border-bottom-color: #2c2c34; }
+  body.pwa-standalone .match-detail-standings th,
+  body.pwa-standalone .match-detail-standings td { border-bottom-color: #2a2a32; color: #ece9f2; }
+  body.pwa-standalone .match-detail-standings tbody tr:hover { background: #1f1f27; }
+  body.pwa-standalone .match-detail-standings tbody tr.match-detail-standings-match-team { background: #261c3d; }
+  body.pwa-standalone .match-detail-standings-position { background: #2c2740; color: #e7defa; }
+  body.pwa-standalone .match-detail-standings-match-team .match-detail-standings-position { background: #4a2a86; color: #fff; }
+  body.pwa-standalone .match-detail-standings-logo-slot,
+  body.pwa-standalone .match-detail-standings-logo { background: #23232c; }
+  body.pwa-standalone .match-detail-standings-logo-fallback { color: #cfa9ff; }
+
+  /* Pastilles, statuts, notices */
+  body.pwa-standalone .match-rank-badge { background: #272731; color: #cfccd8; }
+  body.pwa-standalone .match-rank-badge.is-positive { background: #14301f; color: #8ceab3; }
+  body.pwa-standalone .match-rank-badge.is-negative { background: #35181c; color: #ffadad; }
+  body.pwa-standalone .match-detail-status { background: #272731; color: #d7d4dd; }
+  body.pwa-standalone .match-detail-status.is-live { background: #3a1a20; color: #ff8d99; }
+  body.pwa-standalone .match-detail-api-notice { border-color: #614820; background: #282014; color: #f2d69f; }
+  body.pwa-standalone .match-detail-scorers { background: #15151b; }
+  body.pwa-standalone .match-detail-player-list li > span { background: #2a2338; color: #d9bcff; }
+  body.pwa-standalone .match-detail-player-list small { color: var(--pwa-muted); }
+  body.pwa-standalone .player-avatar { background: #2a2338; color: #d9bcff; }
+
+  /* Confrontations directes */
+  body.pwa-standalone .match-history-overview { border-color: #303039; background: linear-gradient(135deg, #1b1826, #15151b 72%); }
+  body.pwa-standalone .match-history-overview-heading h4,
+  body.pwa-standalone .match-history-total strong,
+  body.pwa-standalone .match-history-meter-label,
+  body.pwa-standalone .match-history-meter-label > strong,
+  body.pwa-standalone .match-history-overview.is-empty > div > p { color: var(--pwa-text); }
+  body.pwa-standalone .match-history-kicker { color: #c6a0fa; }
+  body.pwa-standalone .match-history-meter-track { background: #2a2a33; }
+  body.pwa-standalone .match-history-meter-track > span { background: #9d63ec; }
+  body.pwa-standalone .match-history-card { border-color: #303039; background: #15151b; }
+  body.pwa-standalone .match-history-card:hover { background: #1b1b23; }
+  body.pwa-standalone .match-history-meta time,
+  body.pwa-standalone .match-history-scoreline > strong { color: var(--pwa-text); }
+  body.pwa-standalone .match-history-score { background: #272731; color: #f3f1f7; }
+  body.pwa-standalone .match-history-score i { color: #a29fae; }
+  body.pwa-standalone .match-history-outcome { background: #272731; color: #cfccd8; }
+  body.pwa-standalone .match-history-card.is-home-win .match-history-outcome,
+  body.pwa-standalone .match-history-card.is-away-win .match-history-outcome { background: #2a2338; color: #d9bcff; }
+  body.pwa-standalone .match-history-card.is-draw .match-history-outcome { background: #2f2a1b; color: #e8d79a; }
+  body.pwa-standalone .match-history-empty { border-color: #303039; background: #15151b; color: var(--pwa-muted); }
+  body.pwa-standalone .match-detail-facts p { background: #1b1b23; }
+  body.pwa-standalone .match-detail-facts strong { color: var(--pwa-text); }
+  body.pwa-standalone .match-detail-facts span { color: var(--pwa-muted); }
+
+  /* Bande « En direct » dans l'application */
+  body.pwa-standalone .home-live-head { padding: 0 16px; }
+  body.pwa-standalone .home-live-track { margin: 0; padding: 2px 16px 12px; scroll-padding-left: 16px; }
+  body.pwa-standalone .home-live-head a { color: #c6a0fa; }
+  body.pwa-standalone .home-live-card.is-match { border-color: #303039; background: #15151b; box-shadow: none; }
+  body.pwa-standalone .home-live-card.is-match:hover { border-color: #5b3a96; }
+  body.pwa-standalone .home-live-status { background: #e5223c33; color: #ff8d99; }
+  body.pwa-standalone .home-live-logo { border-color: #3a3a46; background: #23232c; }
+  body.pwa-standalone .home-live-logo i { color: #cfa9ff; }
+  body.pwa-standalone .home-live-row b { color: #d9bcff; }
+  body.pwa-standalone .home-live-card.is-tv small { color: var(--pwa-muted); }
+  body.pwa-standalone .home-live-track { scrollbar-width: none; }
+  body.pwa-standalone .home-live-track::-webkit-scrollbar { display: none; }
+}
+
+/* Petits écrans (site web) : cartes un peu plus compactes */
+@media (max-width: 480px) {
+  .home-live-card.is-match { width: 214px; }
+  .home-live-card.is-tv { width: 246px; }
+}

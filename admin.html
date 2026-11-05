@@ -95,6 +95,11 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-
 .tv-secret-field{font-family:ui-monospace,monospace;font-size:.82rem}
 .tv-obs-steps{margin:8px 0 0;padding-left:20px;color:var(--mu);font-size:.8rem}
 .tv-obs-steps li+li{margin-top:5px}
+.tv-quick{display:flex;gap:8px;margin-bottom:10px}
+.tv-quick .btn{flex:1;justify-content:center}
+.tv-more{margin:12px 0 4px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px}
+.tv-more>summary{cursor:pointer;color:var(--ac);font-weight:700;font-size:.85rem}
+.tv-more[open]>summary{margin-bottom:6px}
 </style></head><body>
 <div id="app"></div><div id="sheet"></div><div id="toast"></div>
 <script>
@@ -218,7 +223,7 @@ const tvStatusLabel=status=>TV_STATUSES.find(([value])=>value===status)?.[1]||st
 const tvRow=item=>`<div>${item.miniature_url?`<img src="${esc(item.miniature_url)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(item.titre)}</b><small>${esc(TV_TYPES.find(([value])=>value===item.type)?.[1]||item.type)} · ${esc(tvStatusLabel(item.statut))} · ${item.publie?"Publié":"Brouillon"}${item.live_input_id?" · Clé OBS prête":""}</small></div></div>`;
 
 function showTvStreamCredentials(credentials){
-  sheet("Direct prêt pour OBS",`<p class="tv-secret-note">Le direct est créé. Copiez ces informations maintenant : la clé secrète ne pourra plus être affichée depuis l’admin. Si vous la perdez, supprimez ce direct et créez-en un nouveau.</p>
+  sheet("Direct prêt pour OBS",`<p class="tv-secret-note">Le direct est créé. Copiez ces informations dans OBS. Gardez la clé secrète : ne la partagez avec personne. Vous pourrez la réafficher à tout moment depuis la fiche du direct (bouton « Afficher la clé OBS »).</p>
     <label>Serveur RTMPS</label><input class="tv-secret-field" id="tv_rtmp_url" readonly value="${esc(credentials.url)}">
     <label>Clé de flux OBS</label><input class="tv-secret-field" id="tv_stream_key" readonly value="${esc(credentials.streamKey)}">
     <div style="display:flex;gap:8px"><button class="add" type="button" id="tv_copy_server">Copier le serveur</button><button class="add" type="button" id="tv_copy_key">Copier la clé</button></div>
@@ -243,21 +248,31 @@ function tvContentForm(item={}){
     if(!response.ok)throw new Error(result.error||`Impossible de supprimer le direct (HTTP ${response.status}).`);
   };
   sheet(isNew?(type==="direct"?"Créer un direct OBS":"Nouveau programme TV"):"Modifier le programme TV",`
+    ${!isNew&&item.live_input_id?`<div class="tv-quick"><button type="button" class="btn pri" id="tv_go_live">🔴 Passer en direct</button><button type="button" class="btn" id="tv_end_live">⏹ Terminer</button></div>
+    <button type="button" class="add" id="tv_show_key" style="margin:0 0 10px">🔑 Afficher la clé OBS</button>
+    <div id="tv_key_box" hidden>
+      <label>Serveur RTMPS</label><input class="tv-secret-field" id="tv_key_url" readonly>
+      <label>Clé de flux OBS</label><input class="tv-secret-field" id="tv_key_value" readonly>
+      <div style="display:flex;gap:8px"><button class="add" type="button" id="tv_key_copy_url">Copier le serveur</button><button class="add" type="button" id="tv_key_copy_value">Copier la clé</button></div>
+      <ol class="tv-obs-steps"><li>Dans OBS : <b>Paramètres → Stream</b> → <b>Personnalisé…</b></li><li>Collez le serveur et la clé, puis <b>Démarrer le streaming</b>.</li><li>Touchez <b>Passer en direct</b> ici : le direct apparaît sur l’accueil du site.</li></ol>
+    </div>`:""}
     <label>Type</label><select id="tv_type"${isNew?"":" disabled"}>${TV_TYPES.map(([value,label])=>`<option value="${value}"${value===type?" selected":""}>${label}</option>`).join("")}</select>
-    <label>Titre</label><input id="tv_title" maxlength="160" value="${esc(item.titre)}" required>
-    <label>Description</label><textarea id="tv_description" rows="3">${esc(item.description)}</textarea>
-    <label>Nom de l’émission (facultatif)</label><input id="tv_show" value="${esc(item.emission_nom)}">
-    <label>Sport</label><input id="tv_sport" value="${esc(item.sport)}" placeholder="Football, basketball…">
-    <label>Compétition</label><input id="tv_competition" value="${esc(item.competition)}">
-    <label>Date et heure</label><input type="datetime-local" id="tv_start" value="${loc(item.debut)}">
-    <label>Fin (facultatif)</label><input type="datetime-local" id="tv_end" value="${loc(item.fin)}">
+    <label>Titre</label><input id="tv_title" maxlength="160" value="${esc(item.titre)}" placeholder="Ex. AS Vita Club – TP Mazembe" required>
+    <label>Sport</label><input id="tv_sport" list="tv_sports" value="${esc(item.sport)}" placeholder="Football, basketball…"><datalist id="tv_sports"><option value="Football"><option value="Basketball"><option value="Judo"><option value="Omnisports"></datalist>
+    <label>Compétition</label><input id="tv_competition" value="${esc(item.competition)}" placeholder="Linafoot, EPF-KIN…">
+    <label>Date et heure</label><input type="datetime-local" id="tv_start" value="${loc(item.debut||(isNew&&type==="direct"?new Date():null))}">
     <div id="tv_video_group"${type==="direct"?" hidden":""}><label>Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
     <small>Drive : le partage doit autoriser « Toute personne disposant du lien ». La vidéo sera lue dans Masano TV.</small></div>
-    <label>Miniature (URL facultative)</label><input type="url" inputmode="url" id="tv_thumbnail" value="${esc(item.miniature_url)}">
-    <label>Match lié (ID facultatif)</label><input id="tv_match" value="${esc(item.match_id)}">
     <label>Statut</label><select id="tv_status">${TV_STATUSES.map(([value,label])=>`<option value="${value}"${value===status?" selected":""}>${label}</option>`).join("")}</select>
     <label><input id="tv_published" type="checkbox" style="width:auto" ${published?"checked":""}> Publier sur Masano TV</label>
-    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Masano générera une clé RTMPS pour OBS. Choisissez le statut et la publication ci-dessus, puis démarrez le streaming dans OBS.</p>`,
+    <details class="tv-more" id="tv_more"${type==="direct"?"":" open"}><summary>Plus d’options</summary>
+      <label>Description</label><textarea id="tv_description" rows="3">${esc(item.description)}</textarea>
+      <label>Nom de l’émission (facultatif)</label><input id="tv_show" value="${esc(item.emission_nom)}">
+      <label>Fin (facultatif)</label><input type="datetime-local" id="tv_end" value="${loc(item.fin)}">
+      <label>Miniature (URL facultative)</label><input type="url" inputmode="url" id="tv_thumbnail" value="${esc(item.miniature_url)}" placeholder="Sinon : image du direct automatique">
+      <label>Match lié (ID facultatif)</label><input id="tv_match" value="${esc(item.match_id)}">
+    </details>
+    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Masano générera votre serveur et votre clé RTMPS pour OBS dès l’enregistrement. Le direct est publié et en direct par défaut : il s’affiche sur l’accueil dès que vous touchez le bouton.</p>`,
     async()=>{
       const titre=$("#tv_title").value.trim();
       if(!titre)throw new Error("Le titre est obligatoire.");
@@ -295,10 +310,32 @@ function tvContentForm(item={}){
     null,
     ()=>{if(createdCredentials)showTvStreamCredentials(createdCredentials)}
   );
+  const tvApi=async method=>{
+    const{data:{session}}=await sb.auth.getSession();
+    if(!session)throw new Error("Votre session a expiré. Reconnectez-vous.");
+    const response=await fetch(`/api/tv-admin?id=${encodeURIComponent(item.id)}`,{method,headers:{Authorization:`Bearer ${session.access_token}`}});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||`Clé indisponible (HTTP ${response.status}).`);
+    return result;
+  };
+  const tvCopy=async(value,message)=>{try{await navigator.clipboard.writeText(value);toast(message)}catch{toast("Copie impossible : sélectionnez le texte et copiez-le manuellement.")}};
+  if(!isNew&&item.live_input_id){
+    $("#tv_go_live").onclick=()=>{$("#tv_status").value="en_direct";$("#tv_published").checked=true;$("#ss").click()};
+    $("#tv_end_live").onclick=()=>{$("#tv_status").value="termine";$("#ss").click()};
+    $("#tv_show_key").onclick=async event=>{
+      const button=event.currentTarget;button.disabled=true;
+      try{const{rtmps}=await tvApi("GET");$("#tv_key_url").value=rtmps.url;$("#tv_key_value").value=rtmps.streamKey;$("#tv_key_box").hidden=false;button.hidden=true}
+      catch(err){toast("Erreur : "+(err.message||err))}
+      button.disabled=false;
+    };
+    $("#tv_key_copy_url").onclick=()=>tvCopy($("#tv_key_url").value,"Serveur copié ✓");
+    $("#tv_key_copy_value").onclick=()=>tvCopy($("#tv_key_value").value,"Clé copiée ✓");
+  }
   const updateTvTypeFields=()=>{
     const isDirect=$("#tv_type").value==="direct";
     $("#tv_direct_note").hidden=!isNew||!isDirect;
     $("#tv_video_group").hidden=isDirect;
+    $("#tv_more").open=!isDirect;
     if(isNew){
       $("#tv_status").value=isDirect?"en_direct":"programme";
       $("#tv_published").checked=isDirect;
