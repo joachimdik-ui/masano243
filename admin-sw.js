@@ -1,15 +1,21 @@
-const CACHE_NAME = "masano-admin-v1";
+const CACHE_NAME = "masano-admin-v3";
 const OFFLINE_URL = "/admin-offline.html";
 const PRECACHE_URLS = [
   OFFLINE_URL,
   "/manifest.webmanifest",
+  "/icons/admin-180.png",
   "/icons/admin-192.png",
-  "/icons/admin-512.png"
+  "/icons/admin-512.png",
+  "/icons/admin-maskable-512.png",
+  "/icons/admin-monochrome-512.png"
 ];
 const CACHED_ASSETS = new Set([
   "/manifest.webmanifest",
+  "/icons/admin-180.png",
   "/icons/admin-192.png",
-  "/icons/admin-512.png"
+  "/icons/admin-512.png",
+  "/icons/admin-maskable-512.png",
+  "/icons/admin-monochrome-512.png"
 ]);
 const ADMIN_PATHS = new Set(["/admin", "/admin/"]);
 
