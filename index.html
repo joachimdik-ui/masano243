@@ -24,6 +24,23 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header class="pwa-app-header">
+    <a class="pwa-app-wordmark" href="/" aria-label="Masano243 accueil">MASANO243</a>
+    <button type="button" class="pwa-app-search-toggle" id="pwaSearchToggle" aria-label="Ouvrir la recherche" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+    </button>
+  </header>
+  <form class="pwa-app-search" id="pwaSearchPanel" role="search" hidden>
+    <input type="search" id="pwaSearchInput" placeholder="Rechercher un article..." aria-label="Rechercher un article">
+    <button type="submit">Rechercher</button>
+  </form>
+  <nav class="pwa-sport-nav" aria-label="Rubriques sportives">
+    <a href="/">Accueil</a>
+    <a href="#football/actualites">Football</a>
+    <a href="#basket-ball/actualites">Basketball</a>
+    <a href="#judo/actualites">Judo</a>
+    <a href="#omnisports/actualites">Omnisports</a>
+  </nav>
   
   <div class="page-shell">
     
@@ -103,6 +120,7 @@
         
         <!-- ZONE VUE ACCUEIL / LISTE (Conteneur global de la liste) -->
         <div id="listViewContainer">
+          <section class="pwa-home-tv" id="pwaHomeTv" aria-label="Masano TV" hidden></section>
           <h2 class="section-title" id="pageSectionTitle">A la une</h2>
 
           <!-- À la une : carrousel avec transition slide -->
@@ -348,6 +366,44 @@
     </div>
   </footer>
 
+  <nav class="pwa-bottom-nav" id="pwaBottomNav" aria-label="Navigation de l’application">
+    <a href="/" data-pwa-route="home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"></path></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="/resultats" data-pwa-route="results">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7m7 7V4m7 16v-11"></path></svg>
+      <span>Résultats</span>
+    </a>
+    <a href="#tv" data-pwa-route="tv">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 22h8m-4-4v4"></path></svg>
+      <span>TV</span>
+      <i class="pwa-nav-live-dot" id="pwaNavLiveDot" hidden></i>
+    </a>
+    <button type="button" id="pwaMenuButton" aria-haspopup="dialog" aria-controls="pwaMenuDialog">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      <span>Menu</span>
+    </button>
+  </nav>
+  <dialog class="pwa-menu-dialog" id="pwaMenuDialog" aria-labelledby="pwaMenuTitle">
+    <div class="pwa-menu-sheet">
+      <div class="pwa-menu-handle" aria-hidden="true"></div>
+      <div class="pwa-menu-heading">
+        <h2 id="pwaMenuTitle">Explorer Masano243</h2>
+        <button type="button" id="pwaMenuClose" aria-label="Fermer le menu">×</button>
+      </div>
+      <a href="#football/actualites">Football <span aria-hidden="true">›</span></a>
+      <a href="#basket-ball/actualites">Basketball <span aria-hidden="true">›</span></a>
+      <a href="#judo/actualites">Judo <span aria-hidden="true">›</span></a>
+      <a href="#omnisports/actualites">Omnisports <span aria-hidden="true">›</span></a>
+      <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer">Scoop243 <span aria-hidden="true">↗</span></a>
+      <div class="pwa-menu-footer">
+        <a href="https://scoop243.net/conditions.html" target="_blank" rel="noopener noreferrer">Conditions d’utilisation</a>
+        <a href="https://scoop243.net/privacy.html" target="_blank" rel="noopener noreferrer">Confidentialité</a>
+      </div>
+    </div>
+  </dialog>
+
     <div id="matchDetailPage" class="match-detail-page" hidden>
       <section class="match-detail-page-content" aria-labelledby="matchDetailTitle" tabindex="-1">
         <header class="match-detail-header">
@@ -388,6 +444,12 @@
           </div>
         </section>
 
+        <div class="pwa-match-tab-nav" aria-label="Informations du match">
+          <button type="button" class="is-active" data-pwa-match-tab="chronology">Chronologie</button>
+          <button type="button" data-pwa-match-tab="lineup">Composition</button>
+          <button type="button" data-pwa-match-tab="history">Confrontations</button>
+          <button type="button" data-pwa-match-tab="highlights">Vidéo</button>
+        </div>
         <div class="match-detail-tabs" role="tablist" aria-label="Détails du match">
           <button type="button" class="match-detail-tab is-active" id="matchTabLineup" role="tab" aria-selected="true" aria-controls="matchPanelLineup" data-match-tab="lineup">Composition</button>
           <button type="button" class="match-detail-tab" id="matchTabHistory" role="tab" aria-selected="false" aria-controls="matchPanelHistory" data-match-tab="history">Confrontations</button>
