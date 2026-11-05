@@ -272,13 +272,6 @@ const sortedArticles = (items) => [...items].sort((first, second) => {
 
 const formatArticleDate = (value) => {
   const parsed = new Date(value);
-  return value && !Number.isNaN(parsed.getTime())
-    ? new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(parsed)
-    : String(value || "");
-};
-
-const formatArticleDetailDate = (value) => {
-  const parsed = new Date(value);
   if (!value || Number.isNaN(parsed.getTime())) return "";
   const parts = new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
@@ -313,7 +306,7 @@ const renderLaUne = (items = articles) => {
     <div class="hero-body">
       <h3 class="hero-title lead-title">${escapeHtml(article.title)}</h3>
       <p class="hero-excerpt lead-summary">${escapeHtml(article.excerpt)}</p>
-      <div class="hero-meta article-meta">Par ${escapeHtml(article.author)} • ${escapeHtml(article.date)}</div>
+      <div class="hero-meta article-meta">${escapeHtml(article.author)} • ${escapeHtml(formatArticleDate(article.date))}</div>
     </div>
   </a>`).join("");
   setLaUneIndex(0);
@@ -499,7 +492,7 @@ const renderArticle = (article) => {
   document.getElementById("artBreadcrumbCat").textContent = article.category || "Sport";
   document.getElementById("artTitle").textContent = article.title;
   document.getElementById("artAuthor").textContent = article.author;
-  document.getElementById("artDate").textContent = formatArticleDetailDate(article.date);
+  document.getElementById("artDate").textContent = formatArticleDate(article.date);
   const image = view.querySelector(".article-main-img");
   const imageWrap = image.closest(".article-main-img-wrap");
   const photos = articlePhotoItems(article.photos);
@@ -742,7 +735,7 @@ const initializeArticlePage = () => {
     }
   }
   if (author) author.textContent = article.author;
-  if (date) date.textContent = formatArticleDetailDate(article.date);
+  if (date) date.textContent = formatArticleDate(article.date);
   if (body) {
     const photos = articlePhotoItems(article.photos);
     const primaryImage = article.image || photos[0]?.url || "";
