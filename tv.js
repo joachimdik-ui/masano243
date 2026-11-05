@@ -1,4 +1,10 @@
 import { supabase } from "./supabaseClient.js";
+import {
+  fetchMatchsEpfKin,
+  fetchMatchsInternationaux,
+  fetchMatchsLeopards,
+  fetchMatchsLocaux
+} from "./services/sportsService.js";
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({
   "&": "&amp;",
@@ -85,22 +91,91 @@ export const mountTvHomePreview = (root) => {
   if (!root || !supabase) return () => {};
   let active = true;
   let channel;
+  let liveMatches = [];
+  let tvContents = [];
+  const liveMatchSources = [
+    ["Linafoot", fetchMatchsLocaux],
+    ["EPF-KIN", fetchMatchsEpfKin],
+    ["Matchs internationaux", fetchMatchsInternationaux],
+    ["Matchs des Léopards", fetchMatchsLeopards]
+  ];
+  const matchSourceData = new Map();
+  const normalizeKeyPart = (value) => String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+  const liveMatchKey = (match) => [
+    [match.equipe_domicile, match.equipe_visiteur].map(normalizeKeyPart).sort().join("|"),
+    normalizeKeyPart(match.competition),
+    String(match.date_match).slice(0, 10)
+  ].join("|");
+  const sportLabel = (category) => ({
+    basketball: "Basketball",
+    judo: "Judo",
+    omnisports: "Omnisports"
+  }[category] || "Football");
+  const formatEventDate = (date) => {
+    if (!date) return "";
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime())
+      ? ""
+      : new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(parsed);
+  };
+  const liveEventsMarkup = () => {
+    if (!liveMatches.length) return "";
+    const visibleMatches = liveMatches.slice(0, 5);
+    return `<section class="pwa-home-live" aria-labelledby="pwaHomeLiveTitle">
+      <div class="pwa-home-live-heading">
+        <h2 id="pwaHomeLiveTitle"><span class="pwa-home-live-pulse" aria-hidden="true"></span>En direct</h2>
+        <span>${liveMatches.length} événement${liveMatches.length === 1 ? "" : "s"}</span>
+      </div>
+      <ul class="pwa-home-live-list">${visibleMatches.map((match) => {
+        const scoreAvailable = match.score_domicile !== null && match.score_visiteur !== null;
+        const score = scoreAvailable
+          ? `${match.score_domicile} – ${match.score_visiteur}`
+          : "En cours";
+        const status = match.minute ? `${match.minute}'` : "EN DIRECT";
+        const isOtherSport = ["basketball", "judo", "omnisports"].includes(match.competition_category);
+        const details = [
+          match.stade,
+          formatEventDate(match.date_match)
+        ].filter(Boolean);
+        return `<li><a class="pwa-home-live-row" href="#resultats">
+          <div class="pwa-home-live-meta">
+            <span>${escapeHtml(sportLabel(match.competition_category))} · ${escapeHtml(match.competition)}</span>
+            <span class="pwa-home-live-status">${escapeHtml(status)}</span>
+          </div>
+          <div class="pwa-home-live-score">
+            <strong>${escapeHtml(match.equipe_domicile)}</strong>
+            <b>${escapeHtml(score)}</b>
+            <strong>${escapeHtml(match.equipe_visiteur)}</strong>
+          </div>
+          ${isOtherSport && details.length
+            ? `<span class="pwa-home-live-details">${escapeHtml(details.join(" · "))}</span>`
+            : ""}
+        </a></li>`;
+      }).join("")}</ul>
+      ${liveMatches.length > visibleMatches.length ? `<a class="pwa-home-live-more" href="#resultats">Voir tous les directs</a>` : ""}
+    </section>`;
+  };
 
-  const render = (contents = []) => {
+  const render = () => {
     if (!active) return;
-    const featured = contents.find((item) => item.type === "direct" && item.statut === "en_direct")
-      || contents.find((item) => item.type === "direct" && item.statut === "programme");
-    const previews = contents
+    const featured = tvContents.find((item) => item.type === "direct" && item.statut === "en_direct")
+      || tvContents.find((item) => item.type === "direct" && item.statut === "programme");
+    const previews = tvContents
       .filter((item) => item.id !== featured?.id && item.type !== "direct")
       .slice(0, 2);
-    if (!featured && !previews.length) {
+    const liveEvents = liveEventsMarkup();
+    if (!featured && !previews.length && !liveEvents) {
       root.hidden = true;
       root.innerHTML = "";
       window.dispatchEvent(new CustomEvent("masano-tv-live-update", { detail: { live: false } }));
       return;
     }
 
-    root.innerHTML = `${featured ? `<a class="pwa-tv-live-card" href="#tv">
+    root.innerHTML = `${liveEvents}${featured ? `<a class="pwa-tv-live-card" href="#tv">
       ${featured.miniature_url ? `<img class="pwa-tv-live-image" src="${escapeHtml(featured.miniature_url)}" alt="" loading="lazy">` : ""}
       <span class="pwa-tv-live-label${featured.statut === "en_direct" ? "" : " is-upcoming"}">${featured.statut === "en_direct" ? "● EN DIRECT" : "À SUIVRE"}</span>
       <strong>${escapeHtml(featured.titre)}</strong>
@@ -117,11 +192,14 @@ export const mountTvHomePreview = (root) => {
     </section>` : ""}`;
     root.hidden = false;
     window.dispatchEvent(new CustomEvent("masano-tv-live-update", {
-      detail: { live: contents.some((item) => item.type === "direct" && item.statut === "en_direct") }
+      detail: {
+        live: liveMatches.length > 0
+          || tvContents.some((item) => item.type === "direct" && item.statut === "en_direct")
+      }
     }));
   };
 
-  const load = async () => {
+  const loadContents = async () => {
     const { data, error } = await supabase
       .from("tv_contenus")
       .select("id,type,titre,emission_nom,sport,competition,statut,debut,miniature_url,publie")
@@ -134,16 +212,43 @@ export const mountTvHomePreview = (root) => {
       console.error("Impossible de charger l’aperçu Masano TV.", error);
       return;
     }
-    render(data || []);
+    tvContents = data || [];
+    render();
   };
 
-  void load();
+  const loadLiveMatches = async () => {
+    await Promise.all(liveMatchSources.map(async ([label, fetchMatches]) => {
+      try {
+        matchSourceData.set(label, await fetchMatches());
+      } catch (error) {
+        console.error(`Impossible de charger les événements en direct (${label}).`, error);
+      }
+    }));
+    if (!active) return;
+    const matchesByKey = new Map();
+    for (const matches of matchSourceData.values()) {
+      for (const match of matches) {
+        if (match.statut === "live") matchesByKey.set(liveMatchKey(match), match);
+      }
+    }
+    liveMatches = [...matchesByKey.values()].sort((first, second) =>
+      String(first.competition).localeCompare(String(second.competition), "fr")
+    );
+    render();
+  };
+
+  void loadContents();
+  void loadLiveMatches();
   channel = supabase.channel("masano-tv-home-preview")
-    .on("postgres_changes", { event: "*", schema: "public", table: "tv_contenus" }, () => { void load(); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "tv_contenus" }, () => { void loadContents(); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "matchs" }, () => { void loadLiveMatches(); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "epf_kin_matches" }, () => { void loadLiveMatches(); })
     .subscribe();
+  const refreshTimer = window.setInterval(() => { void loadLiveMatches(); }, 60000);
 
   return () => {
     active = false;
+    window.clearInterval(refreshTimer);
     if (channel) void supabase.removeChannel(channel);
   };
 };

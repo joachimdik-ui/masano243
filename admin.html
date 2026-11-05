@@ -93,6 +93,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-
 .event-match-header .club-row-logo { width:24px;height:24px;border-radius:50%; }
 .tv-secret-note{padding:12px;border-radius:12px;background:#fff6dd;color:#634d13;font-size:.82rem}
 .tv-secret-field{font-family:ui-monospace,monospace;font-size:.82rem}
+.tv-obs-steps{margin:8px 0 0;padding-left:20px;color:var(--mu);font-size:.8rem}
+.tv-obs-steps li+li{margin-top:5px}
 </style></head><body>
 <div id="app"></div><div id="sheet"></div><div id="toast"></div>
 <script>
@@ -213,21 +215,25 @@ const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<la
 const TV_TYPES=[["direct","Direct OBS"],["emission","Émission"],["resume","Résumé de match"],["recap","Récap"]];
 const TV_STATUSES=[["programme","Programmé"],["en_direct","En direct"],["termine","Terminé"]];
 const tvStatusLabel=status=>TV_STATUSES.find(([value])=>value===status)?.[1]||status;
-const tvRow=item=>`<div>${item.miniature_url?`<img src="${esc(item.miniature_url)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(item.titre)}</b><small>${esc(TV_TYPES.find(([value])=>value===item.type)?.[1]||item.type)} · ${esc(tvStatusLabel(item.statut))} · ${item.publie?"Publié":"Brouillon"}</small></div></div>`;
+const tvRow=item=>`<div>${item.miniature_url?`<img src="${esc(item.miniature_url)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(item.titre)}</b><small>${esc(TV_TYPES.find(([value])=>value===item.type)?.[1]||item.type)} · ${esc(tvStatusLabel(item.statut))} · ${item.publie?"Publié":"Brouillon"}${item.live_input_id?" · Clé OBS prête":""}</small></div></div>`;
 
 function showTvStreamCredentials(credentials){
-  sheet("Clé de diffusion OBS",`<p class="tv-secret-note">Cette clé est affichée une seule fois et n’est pas enregistrée dans la base. Copiez-la maintenant dans OBS et conservez-la dans un endroit sûr.</p>
+  sheet("Direct prêt pour OBS",`<p class="tv-secret-note">Le direct est créé. Copiez ces informations maintenant : la clé secrète ne pourra plus être affichée depuis l’admin. Si vous la perdez, supprimez ce direct et créez-en un nouveau.</p>
     <label>Serveur RTMPS</label><input class="tv-secret-field" id="tv_rtmp_url" readonly value="${esc(credentials.url)}">
     <label>Clé de flux OBS</label><input class="tv-secret-field" id="tv_stream_key" readonly value="${esc(credentials.streamKey)}">
-    <button class="add" type="button" id="tv_copy_key">Copier la clé de flux</button>`,
+    <div style="display:flex;gap:8px"><button class="add" type="button" id="tv_copy_server">Copier le serveur</button><button class="add" type="button" id="tv_copy_key">Copier la clé</button></div>
+    <ol class="tv-obs-steps"><li>Dans OBS, ouvrez <b>Paramètres → Stream</b>.</li><li>Choisissez <b>Serveur de streaming personnalisé</b>.</li><li>Collez le serveur et la clé, puis cliquez sur <b>Démarrer le streaming</b>.</li></ol>`,
     async()=>{},null,"Terminé");
+  $("#tv_copy_server").onclick=async()=>{try{await navigator.clipboard.writeText(credentials.url);toast("Serveur copié ✓")}catch{toast("Copie impossible : sélectionnez le serveur et copiez-le manuellement.")}};
   $("#tv_copy_key").onclick=async()=>{try{await navigator.clipboard.writeText(credentials.streamKey);toast("Clé copiée ✓")}catch{toast("Copie impossible : sélectionnez la clé et copiez-la manuellement.")}};
 }
 
 function tvContentForm(item={}){
   let createdCredentials=null;
   const isNew=!item.id;
-  const type=item.type||"emission";
+  const type=item.type||(isNew?"direct":"emission");
+  const status=item.statut||(isNew&&type==="direct"?"en_direct":"programme");
+  const published=isNew?type==="direct":item.publie;
   const remove=async()=>{
     if(item.type!=="direct"||!item.live_input_id)return w(sb.from("tv_contenus").delete().eq("id",item.id));
     const{data:{session}}=await sb.auth.getSession();
@@ -236,7 +242,7 @@ function tvContentForm(item={}){
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(result.error||`Impossible de supprimer le direct (HTTP ${response.status}).`);
   };
-  sheet(isNew?"Nouveau programme TV":"Modifier le programme TV",`
+  sheet(isNew?(type==="direct"?"Créer un direct OBS":"Nouveau programme TV"):"Modifier le programme TV",`
     <label>Type</label><select id="tv_type"${isNew?"":" disabled"}>${TV_TYPES.map(([value,label])=>`<option value="${value}"${value===type?" selected":""}>${label}</option>`).join("")}</select>
     <label>Titre</label><input id="tv_title" maxlength="160" value="${esc(item.titre)}" required>
     <label>Description</label><textarea id="tv_description" rows="3">${esc(item.description)}</textarea>
@@ -245,13 +251,13 @@ function tvContentForm(item={}){
     <label>Compétition</label><input id="tv_competition" value="${esc(item.competition)}">
     <label>Date et heure</label><input type="datetime-local" id="tv_start" value="${loc(item.debut)}">
     <label>Fin (facultatif)</label><input type="datetime-local" id="tv_end" value="${loc(item.fin)}">
-    <label>Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
-    <small>Drive : le partage doit autoriser « Toute personne disposant du lien ». La vidéo sera lue dans Masano TV.</small>
+    <div id="tv_video_group"${type==="direct"?" hidden":""}><label>Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
+    <small>Drive : le partage doit autoriser « Toute personne disposant du lien ». La vidéo sera lue dans Masano TV.</small></div>
     <label>Miniature (URL facultative)</label><input type="url" inputmode="url" id="tv_thumbnail" value="${esc(item.miniature_url)}">
     <label>Match lié (ID facultatif)</label><input id="tv_match" value="${esc(item.match_id)}">
-    <label>Statut</label><select id="tv_status">${TV_STATUSES.map(([value,label])=>`<option value="${value}"${value===(item.statut||"programme")?" selected":""}>${label}</option>`).join("")}</select>
-    <label><input id="tv_published" type="checkbox" style="width:auto" ${item.publie?"checked":""}> Publier sur Masano TV</label>
-    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Une entrée Cloudflare Stream et une clé RTMPS OBS seront créées à l’enregistrement. La clé ne sera montrée qu’une fois.</p>`,
+    <label>Statut</label><select id="tv_status">${TV_STATUSES.map(([value,label])=>`<option value="${value}"${value===status?" selected":""}>${label}</option>`).join("")}</select>
+    <label><input id="tv_published" type="checkbox" style="width:auto" ${published?"checked":""}> Publier sur Masano TV</label>
+    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Masano générera une clé RTMPS pour OBS. Choisissez le statut et la publication ci-dessus, puis démarrez le streaming dans OBS.</p>`,
     async()=>{
       const titre=$("#tv_title").value.trim();
       if(!titre)throw new Error("Le titre est obligatoire.");
@@ -289,7 +295,18 @@ function tvContentForm(item={}){
     null,
     ()=>{if(createdCredentials)showTvStreamCredentials(createdCredentials)}
   );
-  $("#tv_type").onchange=()=>{$("#tv_direct_note").hidden=!isNew||$("#tv_type").value!=="direct"};
+  const updateTvTypeFields=()=>{
+    const isDirect=$("#tv_type").value==="direct";
+    $("#tv_direct_note").hidden=!isNew||!isDirect;
+    $("#tv_video_group").hidden=isDirect;
+    if(isNew){
+      $("#tv_status").value=isDirect?"en_direct":"programme";
+      $("#tv_published").checked=isDirect;
+      $("#ss").lastChild.textContent=isDirect?"Créer le direct + générer la clé OBS":"Enregistrer";
+    }
+  };
+  $("#tv_type").onchange=updateTvTypeFields;
+  if(isNew&&type==="direct")$("#ss").lastChild.textContent="Créer le direct + générer la clé OBS";
 }
 
 function matchForm(m={}){
@@ -460,7 +477,7 @@ const mRow=r=>{
 };
 
 function V(){const s=cur();
-  if(sec==="tv")return{t:"tv_contenus",o:["created_at",0],open:tvContentForm,add:()=>tvContentForm(),row:tvRow};
+  if(sec==="tv")return{t:"tv_contenus",o:["created_at",0],open:tvContentForm,add:()=>tvContentForm({type:"direct",statut:"en_direct",publie:true}),row:tvRow};
   if(sec==="news")return s==="flash"?{t:"flash",o:["id",0],open:flashForm,add:()=>flashForm(),row:r=>`<div><b style="white-space:normal">${esc(r.info)}</b></div>`}
     :{t:"articles",o:["created_at",0],open:articleForm,add:()=>articleForm(),row:r=>`${r.photo_1?`<img src="${esc(r.photo_1)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(r.titre)}</b><small>${esc(r.categorie||"")} · ${fmt(r.created_at)}</small></div>`};
   if(sec==="match"){if(s==="EPF"){const g=gen("em");return{...g,open:epfKinMatchForm,add:()=>epfKinMatchForm(),row:mRow}}
@@ -470,11 +487,13 @@ function V(){const s=cur();
 async function load(){
   const L=$("#list");if(sec==="home")return dash(L);
   const v=V();$("#fab").hidden=!v.add;
+  $("#fab").setAttribute("aria-label",sec==="tv"?"Créer un direct OBS":"Ajouter");
+  $("#fab").title=sec==="tv"?"Créer un direct OBS":"Ajouter";
   L.innerHTML=(SECS[sec][2]?`<div class="pills">${SECS[sec][2].map(([k,l])=>`<button class="pill${k===cur()?" on":""}" data-s="${k}">${l}</button>`).join("")}</div>`:"")+'<div id="rl"><p class="mu">Chargement…</p></div>';
   $$(".pill").forEach(b=>b.onclick=()=>{sub[sec]=b.dataset.s;load()});
   let q=sb.from(v.t).select("*");if(v.flt)q=v.flt(q);const{data,error}=await q.order(v.o[0],{ascending:!!v.o[1]}).limit(100);
   if(error){$("#fab").hidden=true;$("#rl").innerHTML=miss(error)?`<div class="note"><b>Bientôt disponible</b><p>Cette rubrique est prête dans l’admin, mais la table <code>${v.t}</code> n’existe pas encore dans la base.</p></div>`:`<p class="err">${esc(error.message)}</p>`;return}
-  rows=data;if(!rows.length){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
+  rows=data;if(!rows.length){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(sec==="tv"?" Touchez + pour créer un direct et générer sa clé OBS.":v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
   $("#rl").innerHTML=rows.map((r,i)=>`<button class="row" data-i="${i}">${v.row(r)}</button>`).join("");
   if(v.open)$$("#rl .row").forEach(b=>b.onclick=()=>v.open(rows[+b.dataset.i]));
 }
