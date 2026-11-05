@@ -532,17 +532,56 @@ export const mountResults = (root, competitionPage = null) => {
     }
   };
 
+  const matchVideoEmbed = (value) => {
+    const safeUrl = safeHttpUrl(value);
+    if (!safeUrl) return null;
+    const url = new URL(safeUrl);
+    const youtubeHost = url.hostname === "youtube.com" || url.hostname.endsWith(".youtube.com")
+      || url.hostname === "youtu.be" || url.hostname.endsWith(".youtu.be");
+    if (youtubeHost) {
+      const videoId = url.hostname.endsWith("youtu.be")
+        ? url.pathname.split("/").filter(Boolean)[0]
+        : url.searchParams.get("v") || url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1];
+      return /^[A-Za-z0-9_-]{11}$/.test(videoId || "")
+        ? { type: "iframe", url: `https://www.youtube-nocookie.com/embed/${videoId}` }
+        : null;
+    }
+    if (url.hostname === "vimeo.com" || url.hostname === "www.vimeo.com" || url.hostname === "player.vimeo.com") {
+      const videoId = url.pathname.match(/\/(?:video\/)?(\d+)(?:\/|$)/)?.[1];
+      return videoId ? { type: "iframe", url: `https://player.vimeo.com/video/${videoId}` } : null;
+    }
+    if (/\.(?:mp4|webm|ogg)$/i.test(url.pathname)) return { type: "video", url: safeUrl };
+    return null;
+  };
+
+  const stopMatchHighlightPlayback = () => {
+    const frame = detailModal.querySelector("#matchDetailHighlightFrame");
+    const video = detailModal.querySelector("#matchDetailHighlightVideo");
+    frame.removeAttribute("src");
+    frame.hidden = true;
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+    video.hidden = true;
+    detailModal.querySelector("#matchDetailEmbeddedPlayer").hidden = true;
+  };
+
   const renderMatchHighlights = (match, details = {}) => {
     const highlightLink = detailModal.querySelector("#matchDetailHighlightLink");
     const highlightMessage = detailModal.querySelector("#matchDetailHighlightMessage");
     const highlightImage = detailModal.querySelector("#matchDetailHighlightImage");
     const fallback = detailModal.querySelector("#matchDetailHighlightFallback");
+    const embeddedPlayer = detailModal.querySelector("#matchDetailEmbeddedPlayer");
+    const frame = detailModal.querySelector("#matchDetailHighlightFrame");
+    const video = detailModal.querySelector("#matchDetailHighlightVideo");
     const videoUrl = safeHttpUrl(details.highlights_url || match.resume_video_url);
+    const embed = matchVideoEmbed(videoUrl);
     const thumbnailUrl = safeHttpUrl(
       details.highlights_thumbnail_url
       || details.thumbnail_url
       || match.resume_video_thumbnail
     ) || videoThumbnailFromUrl(videoUrl);
+    stopMatchHighlightPlayback();
     if (!videoUrl) {
       highlightLink.hidden = true;
       highlightImage.hidden = true;
@@ -550,6 +589,19 @@ export const mountResults = (root, competitionPage = null) => {
       fallback.hidden = true;
       highlightMessage.textContent = "Vidéo non fournie.";
       highlightMessage.hidden = false;
+      return;
+    }
+    if (embed) {
+      embeddedPlayer.hidden = false;
+      highlightLink.hidden = true;
+      highlightMessage.hidden = true;
+      if (embed.type === "iframe") {
+        frame.src = embed.url;
+        frame.hidden = false;
+      } else {
+        video.src = embed.url;
+        video.hidden = false;
+      }
       return;
     }
     highlightLink.href = videoUrl;
@@ -700,6 +752,7 @@ export const mountResults = (root, competitionPage = null) => {
   const closeMatchDetail = () => {
     if (!detailModal || detailModal.hidden) return;
     detailModal.hidden = true;
+    stopMatchHighlightPlayback();
     activeDetailMatchId = null;
     document.body.classList.remove("has-match-detail-page");
     window.scrollTo(0, previousPageScrollY);

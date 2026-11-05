@@ -91,6 +91,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-
 .event-match-header { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; color: var(--tx); }
 .event-match-header img { width: 24px; height: 24px; object-fit: contain; }
 .event-match-header .club-row-logo { width:24px;height:24px;border-radius:50%; }
+.tv-secret-note{padding:12px;border-radius:12px;background:#fff6dd;color:#634d13;font-size:.82rem}
+.tv-secret-field{font-family:ui-monospace,monospace;font-size:.82rem}
 </style></head><body>
 <div id="app"></div><div id="sheet"></div><div id="toast"></div>
 <script>
@@ -108,6 +110,7 @@ const IC={
   out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
   ref:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
+  tv:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M8 3l4 3 4-3M8 23h8"/>',
   events:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
   lineup:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'
 };
@@ -136,13 +139,13 @@ const chips=(n,o,v)=>`<div class="chips" data-n="${n}">${o.map(([k,l])=>`<button
 const cv=n=>$(`.chips[data-n="${n}"] .on`)?.dataset.v;
 document.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;$$(".chip",c.parentNode).forEach(x=>x.classList.remove("on"));c.classList.add("on");c.parentNode.dispatchEvent(new Event("change",{bubbles:true}))});
 
-function sheet(title,body,save,del,lbl){
+function sheet(title,body,save,del,lbl,afterSave){
   const s=$("#sheet");
   s.innerHTML=`<div class="box"><div class="bh"><b>${title}</b><button class="x" id="sx">✕</button></div><div class="bb">${body}</div><div class="bf">${del?'<button class="btn dng" id="sd">Supprimer</button>':""}<button class="btn pri" id="ss">${ic("plus")} ${lbl||"Enregistrer"}</button></div></div>`;
   s.classList.add("on");s.onchange=null;$("#ss").lastChild.textContent=lbl||"Enregistrer";
-  const close=()=>s.classList.remove("on");
+  const close=()=>{s.classList.remove("on");s.replaceChildren()};
   $("#sx").onclick=close;s.onclick=e=>{if(e.target===s)close()};
-  $("#ss").onclick=async e=>{e.target.disabled=true;try{await save();close();if(!lbl)toast("Enregistré ✓");load()}catch(err){toast("Erreur : "+(err.message||err))}e.target.disabled=false};
+  $("#ss").onclick=async e=>{const button=e.currentTarget;button.disabled=true;try{await save();close();if(!lbl)toast("Enregistré ✓");load();if(afterSave)await afterSave()}catch(err){toast("Erreur : "+(err.message||err))}button.disabled=false};
   if(del)$("#sd").onclick=async()=>{if(!confirm("Supprimer définitivement ?"))return;try{await del();close();toast("Supprimé");load()}catch(err){toast("Erreur : "+err.message)}};
 }
 
@@ -207,6 +210,88 @@ const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<la
   async()=>{const info=$("#f_i").value.trim();if(!info)throw new Error("Message vide");await w(f.id?sb.from("flash").update({info}).eq("id",f.id):sb.from("flash").insert({info}))},
   f.id&&(()=>w(sb.from("flash").delete().eq("id",f.id))));
 
+const TV_TYPES=[["direct","Direct OBS"],["emission","Émission"],["resume","Résumé de match"],["recap","Récap"]];
+const TV_STATUSES=[["programme","Programmé"],["en_direct","En direct"],["termine","Terminé"]];
+const tvStatusLabel=status=>TV_STATUSES.find(([value])=>value===status)?.[1]||status;
+const tvRow=item=>`<div>${item.miniature_url?`<img src="${esc(item.miniature_url)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(item.titre)}</b><small>${esc(TV_TYPES.find(([value])=>value===item.type)?.[1]||item.type)} · ${esc(tvStatusLabel(item.statut))} · ${item.publie?"Publié":"Brouillon"}</small></div></div>`;
+
+function showTvStreamCredentials(credentials){
+  sheet("Clé de diffusion OBS",`<p class="tv-secret-note">Cette clé est affichée une seule fois et n’est pas enregistrée dans la base. Copiez-la maintenant dans OBS et conservez-la dans un endroit sûr.</p>
+    <label>Serveur RTMPS</label><input class="tv-secret-field" id="tv_rtmp_url" readonly value="${esc(credentials.url)}">
+    <label>Clé de flux OBS</label><input class="tv-secret-field" id="tv_stream_key" readonly value="${esc(credentials.streamKey)}">
+    <button class="add" type="button" id="tv_copy_key">Copier la clé de flux</button>`,
+    async()=>{},null,"Terminé");
+  $("#tv_copy_key").onclick=async()=>{try{await navigator.clipboard.writeText(credentials.streamKey);toast("Clé copiée ✓")}catch{toast("Copie impossible : sélectionnez la clé et copiez-la manuellement.")}};
+}
+
+function tvContentForm(item={}){
+  let createdCredentials=null;
+  const isNew=!item.id;
+  const type=item.type||"emission";
+  const remove=async()=>{
+    if(item.type!=="direct"||!item.live_input_id)return w(sb.from("tv_contenus").delete().eq("id",item.id));
+    const{data:{session}}=await sb.auth.getSession();
+    if(!session)throw new Error("Votre session a expiré. Reconnectez-vous.");
+    const response=await fetch(`/api/tv-admin?id=${encodeURIComponent(item.id)}`,{method:"DELETE",headers:{Authorization:`Bearer ${session.access_token}`}});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||`Impossible de supprimer le direct (HTTP ${response.status}).`);
+  };
+  sheet(isNew?"Nouveau programme TV":"Modifier le programme TV",`
+    <label>Type</label><select id="tv_type"${isNew?"":" disabled"}>${TV_TYPES.map(([value,label])=>`<option value="${value}"${value===type?" selected":""}>${label}</option>`).join("")}</select>
+    <label>Titre</label><input id="tv_title" maxlength="160" value="${esc(item.titre)}" required>
+    <label>Description</label><textarea id="tv_description" rows="3">${esc(item.description)}</textarea>
+    <label>Nom de l’émission (facultatif)</label><input id="tv_show" value="${esc(item.emission_nom)}">
+    <label>Sport</label><input id="tv_sport" value="${esc(item.sport)}" placeholder="Football, basketball…">
+    <label>Compétition</label><input id="tv_competition" value="${esc(item.competition)}">
+    <label>Date et heure</label><input type="datetime-local" id="tv_start" value="${loc(item.debut)}">
+    <label>Fin (facultatif)</label><input type="datetime-local" id="tv_end" value="${loc(item.fin)}">
+    <label>Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
+    <small>Drive : le partage doit autoriser « Toute personne disposant du lien ». La vidéo sera lue dans Masano TV.</small>
+    <label>Miniature (URL facultative)</label><input type="url" inputmode="url" id="tv_thumbnail" value="${esc(item.miniature_url)}">
+    <label>Match lié (ID facultatif)</label><input id="tv_match" value="${esc(item.match_id)}">
+    <label>Statut</label><select id="tv_status">${TV_STATUSES.map(([value,label])=>`<option value="${value}"${value===(item.statut||"programme")?" selected":""}>${label}</option>`).join("")}</select>
+    <label><input id="tv_published" type="checkbox" style="width:auto" ${item.publie?"checked":""}> Publier sur Masano TV</label>
+    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Une entrée Cloudflare Stream et une clé RTMPS OBS seront créées à l’enregistrement. La clé ne sera montrée qu’une fois.</p>`,
+    async()=>{
+      const titre=$("#tv_title").value.trim();
+      if(!titre)throw new Error("Le titre est obligatoire.");
+      const validUrl=(value,label)=>{if(!value)return null;try{const url=new URL(value);if(!["http:","https:"].includes(url.protocol))throw new Error();return url.href}catch{throw new Error(`${label} doit être une URL HTTP ou HTTPS valide.`)}};
+      const values={
+        type:$("#tv_type").value,
+        titre,
+        description:$("#tv_description").value.trim()||null,
+        emission_nom:$("#tv_show").value.trim()||null,
+        sport:$("#tv_sport").value.trim()||null,
+        competition:$("#tv_competition").value.trim()||null,
+        statut:$("#tv_status").value,
+        debut:$("#tv_start").value?new Date($("#tv_start").value).toISOString():null,
+        fin:$("#tv_end").value?new Date($("#tv_end").value).toISOString():null,
+        video_url:validUrl($("#tv_video").value.trim(),"Le lien vidéo"),
+        miniature_url:validUrl($("#tv_thumbnail").value.trim(),"La miniature"),
+        match_id:$("#tv_match").value.trim()||null,
+        publie:$("#tv_published").checked
+      };
+      if(values.debut&&values.fin&&new Date(values.fin)<=new Date(values.debut))throw new Error("La fin doit être après le début.");
+      if(isNew&&values.type==="direct"){
+        const{data:{session}}=await sb.auth.getSession();
+        if(!session)throw new Error("Votre session a expiré. Reconnectez-vous.");
+        const response=await fetch("/api/tv-admin",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session.access_token}`},body:JSON.stringify(values)});
+        const result=await response.json().catch(()=>({}));
+        if(!response.ok)throw new Error(result.error||`Impossible de créer le direct (HTTP ${response.status}).`);
+        createdCredentials=result.rtmps;
+      }else if(isNew){
+        await w(sb.from("tv_contenus").insert(values));
+      }else{
+        await w(sb.from("tv_contenus").update(values).eq("id",item.id));
+      }
+    },
+    item.id&&remove,
+    null,
+    ()=>{if(createdCredentials)showTvStreamCredentials(createdCredentials)}
+  );
+  $("#tv_type").onchange=()=>{$("#tv_direct_note").hidden=!isNew||$("#tv_type").value!=="direct"};
+}
+
 function matchForm(m={}){
   const nw=!m.id;let lg=m.ligue||"L1",gp=m.groupe||"A",sc=[m.score_domicile??0,m.score_visiteur??0];
   const fill=()=>{const o=clubs.filter(c=>c.ligue===lg&&c.groupe===gp).map(c=>`<option value="${c.id}">${esc(c.nom)}</option>`).join("");$("#f_h").innerHTML=o;$("#f_v").innerHTML=o};
@@ -230,6 +315,64 @@ function matchForm(m={}){
   $$(".st button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sc[i]=Math.max(0,sc[i]+ +b.dataset.d);$("#s"+i).textContent=sc[i]});
   if(!nw){$("#b_ev").onclick=()=>eventsSheet(m);$("#b_lu").onclick=()=>lineupSheet(m)}
   if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
+}
+
+function epfKinMatchForm(m={}){
+  const nw=!m.id;
+  let serie=m.serie||"A";
+  const scores=[m.score_domicile??0,m.score_visiteur??0];
+  const fillClubs=()=>{
+    const home=$("#f_h"),away=$("#f_v");
+    if(!home||!away)return;
+    const previousHome=home.value||m.club_domicile_id||"";
+    const previousAway=away.value||m.club_visiteur_id||"";
+    const options=eclubs.filter(club=>club.serie===serie);
+    const markup=options.map(club=>`<option value="${club.id}">${esc(club.nom)}</option>`).join("");
+    home.innerHTML=markup;away.innerHTML=markup;
+    home.value=options.some(club=>club.id===previousHome)?previousHome:options[0]?.id||"";
+    away.value=options.some(club=>club.id===previousAway)?previousAway:options.find(club=>club.id!==home.value)?.id||"";
+  };
+  sheet(nw?"Nouveau match EPF-KIN":`${esc(cn(m.club_domicile_id))} – ${esc(cn(m.club_visiteur_id))}`,
+    `<label>Série</label>${chips("epf_serie",SR,serie)}
+    <label>Journée</label><input id="f_j" type="number" min="1" inputmode="numeric" value="${esc(m.journee)}">
+    <label>Domicile</label><select id="f_h"></select><label>Visiteur</label><select id="f_v"></select>
+    <label>Score</label><div class="sc">${scores.map((score,index)=>`<div><small>${index?"Visiteur":"Domicile"}</small><div class="st"><button type="button" data-i="${index}" data-d="-1">−</button><b id="s${index}">${score}</b><button type="button" data-i="${index}" data-d="1">+</button></div></div>`).join("")}</div>
+    <label>État du match</label>${chips("epf_status",ST,m.statut||"upcoming")}
+    <label>Date et heure</label><input type="datetime-local" id="f_d" value="${loc(m.date_match)}">
+    <label>Stade</label><input id="f_s" value="${esc(m.stade)}">
+    <label>Lien du résumé vidéo (facultatif)</label><input type="url" inputmode="url" id="f_video" value="${esc(m.resume_video_url)}" placeholder="https://…">
+    <label>Saison</label><input id="f_season" value="${esc(m.saison||"2026-2027")}">`,
+    async()=>{
+      const home=eclubs.find(club=>club.id===$("#f_h").value);
+      const away=eclubs.find(club=>club.id===$("#f_v").value);
+      const date=$("#f_d").value;
+      const journee=Number($("#f_j").value);
+      const saison=$("#f_season").value.trim();
+      const video=$("#f_video").value.trim();
+      let resume_video_url=null;
+      if(!home||!away||home.id===away.id)throw new Error("Choisissez deux clubs EPF-KIN différents.");
+      if(!date||!Number.isFinite(new Date(date).getTime()))throw new Error("Indiquez une date et une heure valides.");
+      if(!Number.isInteger(journee)||journee<1)throw new Error("La journée doit être un entier positif.");
+      if(!saison)throw new Error("Indiquez la saison.");
+      if(video){try{const url=new URL(video);if(!["http:","https:"].includes(url.protocol))throw new Error();resume_video_url=url.href}catch{throw new Error("Saisissez un lien de résumé vidéo valide (http ou https).")}}
+      const statut=cv("epf_status");
+      const payload={
+        serie,journee,club_domicile_id:home.id,club_visiteur_id:away.id,
+        date_match:new Date(date).toISOString(),stade:$("#f_s").value.trim()||null,
+        resume_video_url,saison,statut,
+        score_domicile:statut==="upcoming"?null:scores[0],
+        score_visiteur:statut==="upcoming"?null:scores[1]
+      };
+      await w(nw?sb.from("epf_kin_matches").insert(payload):sb.from("epf_kin_matches").update(payload).eq("id",m.id));
+    },
+    m.id&&(()=>w(sb.from("epf_kin_matches").delete().eq("id",m.id))));
+  fillClubs();
+  $$(".st button").forEach(button=>button.onclick=()=>{const index=+button.dataset.i;scores[index]=Math.max(0,scores[index]+ +button.dataset.d);$("#s"+index).textContent=scores[index]});
+  $("#sheet").onchange=event=>{if(event.target.dataset.n==="epf_serie"){serie=cv("epf_serie");fillClubs()}};
+  if(m.id){
+    $(".bb").insertAdjacentHTML("afterbegin",`<button type="button" class="btn pri" id="b_epf_ev" style="width:100%;margin-top:10px">${ic("ball")} Événements du match</button>`);
+    $("#b_epf_ev").onclick=()=>epfEvents(m);
+  }
 }
 
 function eventsSheet(m){
@@ -286,7 +429,7 @@ async function epfEvents(m){
     ["e_m","e_a"].forEach(i=>$("#"+i).value="");toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
 }
 
-const SECS={home:["Accueil","home"],news:["Actus","news",[["articles","Articles"],["flash","Flash infos"]]],match:["Matchs","ball",[["L1","Ligue 1"],["L2","Ligue 2"],["EPF","EPF-KIN"],["AUT","Autres matchs"]]],
+const SECS={home:["Accueil","home"],news:["Actus","news",[["articles","Articles"],["flash","Flash infos"]]],match:["Matchs","ball",[["L1","Ligue 1"],["L2","Ligue 2"],["EPF","EPF-KIN"],["AUT","Autres matchs"]]],tv:["TV","tv"],
   team:["Équipes","shield",[["lc","Clubs Linafoot"],["lb","Buteurs Linafoot"],["lr","Classements"],["ec","Clubs EPF-KIN"],["es","Buteurs EPF-KIN"],["er","Classement EPF-KIN"]]],
   sport:["Sports","grid",[["bk","Basketball"],["ju","Judo"],["om","Omnisports"]]]};
 const cur=()=>sub[sec]||SECS[sec][2]?.[0][0];
@@ -317,9 +460,10 @@ const mRow=r=>{
 };
 
 function V(){const s=cur();
+  if(sec==="tv")return{t:"tv_contenus",o:["created_at",0],open:tvContentForm,add:()=>tvContentForm(),row:tvRow};
   if(sec==="news")return s==="flash"?{t:"flash",o:["id",0],open:flashForm,add:()=>flashForm(),row:r=>`<div><b style="white-space:normal">${esc(r.info)}</b></div>`}
     :{t:"articles",o:["created_at",0],open:articleForm,add:()=>articleForm(),row:r=>`${r.photo_1?`<img src="${esc(r.photo_1)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(r.titre)}</b><small>${esc(r.categorie||"")} · ${fmt(r.created_at)}</small></div>`};
-  if(sec==="match"){if(s==="EPF"){const g=gen("em");return{...g,row:mRow}}
+  if(sec==="match"){if(s==="EPF"){const g=gen("em");return{...g,open:epfKinMatchForm,add:()=>epfKinMatchForm(),row:mRow}}
     if(s==="AUT"){const g=gen("ma");return{...g,flt:q=>q.is("ligue",null)}}
     return{t:"matchs",o:["date_match",0],flt:q=>q.eq("ligue",s),open:matchForm,add:()=>matchForm({ligue:s}),row:mRow}}
   return gen(s)}
@@ -357,7 +501,7 @@ async function dash(L){
     <div class="dashboard-section-heading"><div><h2>Vue d’ensemble</h2><p>Vos contenus et compétitions en un coup d’œil.</p></div><span>${esc(today)}</span></div>
     <div class="tiles">${tiles.map((t,i)=>`<button class="tile" data-i="${i}"><span class="tile-icon">${ic(t[4])}</span><b>${t[1]}</b><span>${t[0]}</span></button>`).join("")}</div>`;
   $$(".tile").forEach(b=>b.onclick=()=>{const t=tiles[+b.dataset.i];go(t[2],t[3])});
-  if(lm)$("#hm").onclick=()=>isE?form(R.em,lm):matchForm(lm);else $("#hn").onclick=()=>go("match","L1");
+  if(lm)$("#hm").onclick=()=>isE?epfKinMatchForm(lm):matchForm(lm);else $("#hn").onclick=()=>go("match","L1");
 }
 function go(s,p){sec=s;if(p)sub[s]=p;shell();load()}
 function shell(){

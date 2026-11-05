@@ -39,6 +39,9 @@ create table if not exists public.epf_kin_matches (
     unique (saison, journee, serie, club_domicile_id, club_visiteur_id)
 );
 
+alter table public.epf_kin_matches
+  add column if not exists resume_video_url text;
+
 create index if not exists epf_kin_matches_schedule_idx
   on public.epf_kin_matches (saison, serie, date_match);
 
@@ -47,6 +50,7 @@ alter table public.epf_kin_matches enable row level security;
 
 revoke all on public.epf_kin_clubs, public.epf_kin_matches from public, anon, authenticated;
 grant select on public.epf_kin_clubs, public.epf_kin_matches to anon, authenticated;
+grant insert, update, delete on public.epf_kin_clubs, public.epf_kin_matches to authenticated;
 
 drop policy if exists "Public can read EPF-KIN clubs" on public.epf_kin_clubs;
 create policy "Public can read EPF-KIN clubs"
@@ -55,6 +59,18 @@ create policy "Public can read EPF-KIN clubs"
 drop policy if exists "Public can read EPF-KIN matches" on public.epf_kin_matches;
 create policy "Public can read EPF-KIN matches"
   on public.epf_kin_matches for select to anon, authenticated using (true);
+
+drop policy if exists "Admins can manage EPF-KIN clubs" on public.epf_kin_clubs;
+create policy "Admins can manage EPF-KIN clubs"
+  on public.epf_kin_clubs for all to authenticated
+  using ((select public.is_admin()))
+  with check ((select public.is_admin()));
+
+drop policy if exists "Admins can manage EPF-KIN matches" on public.epf_kin_matches;
+create policy "Admins can manage EPF-KIN matches"
+  on public.epf_kin_matches for all to authenticated
+  using ((select public.is_admin()))
+  with check ((select public.is_admin()));
 
 insert into public.epf_kin_clubs (nom, serie) values
   ('ARSENAL BB', 'A'),
@@ -151,5 +167,7 @@ on conflict (saison, journee, serie, club_domicile_id, club_visiteur_id)
 do update set
   date_match = excluded.date_match,
   stade = excluded.stade;
+
+notify pgrst, 'reload schema';
 
 commit;

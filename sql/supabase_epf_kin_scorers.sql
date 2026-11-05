@@ -159,6 +159,8 @@ revoke all on public.epf_kin_scorers, public.epf_kin_match_events
   from public, anon, authenticated;
 grant select on public.epf_kin_scorers, public.epf_kin_match_events
   to anon, authenticated;
+grant insert, update, delete on public.epf_kin_scorers, public.epf_kin_match_events
+  to authenticated;
 
 drop policy if exists "Public can read EPF-KIN scorers"
   on public.epf_kin_scorers;
@@ -169,6 +171,20 @@ drop policy if exists "Public can read EPF-KIN match events"
   on public.epf_kin_match_events;
 create policy "Public can read EPF-KIN match events"
   on public.epf_kin_match_events for select to anon, authenticated using (true);
+
+drop policy if exists "Admins can manage EPF-KIN scorers"
+  on public.epf_kin_scorers;
+create policy "Admins can manage EPF-KIN scorers"
+  on public.epf_kin_scorers for all to authenticated
+  using ((select public.is_admin()))
+  with check ((select public.is_admin()));
+
+drop policy if exists "Admins can manage EPF-KIN match events"
+  on public.epf_kin_match_events;
+create policy "Admins can manage EPF-KIN match events"
+  on public.epf_kin_match_events for all to authenticated
+  using ((select public.is_admin()))
+  with check ((select public.is_admin()));
 
 do $$
 begin
@@ -194,5 +210,7 @@ begin
   end if;
 end;
 $$;
+
+notify pgrst, 'reload schema';
 
 commit;

@@ -1,5 +1,6 @@
 import { scoopSupabase, supabase } from "./supabaseClient.js";
 import { mountResults } from "./src_results.js";
+import { mountTv } from "./tv.js";
 import {
   fetchMatchsEpfKin,
   fetchMatchsInternationaux,
@@ -9,6 +10,7 @@ import {
 
 let articles = [];
 let resultsCleanup;
+let tvCleanup;
 
 const categoryLabels = {
   linafoot: "LINAFOOT",
@@ -606,6 +608,30 @@ const initializeIndex = () => {
   }, 60000);
   const showRoute = () => {
     const route = normalizeRoute(window.location.hash.slice(1));
+    const main = document.querySelector("main.container");
+    const tvView = document.getElementById("tvView");
+    renderSectionNavigation(route);
+    if (route === "tv" && tvView) {
+      if (resultsCleanup) {
+        resultsCleanup();
+        resultsCleanup = undefined;
+      }
+      main.classList.remove("has-results-view");
+      main.classList.add("has-tv-view");
+      document.getElementById("listViewContainer").style.display = "none";
+      document.getElementById("articleView").style.display = "none";
+      document.getElementById("resultsView").hidden = true;
+      tvView.hidden = false;
+      if (!tvCleanup) tvCleanup = mountTv(tvView);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    if (tvCleanup) {
+      tvCleanup();
+      tvCleanup = undefined;
+    }
+    if (tvView) tvView.hidden = true;
+    main?.classList.remove("has-tv-view");
     // Anciennes pages dédiées : le Live Center ne garde que le filtre des matchs.
     if (["calendrier", "classements", "buteurs"].includes(route)) {
       window.location.replace(`${window.location.pathname}${window.location.search}#resultats`);
@@ -615,7 +641,6 @@ const initializeIndex = () => {
     const competitionPage = footballEventRoutes[route]
       || (footballRoute ? footballCompetitionRoutes[footballRoute[1]] : null)
       || disciplineEventRoutes[route];
-    renderSectionNavigation(route);
     const isResultsRoute = route === "resultats" || Boolean(competitionPage);
     if (window.location.pathname === "/resultats" || isResultsRoute) {
       if (resultsCleanup) resultsCleanup();
@@ -641,7 +666,7 @@ const initializeIndex = () => {
   search.addEventListener("input", () => {
     const route = normalizeRoute(window.location.hash.slice(1));
     const isFootballResultsPage = route.startsWith("football/") && Boolean(footballCompetitionRoutes[route.split("/")[1]]);
-    if (window.location.pathname !== "/resultats" && route !== "resultats" && !isFootballResultsPage && !footballEventRoutes[route] && !disciplineEventRoutes[route]) {
+    if (window.location.pathname !== "/resultats" && route !== "resultats" && route !== "tv" && !isFootballResultsPage && !footballEventRoutes[route] && !disciplineEventRoutes[route]) {
       renderHome(search.value);
     }
   });

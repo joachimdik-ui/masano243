@@ -61,6 +61,7 @@
         <a href="#basket-ball">Basketball</a>
         <a href="#judo">Judo</a>
         <a href="#omnisports">Omnisports</a>
+        <a href="#tv">Masano TV</a>
         <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer" class="nav-external">Scoop243</a>
         <a href="#resultats" class="nav-live" aria-label="Live Center, aucun match en direct">Live Center</a>
       </nav>
@@ -254,6 +255,8 @@
           </div>
         </article>
 
+        <section id="tvView" class="tv-view" hidden aria-label="Masano TV"></section>
+
       </section>
 
       <!-- Colonne de Droite (Widgets) -->
@@ -407,6 +410,10 @@
           </section>
           <section id="matchPanelHighlights" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabHighlights" data-match-panel="highlights" hidden>
             <p class="match-detail-empty" id="matchDetailHighlightMessage">Vidéo non fournie.</p>
+            <div class="match-detail-embedded-player" id="matchDetailEmbeddedPlayer" hidden>
+              <iframe id="matchDetailHighlightFrame" title="Résumé vidéo du match" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen hidden></iframe>
+              <video id="matchDetailHighlightVideo" controls playsinline preload="metadata" hidden></video>
+            </div>
             <a id="matchDetailHighlightLink" class="match-detail-highlight-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Lire le résumé vidéo" hidden>
               <span class="match-detail-video-poster">
                 <img id="matchDetailHighlightImage" alt="" hidden>
