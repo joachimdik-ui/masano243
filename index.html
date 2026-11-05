@@ -25,14 +25,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <script>
+    if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) {
+      document.body.classList.add("pwa-standalone");
+    }
+  </script>
   <header class="pwa-app-header">
-    <a class="pwa-app-wordmark" href="/" aria-label="Masano243 accueil"><img src="/icons/site-logo-white.png" alt=""></a>
+    <a class="pwa-app-wordmark" href="/" aria-label="Masano243 accueil">Masano243</a>
     <div class="pwa-app-header-actions">
-      <button type="button" class="pwa-app-account-toggle" id="pwaAccountButton" aria-label="Se connecter" title="Se connecter">
+      <button type="button" class="pwa-app-account-toggle" id="pwaAccountButton" aria-label="Se connecter" title="Se connecter" aria-expanded="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>
-      </button>
-      <button type="button" class="pwa-app-search-toggle" id="pwaSearchToggle" aria-label="Ouvrir la recherche" aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
       </button>
     </div>
   </header>
@@ -57,9 +59,8 @@
       <p class="pwa-account-message" id="pwaAccountMessage" role="status" aria-live="polite"></p>
     </form>
   </dialog>
-  <form class="pwa-app-search" id="pwaSearchPanel" role="search" hidden>
-    <input type="search" id="pwaSearchInput" placeholder="Rechercher un article..." aria-label="Rechercher un article">
-    <button type="submit">Rechercher</button>
+  <form class="pwa-app-search" id="pwaSearchPanel" role="search">
+    <input type="search" id="pwaSearchInput" placeholder="Rechercher un article..." aria-label="Rechercher un article" enterkeyhint="search">
   </form>
   <nav class="pwa-sport-nav" aria-label="Rubriques sportives">
     <a href="/">Accueil</a>
@@ -395,20 +396,20 @@
 
   <nav class="pwa-bottom-nav" id="pwaBottomNav" aria-label="Navigation de l’application">
     <a href="/" data-pwa-route="home">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"></path></svg>
+      <span class="pwa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"></path></svg></span>
       <span>Accueil</span>
     </a>
     <a href="#football/l1" data-pwa-route="results">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7m7 7V4m7 16v-11"></path></svg>
+      <span class="pwa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7m7 7V4m7 16v-11"></path></svg></span>
       <span>Rencontres</span>
     </a>
     <a href="#tv" data-pwa-route="tv">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 22h8m-4-4v4"></path></svg>
+      <span class="pwa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 22h8m-4-4v4"></path></svg></span>
       <span>TV</span>
       <i class="pwa-nav-live-dot" id="pwaNavLiveDot" hidden></i>
     </a>
     <button type="button" id="pwaMenuButton" aria-haspopup="dialog" aria-controls="pwaMenuDialog">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      <span class="pwa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></span>
       <span>Menu</span>
     </button>
   </nav>

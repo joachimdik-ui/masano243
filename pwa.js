@@ -5,7 +5,6 @@ const installButton = document.getElementById("pwaInstallButton");
 const installDialog = document.getElementById("pwaInstallDialog");
 const installInstructions = document.getElementById("pwaInstallInstructions");
 const installConfirmButton = document.getElementById("pwaInstallConfirm");
-const searchToggle = document.getElementById("pwaSearchToggle");
 const searchPanel = document.getElementById("pwaSearchPanel");
 const pwaSearchInput = document.getElementById("pwaSearchInput");
 const siteSearch = document.getElementById("siteSearch");
@@ -107,7 +106,7 @@ const updateNavigation = () => {
           : "";
   document.querySelectorAll(".pwa-sport-nav a").forEach((link) => {
     const href = link.getAttribute("href");
-    const active = href === "/" ? !hash : href === "#articles" && route === "articles"
+    const active = href === "/" ? route === "home" : href === "#articles" && route === "articles"
       || href.startsWith("#football") && activeSport === "football"
       || href.startsWith("#basket-ball") && activeSport === "basket-ball"
       || href.startsWith("#judo") && activeSport === "judo"
@@ -122,6 +121,7 @@ const updateNavigation = () => {
 
 const closeMenu = () => {
   if (menuDialog?.open) menuDialog.close();
+  document.getElementById("pwaMenuButton").classList.remove("is-active");
 };
 
 const setAccountMessage = (message = "", isError = false) => {
@@ -158,8 +158,10 @@ if (supabase) {
 accountButton.addEventListener("click", () => {
   setAccountMessage();
   accountDialog.showModal();
+  accountButton.setAttribute("aria-expanded", "true");
 });
 document.getElementById("pwaAccountClose").addEventListener("click", () => accountDialog.close());
+accountDialog.addEventListener("close", () => accountButton.setAttribute("aria-expanded", "false"));
 accountDialog.addEventListener("click", (event) => {
   if (event.target === accountDialog) accountDialog.close();
 });
@@ -214,29 +216,18 @@ document.getElementById("pwaAccountSignOut").addEventListener("click", async () 
   }
 });
 
-searchToggle.addEventListener("click", () => {
-  const opening = searchPanel.hidden;
-  searchPanel.hidden = !opening;
-  searchToggle.setAttribute("aria-expanded", String(opening));
-  document.body.classList.toggle("pwa-search-open", opening);
-  if (opening) pwaSearchInput.focus();
-  else pwaSearchInput.value = "";
-});
-
-pwaSearchInput.addEventListener("input", () => {
-  siteSearch.value = pwaSearchInput.value;
-  siteSearch.dispatchEvent(new Event("input", { bubbles: true }));
-});
-
 searchPanel.addEventListener("submit", (event) => {
   event.preventDefault();
-  searchPanel.hidden = true;
-  searchToggle.setAttribute("aria-expanded", "false");
-  document.body.classList.remove("pwa-search-open");
+  siteSearch.value = pwaSearchInput.value;
+  siteSearch.dispatchEvent(new Event("input", { bubbles: true }));
   pwaSearchInput.blur();
 });
 
-document.getElementById("pwaMenuButton").addEventListener("click", () => menuDialog.showModal());
+document.getElementById("pwaMenuButton").addEventListener("click", () => {
+  menuDialog.showModal();
+  document.getElementById("pwaMenuButton").classList.add("is-active");
+});
+menuDialog.addEventListener("close", () => document.getElementById("pwaMenuButton").classList.remove("is-active"));
 document.getElementById("pwaMenuClose").addEventListener("click", closeMenu);
 menuDialog.addEventListener("click", (event) => {
   if (event.target === menuDialog) closeMenu();
@@ -244,25 +235,46 @@ menuDialog.addEventListener("click", (event) => {
 });
 
 const matchDetailPage = document.getElementById("matchDetailPage");
+const setMatchDetailView = (view) => {
+  const overview = matchDetailPage.querySelector(".match-detail-overview");
+  const panels = matchDetailPage.querySelectorAll("[data-match-panel]");
+  const pwaTabs = matchDetailPage.querySelectorAll("[data-pwa-match-tab]");
+  pwaTabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.pwaMatchTab === view));
+  if (view === "chronology") {
+    overview.hidden = false;
+    panels.forEach((panel) => { panel.hidden = true; });
+    matchDetailPage.querySelectorAll("[data-match-tab]").forEach((tab) => {
+      tab.classList.remove("is-active");
+      tab.setAttribute("aria-selected", "false");
+      tab.tabIndex = -1;
+    });
+    return;
+  }
+  overview.hidden = true;
+  panels.forEach((panel) => { panel.hidden = panel.dataset.matchPanel !== view; });
+  matchDetailPage.querySelector(`[data-match-tab="${view}"]`)?.click();
+};
+
 matchDetailPage.addEventListener("click", (event) => {
   const tab = event.target.closest("[data-pwa-match-tab]");
   if (!tab) return;
-  document.querySelectorAll("[data-pwa-match-tab]").forEach((item) => item.classList.toggle("is-active", item === tab));
-  if (tab.dataset.pwaMatchTab === "chronology") {
-    document.getElementById("matchDetailOverviewTitle").scrollIntoView({ block: "start", behavior: "smooth" });
-    return;
-  }
-  matchDetailPage.querySelector(`[data-match-tab="${tab.dataset.pwaMatchTab}"]`)?.click();
+  setMatchDetailView(tab.dataset.pwaMatchTab);
 });
 
 new MutationObserver(() => {
   if (!matchDetailPage.hidden && isInstalled()) {
-    document.querySelectorAll("[data-pwa-match-tab]").forEach((tab) => tab.classList.toggle("is-active", tab.dataset.pwaMatchTab === "chronology"));
+    setMatchDetailView("chronology");
   }
 }).observe(matchDetailPage, { attributes: true, attributeFilter: ["hidden"] });
 
-document.querySelectorAll(".pwa-sport-nav a, .pwa-bottom-nav a, .pwa-menu-dialog a").forEach((link) => {
-  link.addEventListener("click", () => {
+document.querySelectorAll(".pwa-sport-nav a, .pwa-bottom-nav a, .pwa-menu-dialog a, .pwa-app-wordmark").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const isHomeLink = link.dataset.pwaRoute === "home" || link.getAttribute("href") === "/";
+    if (isInstalled() && isHomeLink) {
+      event.preventDefault();
+      if (window.location.hash !== "#home") window.location.hash = "home";
+      else window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     if (link.getAttribute("href") !== "/resultats") {
       siteSearch.value = "";
       pwaSearchInput.value = "";
