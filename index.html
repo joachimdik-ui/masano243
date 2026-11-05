@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Masano243</title>
   <meta name="description" content="Masano243, la vitrine de l'actualité sportive en RDC." />
+  <meta name="theme-color" content="#42158f" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/site-180.png" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,7 +68,20 @@
         <a href="https://scoop243.net" target="_blank" rel="noopener noreferrer" class="nav-external">Scoop243</a>
         <a href="#resultats" class="nav-live" aria-label="Live Center, aucun match en direct">Live Center</a>
       </nav>
+      <button type="button" class="pwa-install-button" id="pwaInstallButton">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+        Installer l’application
+      </button>
     </div>
+    <dialog class="pwa-install-dialog" id="pwaInstallDialog" aria-labelledby="pwaInstallTitle">
+      <form method="dialog">
+        <button type="submit" class="pwa-install-close" aria-label="Fermer">×</button>
+        <p class="pwa-install-eyebrow">MASANO243 · APPLICATION</p>
+        <h2 id="pwaInstallTitle">Emportez le sport avec vous</h2>
+        <p id="pwaInstallInstructions">Installez Masano243 sur votre appareil pour retrouver rapidement toute l’actualité sportive.</p>
+        <button type="button" class="pwa-install-confirm" id="pwaInstallConfirm">Installer Masano243</button>
+      </form>
+    </dialog>
 
     <div class="section-nav-row" id="sectionNavRow" hidden>
       <nav class="section-nav" id="sectionNav" aria-label="Sous-rubriques"></nav>
@@ -435,5 +451,6 @@
     </div>
 
     <script type="module" src="app.js"></script>
+    <script type="module" src="pwa.js"></script>
   </body>
   </html>

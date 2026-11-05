@@ -137,6 +137,9 @@ body {
 
 .nav-row {
   position: sticky;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   top: 0;
   z-index: 100;
   background: var(--accent);
@@ -147,6 +150,8 @@ body {
 
 .nav-left {
   display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
@@ -182,6 +187,49 @@ body {
 .nav-left a.nav-external:hover {
   background-color: rgba(255, 255, 255, 0.45);
 }
+.nav-row > .pwa-install-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--accent);
+  font: 700 0.76rem/1 var(--font-text);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--transition), background-color var(--transition), color var(--transition);
+}
+.nav-row > .pwa-install-button:hover,
+.nav-row > .pwa-install-button:focus-visible {
+  transform: translateY(-1px);
+  background: #f0eafa;
+  color: #2f0e6b;
+}
+.pwa-install-button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pwa-install-button[hidden] { display: none; }
+.pwa-install-dialog {
+  width: min(440px, calc(100% - 32px));
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 80px #170b2c55;
+}
+.pwa-install-dialog::backdrop { background: #160d24a8; backdrop-filter: blur(4px); }
+.pwa-install-dialog form { position: relative; }
+.pwa-install-close { position: absolute; top: -18px; right: -14px; width: 38px; height: 38px; border: 0; border-radius: 50%; background: var(--bg); color: var(--text); font-size: 1.5rem; cursor: pointer; }
+.pwa-install-eyebrow { margin: 0 0 8px; color: var(--accent); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; }
+.pwa-install-dialog h2 { margin: 0 0 10px; font: 400 2rem/1.05 var(--font-title); }
+.pwa-install-dialog form > p:not(.pwa-install-eyebrow) { margin: 0 0 20px; color: var(--muted); font-size: 0.9rem; }
+.pwa-install-confirm { width: 100%; padding: 13px 18px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: 700 0.9rem var(--font-text); cursor: pointer; }
+.pwa-install-confirm:hover, .pwa-install-confirm:focus-visible { background: #32106f; }
+.pwa-install-confirm[hidden] { display: none; }
 
 .nav-dropdown { position: relative; color: #fff; font-family: var(--font-text); font-size: 14px; font-weight: 600; text-transform: uppercase; }
 .nav-dropdown summary { padding: 8px 14px; border-radius: 20px; cursor: pointer; list-style: none; white-space: nowrap; }
