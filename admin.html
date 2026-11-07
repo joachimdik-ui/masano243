@@ -493,25 +493,25 @@ async function lineupSheet(m){
 
 async function epfEvents(m){
   const{data:sc0}=await sb.from("epf_kin_scorers").select("id,nom,club_id").in("club_id",[m.club_domicile_id,m.club_visiteur_id]).eq("saison",m.saison||"2026-2027");const sc=sc0||[];
-  const opts=()=>(sc||[]).filter(s=>s.club_id===(cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id)).map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")||"<option value=''>Aucun buteur enregistré : saisissez son nom ci-dessous</option>";
+  const opts=()=>(sc||[]).filter(s=>s.club_id===(cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id)).map(s=>`<option value="${esc(s.nom)}"></option>`).join("");
   const dLogo = clogo(m.club_domicile_id);
   const vLogo = clogo(m.club_visiteur_id);
   sheet("Buts du match",`<div class="event-match-header">${clubMark(cshort(m.club_domicile_id,cn(m.club_domicile_id)),dLogo)}<span>${esc(cn(m.club_domicile_id))}</span><span>–</span><span>${esc(cn(m.club_visiteur_id))}</span>${clubMark(cshort(m.club_visiteur_id,cn(m.club_visiteur_id)),vLogo)}</div><div id="ev" style="margin-top:10px"></div>
   <label>Type</label>${chips("et",[["goal","But"],["penalty","Penalty"],["own_goal","CSC"]],"goal")}<label>Équipe du buteur</label>${chips("tm",[["h",cn(m.club_domicile_id)],["v",cn(m.club_visiteur_id)]],"h")}
-  <label>Buteur déjà enregistré</label><select id="e_b">${opts()}</select>
-  <label>Ou nouveau buteur (saisir le nom)</label><input id="e_n" placeholder="Ex. : Mukendi Kabasele" autocomplete="off" autocapitalize="words">
+  <label>Buteur</label><input id="e_n" list="e_dl" placeholder="Nom du joueur" autocomplete="off" autocapitalize="words"><datalist id="e_dl">${opts()}</datalist>
   <div style="display:flex;gap:8px"><div style="flex:1"><label>Minute</label><input id="e_m" type="number" min="0" max="150" inputmode="numeric"></div><div style="flex:1"><label>+ Arrêts de jeu</label><input id="e_a" type="number" min="0" max="30" inputmode="numeric"></div></div>
   <button type="button" class="btn pri" id="e_add" style="width:100%;margin:14px 0">${ic("plus")} Ajouter le but</button>`,async()=>{},null,"Fermer");
-  $("#sheet").onchange=e=>{if(e.target.dataset?.n==="tm")$("#e_b").innerHTML=opts()};
+  $("#sheet").onchange=e=>{if(e.target.dataset?.n==="tm")$("#e_dl").innerHTML=opts()};
   const ref=async()=>{const{data,error}=await sb.from("epf_kin_match_events").select("*").eq("match_id",m.id).order("minute").order("ordre");
     $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc(e.joueur||sc.find(x=>x.id===e.buteur_id)?.nom||"")}</b><small>${esc(cn(e.club_id))} · ${e.type}</small></div><button class="x" data-id="${e.id}">✕</button></div>`).join(""):'<p class="mu">Aucun but enregistré.</p>';
     $$("#ev .x").forEach(b=>b.onclick=async()=>{const{error}=await sb.from("epf_kin_match_events").delete().eq("id",b.dataset.id);if(error)toast("Erreur : "+error.message);ref()})};
   ref();
-  $("#e_add").onclick=async e=>{e.target.disabled=true;try{let id=$("#e_b").value;const nom=$("#e_n").value.trim().replace(/\s+/g," "),cid=cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id;
+  $("#e_add").onclick=async e=>{e.target.disabled=true;try{let id=null;const nom=$("#e_n").value.trim().replace(/\s+/g," "),cid=cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id;
     if(nom){const ex=sc.find(x=>x.club_id===cid&&x.nom.trim().toLowerCase()===nom.toLowerCase());if(ex)id=ex.id;else{const[ns]=await w(sb.from("epf_kin_scorers").insert({nom,club_id:cid,saison:m.saison||"2026-2027",matches_joues:0,buts:0,penaltys:0}));sc.push(ns);id=ns.id}}
-    if(!id)throw new Error("Choisissez un buteur ou saisissez son nom");const mn=$("#e_m").value;
-    await w(sb.from("epf_kin_match_events").insert({match_id:m.id,club_id:cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id,buteur_id:id,type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,ordre:Date.now()%1e9}));
-    ["e_m","e_a","e_n"].forEach(i=>$("#"+i).value="");$("#e_b").innerHTML=opts();toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
+    if(!nom)throw new Error("Saisissez le nom du buteur");const mn=$("#e_m").value;
+    const ev={match_id:m.id,club_id:cid,buteur_id:id,type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,ordre:Date.now()%1e9};
+    try{await w(sb.from("epf_kin_match_events").insert({...ev,joueur:nom}))}catch(err){if(!/joueur/.test(err.message||""))throw err;await w(sb.from("epf_kin_match_events").insert(ev))}
+    ["e_m","e_a","e_n"].forEach(i=>$("#"+i).value="");$("#e_dl").innerHTML=opts();toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
 }
 
 const SECS={home:["Accueil","home"],news:["Actus","news",[["articles","Articles"],["flash","Flash infos"]]],match:["Matchs","ball",[["L1","Ligue 1"],["L2","Ligue 2"],["EPF","EPF-KIN"],["AUT","Autres matchs"]]],tv:["TV","tv"],
