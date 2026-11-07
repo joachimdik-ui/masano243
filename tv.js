@@ -29,30 +29,51 @@ const drivePreviewUrl = (value) => {
     : "";
 };
 
-const youtubeEmbedUrl = (value) => {
+const YT_HOSTS = ["youtube.com", "www.youtube.com", "m.youtube.com"];
+
+const youtubeVideoId = (value) => {
   let url;
   try {
     url = new URL(value);
   } catch {
     return "";
   }
-  if (url.hostname === "youtu.be" || url.hostname === "www.youtu.be") {
-    const id = url.pathname.split("/").filter(Boolean)[0];
-    return /^[A-Za-z0-9_-]{11}$/.test(id || "") ? `https://www.youtube-nocookie.com/embed/${id}` : "";
+  let id = "";
+  if (url.hostname === "youtu.be" || url.hostname === "www.youtu.be") id = url.pathname.split("/").filter(Boolean)[0] || "";
+  else if (YT_HOSTS.includes(url.hostname)) id = url.searchParams.get("v") || url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1] || "";
+  return id !== "live_stream" && /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+};
+
+// Lien YouTube -> lecteur intégré Masano TV.
+// Accepte watch?v=, /live/ID, youtu.be/ID et la page live permanente d'une chaîne (/channel/UC.../live).
+const youtubeEmbedUrl = (value, live = false) => {
+  const query = `rel=0&playsinline=1${live ? "&autoplay=1" : ""}`;
+  const id = youtubeVideoId(value);
+  if (id) return `https://www.youtube-nocookie.com/embed/${id}?${query}`;
+  try {
+    const url = new URL(value);
+    const channel = YT_HOSTS.includes(url.hostname)
+      ? url.pathname.match(/^\/channel\/(UC[A-Za-z0-9_-]{22})\/live\/?$/)?.[1]
+      : "";
+    return channel ? `https://www.youtube-nocookie.com/embed/live_stream?channel=${channel}&${query}` : "";
+  } catch {
+    return "";
   }
-  if (!["youtube.com", "www.youtube.com", "m.youtube.com"].includes(url.hostname)) return "";
-  const id = url.searchParams.get("v") || url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1];
-  return /^[A-Za-z0-9_-]{11}$/.test(id || "") ? `https://www.youtube-nocookie.com/embed/${id}` : "";
+};
+
+const youtubeThumbnail = (value) => {
+  const id = youtubeVideoId(value);
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : "";
 };
 
 const mediaSource = (content) => {
   const value = content.type === "direct"
-    ? (content.statut === "termine" ? content.replay_url || content.hls_url : content.hls_url || content.video_url)
+    ? (content.statut === "termine" ? content.replay_url || content.hls_url || content.video_url : content.hls_url || content.video_url)
     : content.video_url;
   if (!value) return { type: "none", url: "" };
   const drive = drivePreviewUrl(value);
   if (drive) return { type: "iframe", url: drive, title: "Lecteur Google Drive" };
-  const youtube = youtubeEmbedUrl(value);
+  const youtube = youtubeEmbedUrl(value, content.type === "direct" && content.statut === "en_direct");
   if (youtube) return { type: "iframe", url: youtube, title: "Lecteur YouTube" };
 
   let url;
@@ -106,7 +127,7 @@ const tvThumbnail = (item) => {
   const hls = safeImageUrl(item.hls_url);
   return hls && /\/manifest\/video\.m3u8$/i.test(hls)
     ? hls.replace(/\/manifest\/video\.m3u8$/i, "/thumbnails/thumbnail.jpg?height=360")
-    : "";
+    : youtubeThumbnail(item.video_url);
 };
 
 const PENDING_TV_KEY = "masano-tv-pending-content-id";
@@ -242,7 +263,7 @@ export const mountTvHomePreview = (root) => {
   root.addEventListener("error", onImageError, true);
 
   const loadContents = async () => {
-    const columns = "id,type,titre,emission_nom,sport,competition,statut,debut,miniature_url,hls_url,publie,created_at";
+    const columns = "id,type,titre,emission_nom,sport,competition,statut,debut,miniature_url,hls_url,video_url,publie,created_at";
     const [directs, others] = await Promise.all([
       supabase.from("tv_contenus").select(columns).eq("publie", true).eq("type", "direct")
         .in("statut", ["en_direct", "programme"])
@@ -322,9 +343,12 @@ export const mountTv = (root) => {
   let activeSport = "Toutes";
   let player = null;
   let hls = null;
+  let retryTimer = null;
   let active = true;
 
   const stopPlayer = () => {
+    clearTimeout(retryTimer);
+    retryTimer = null;
     hls?.destroy();
     hls = null;
     if (player) {
@@ -356,8 +380,8 @@ export const mountTv = (root) => {
   };
 
   const cardMarkup = (content) => `<button type="button" class="tv-content-card${content.id === selectedId ? " is-selected" : ""}" data-tv-id="${escapeHtml(content.id)}">
-    ${content.miniature_url
-      ? `<img src="${escapeHtml(content.miniature_url)}" alt="" loading="lazy">`
+    ${tvThumbnail(content)
+      ? `<img src="${escapeHtml(tvThumbnail(content))}" alt="" loading="lazy">`
       : `<span class="tv-card-placeholder" aria-hidden="true">▶</span>`}
     <span class="tv-card-copy">
       <small>${content.type === "direct" && content.statut === "en_direct" ? `<span class="tv-live-label">● EN DIRECT</span>` : escapeHtml(statusLabel(content.statut))}${content.debut ? ` · ${escapeHtml(formatDate(content.debut))}` : ""}</small>
@@ -386,11 +410,22 @@ export const mountTv = (root) => {
       hls = new Hls();
       hls.loadSource(source);
       hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        const message = root.querySelector("#tvPlayerMessage");
+        if (message) message.textContent = "";
+      });
       hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (data.fatal) {
-          const message = root.querySelector("#tvPlayerMessage");
-          if (message) message.textContent = "Le flux vidéo est momentanément indisponible.";
+        if (!data.fatal) return;
+        const message = root.querySelector("#tvPlayerMessage");
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          // Le signal OBS n'est pas encore arrivé : on réessaie toutes les 5 s sans recharger la page.
+          if (message) message.textContent = "En attente du signal du direct… la lecture démarrera automatiquement.";
+          clearTimeout(retryTimer);
+          const current = hls;
+          retryTimer = setTimeout(() => { if (active && hls === current) current.loadSource(source); }, 5000);
+          return;
         }
+        if (message) message.textContent = "Le flux vidéo est momentanément indisponible.";
       });
     } catch (error) {
       console.error("Impossible de démarrer le lecteur HLS.", error);

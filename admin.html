@@ -220,7 +220,8 @@ const flashForm=(f={})=>sheet(f.id?"Modifier le flash":"Nouveau flash info",`<la
 const TV_TYPES=[["direct","Direct OBS"],["emission","Émission"],["resume","Résumé de match"],["recap","Récap"]];
 const TV_STATUSES=[["programme","Programmé"],["en_direct","En direct"],["termine","Terminé"]];
 const tvStatusLabel=status=>TV_STATUSES.find(([value])=>value===status)?.[1]||status;
-const tvRow=item=>`<div>${item.miniature_url?`<img src="${esc(item.miniature_url)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(item.titre)}</b><small>${esc(TV_TYPES.find(([value])=>value===item.type)?.[1]||item.type)} · ${esc(tvStatusLabel(item.statut))} · ${item.publie?"Publié":"Brouillon"}${item.live_input_id?" · Clé OBS prête":""}</small></div></div>`;
+const isYoutubeUrl=value=>{try{return["youtu.be","www.youtu.be","youtube.com","www.youtube.com","m.youtube.com"].includes(new URL(value).hostname)}catch{return false}};
+const tvRow=item=>`<div>${item.miniature_url?`<img src="${esc(item.miniature_url)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(item.titre)}</b><small>${esc(TV_TYPES.find(([value])=>value===item.type)?.[1]||item.type)} · ${esc(tvStatusLabel(item.statut))} · ${item.publie?"Publié":"Brouillon"}${item.live_input_id?" · Clé OBS prête":(item.type==="direct"&&item.video_url?" · YouTube":"")}</small></div></div>`;
 
 function showTvStreamCredentials(credentials){
   sheet("Direct prêt pour OBS",`<p class="tv-secret-note">Le direct est créé. Copiez ces informations dans OBS. Gardez la clé secrète : ne la partagez avec personne. Vous pourrez la réafficher à tout moment depuis la fiche du direct (bouton « Afficher la clé OBS »).</p>
@@ -248,20 +249,21 @@ function tvContentForm(item={}){
     if(!response.ok)throw new Error(result.error||`Impossible de supprimer le direct (HTTP ${response.status}).`);
   };
   sheet(isNew?(type==="direct"?"Créer un direct OBS":"Nouveau programme TV"):"Modifier le programme TV",`
-    ${!isNew&&item.live_input_id?`<div class="tv-quick"><button type="button" class="btn pri" id="tv_go_live">🔴 Passer en direct</button><button type="button" class="btn" id="tv_end_live">⏹ Terminer</button></div>
-    <button type="button" class="add" id="tv_show_key" style="margin:0 0 10px">🔑 Afficher la clé OBS</button>
+    ${!isNew&&item.type==="direct"?`<div class="tv-quick"><button type="button" class="btn pri" id="tv_go_live">🔴 Passer en direct</button><button type="button" class="btn" id="tv_end_live">⏹ Terminer</button></div>
+    ${item.live_input_id?`<button type="button" class="add" id="tv_show_key" style="margin:0 0 10px">🔑 Afficher la clé OBS</button>
     <div id="tv_key_box" hidden>
       <label>Serveur RTMPS</label><input class="tv-secret-field" id="tv_key_url" readonly>
       <label>Clé de flux OBS</label><input class="tv-secret-field" id="tv_key_value" readonly>
       <div style="display:flex;gap:8px"><button class="add" type="button" id="tv_key_copy_url">Copier le serveur</button><button class="add" type="button" id="tv_key_copy_value">Copier la clé</button></div>
       <ol class="tv-obs-steps"><li>Dans OBS : <b>Paramètres → Stream</b> → <b>Personnalisé…</b></li><li>Collez le serveur et la clé, puis <b>Démarrer le streaming</b>.</li><li>Touchez <b>Passer en direct</b> ici : le direct apparaît sur l’accueil du site.</li></ol>
-    </div>`:""}
+    </div>`:""}`:""}
     <label>Type</label><select id="tv_type"${isNew?"":" disabled"}>${TV_TYPES.map(([value,label])=>`<option value="${value}"${value===type?" selected":""}>${label}</option>`).join("")}</select>
+    <div id="tv_source_group"${isNew&&type==="direct"?"":" hidden"}><label>Source du direct</label><select id="tv_source"><option value="obs">🎥 OBS — clé de flux générée par Masano</option><option value="youtube">▶ Lien YouTube Live</option></select></div>
     <label>Titre</label><input id="tv_title" maxlength="160" value="${esc(item.titre)}" placeholder="Ex. AS Vita Club – TP Mazembe" required>
     <label>Sport</label><input id="tv_sport" list="tv_sports" value="${esc(item.sport)}" placeholder="Football, basketball…"><datalist id="tv_sports"><option value="Football"><option value="Basketball"><option value="Judo"><option value="Omnisports"></datalist>
     <label>Compétition</label><input id="tv_competition" value="${esc(item.competition)}" placeholder="Linafoot, EPF-KIN…">
     <label>Date et heure</label><input type="datetime-local" id="tv_start" value="${loc(item.debut||(isNew&&type==="direct"?new Date():null))}">
-    <div id="tv_video_group"${type==="direct"?" hidden":""}><label>Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
+    <div id="tv_video_group"${type==="direct"&&(isNew||item.live_input_id)?" hidden":""}><label id="tv_video_label">Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
     <small>Drive : le partage doit autoriser « Toute personne disposant du lien ». La vidéo sera lue dans Masano TV.</small></div>
     <label>Statut</label><select id="tv_status">${TV_STATUSES.map(([value,label])=>`<option value="${value}"${value===status?" selected":""}>${label}</option>`).join("")}</select>
     <label><input id="tv_published" type="checkbox" style="width:auto" ${published?"checked":""}> Publier sur Masano TV</label>
@@ -272,7 +274,8 @@ function tvContentForm(item={}){
       <label>Miniature (URL facultative)</label><input type="url" inputmode="url" id="tv_thumbnail" value="${esc(item.miniature_url)}" placeholder="Sinon : image du direct automatique">
       <label>Match lié (ID facultatif)</label><input id="tv_match" value="${esc(item.match_id)}">
     </details>
-    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Masano générera votre serveur et votre clé RTMPS pour OBS dès l’enregistrement. Le direct est publié et en direct par défaut : il s’affiche sur l’accueil dès que vous touchez le bouton.</p>`,
+    <p class="tv-secret-note" id="tv_direct_note"${isNew&&type==="direct"?"":" hidden"}>Masano générera votre serveur et votre clé RTMPS pour OBS dès l’enregistrement. Le direct est publié et en direct par défaut : il s’affiche sur l’accueil dès que vous touchez le bouton.</p>
+    <p class="tv-secret-note" id="tv_youtube_note" hidden>Collez le lien de votre YouTube Live (watch, /live/ ou youtu.be). Le direct est créé « Programmé » : touchez <b>Passer en direct</b> quand la diffusion YouTube démarre. Dans YouTube Studio, vérifiez que l’<b>intégration</b> est autorisée.</p>`,
     async()=>{
       const titre=$("#tv_title").value.trim();
       if(!titre)throw new Error("Le titre est obligatoire.");
@@ -293,7 +296,9 @@ function tvContentForm(item={}){
         publie:$("#tv_published").checked
       };
       if(values.debut&&values.fin&&new Date(values.fin)<=new Date(values.debut))throw new Error("La fin doit être après le début.");
-      if(isNew&&values.type==="direct"){
+      const ytSource=values.type==="direct"&&(isNew?$("#tv_source").value==="youtube":!item.live_input_id);
+      if(ytSource&&(!values.video_url||!isYoutubeUrl(values.video_url)))throw new Error("Collez un lien YouTube Live valide (youtube.com/watch…, youtube.com/live/… ou youtu.be/…).");
+      if(isNew&&values.type==="direct"&&!ytSource){
         const{data:{session}}=await sb.auth.getSession();
         if(!session)throw new Error("Votre session a expiré. Reconnectez-vous.");
         const response=await fetch("/api/tv-admin",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session.access_token}`},body:JSON.stringify(values)});
@@ -319,9 +324,11 @@ function tvContentForm(item={}){
     return result;
   };
   const tvCopy=async(value,message)=>{try{await navigator.clipboard.writeText(value);toast(message)}catch{toast("Copie impossible : sélectionnez le texte et copiez-le manuellement.")}};
-  if(!isNew&&item.live_input_id){
+  if(!isNew&&item.type==="direct"){
     $("#tv_go_live").onclick=()=>{$("#tv_status").value="en_direct";$("#tv_published").checked=true;$("#ss").click()};
     $("#tv_end_live").onclick=()=>{$("#tv_status").value="termine";$("#ss").click()};
+  }
+  if(!isNew&&item.live_input_id){
     $("#tv_show_key").onclick=async event=>{
       const button=event.currentTarget;button.disabled=true;
       try{const{rtmps}=await tvApi("GET");$("#tv_key_url").value=rtmps.url;$("#tv_key_value").value=rtmps.streamKey;$("#tv_key_box").hidden=false;button.hidden=true}
@@ -331,19 +338,23 @@ function tvContentForm(item={}){
     $("#tv_key_copy_url").onclick=()=>tvCopy($("#tv_key_url").value,"Serveur copié ✓");
     $("#tv_key_copy_value").onclick=()=>tvCopy($("#tv_key_value").value,"Clé copiée ✓");
   }
-  const updateTvTypeFields=()=>{
+  const updateTvTypeFields=(reset=true)=>{
     const isDirect=$("#tv_type").value==="direct";
-    $("#tv_direct_note").hidden=!isNew||!isDirect;
-    $("#tv_video_group").hidden=isDirect;
+    const yt=isDirect&&(isNew?$("#tv_source").value==="youtube":!item.live_input_id);
+    $("#tv_source_group").hidden=!(isNew&&isDirect);
+    $("#tv_direct_note").hidden=!(isNew&&isDirect&&!yt);
+    $("#tv_youtube_note").hidden=!yt;
+    $("#tv_video_group").hidden=isDirect&&!yt;
+    $("#tv_video_label").textContent=yt?"Lien YouTube Live":"Lien vidéo";
     $("#tv_more").open=!isDirect;
     if(isNew){
-      $("#tv_status").value=isDirect?"en_direct":"programme";
-      $("#tv_published").checked=isDirect;
-      $("#ss").lastChild.textContent=isDirect?"Créer le direct + générer la clé OBS":"Enregistrer";
+      if(reset){$("#tv_status").value=isDirect&&!yt?"en_direct":"programme";$("#tv_published").checked=isDirect}
+      $("#ss").lastChild.textContent=isDirect?(yt?"Créer le direct YouTube":"Créer le direct + générer la clé OBS"):"Enregistrer";
     }
   };
-  $("#tv_type").onchange=updateTvTypeFields;
-  if(isNew&&type==="direct")$("#ss").lastChild.textContent="Créer le direct + générer la clé OBS";
+  $("#tv_type").onchange=()=>updateTvTypeFields();
+  $("#tv_source").onchange=()=>updateTvTypeFields();
+  updateTvTypeFields(false);
 }
 
 function matchForm(m={}){
