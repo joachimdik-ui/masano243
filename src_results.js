@@ -164,10 +164,10 @@ const FOOTBALL_SCOPES = [
   ["international", "International"]
 ];
 const SPORT_CHIPS = [
-  ["football", "Football", "⚽"],
-  ["basketball", "Basketball", "🏀"],
-  ["judo", "Judo", "🥋"],
-  ["omnisports", "Omnisports", "🏅"]
+  ["football", "Football"],
+  ["basketball", "Basketball"],
+  ["judo", "Judo"],
+  ["omnisports", "Omnisports"]
 ];
 
 const MATCH_SKELETONS = '<div class="match-skeleton"></div><div class="match-skeleton"></div><div class="match-skeleton"></div>';
@@ -1414,7 +1414,7 @@ export const mountResults = (root, competitionPage = null) => {
     sportSwitchEl.className = "sport-switch";
     sportSwitchEl.setAttribute("role", "tablist");
     sportSwitchEl.setAttribute("aria-label", "Choisir un sport");
-    sportSwitchEl.innerHTML = SPORT_CHIPS.map(([key, label, icon]) => `<button type="button" class="sport-chip${key === sportFilter ? " is-active" : ""}" role="tab" aria-selected="${key === sportFilter}" data-sport="${key}"><span class="sport-chip-icon" aria-hidden="true">${icon}</span><span class="sport-chip-label">${label}</span><b class="sport-chip-count" data-sport-count="${key}" hidden></b></button>`).join("");
+    sportSwitchEl.innerHTML = SPORT_CHIPS.map(([key, label]) => `<button type="button" class="sport-chip${key === sportFilter ? " is-active" : ""}" role="tab" aria-selected="${key === sportFilter}" data-sport="${key}"><span class="sport-chip-label">${label}</span><b class="sport-chip-count" data-sport-count="${key}" hidden></b></button>`).join("");
     root.querySelector(".results-toolbar").prepend(sportSwitchEl);
     sportSwitchEl.addEventListener("click", (event) => {
       const chip = event.target.closest("[data-sport]");

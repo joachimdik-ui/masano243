@@ -2779,3 +2779,6 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
   body.pwa-standalone .match-team strong { font-size: .72rem; }
   body.pwa-standalone .team-mark { width: 38px; height: 38px; flex-basis: 38px; }
 }
+/* Menu des rubriques sportives : sans icônes */
+.sport-chip-icon { display: none !important; }
+.sport-chip { gap: 8px; }
