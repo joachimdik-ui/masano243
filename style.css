@@ -1595,7 +1595,7 @@ body.has-player-modal { overflow: hidden; }
   body.pwa-standalone .match-detail-tab { padding-right: 7px; padding-left: 7px; font-size: .62rem; }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 700px) and (prefers-color-scheme: dark) {
   body.pwa-standalone {
     --pwa-purple: #7425d2;
     --pwa-deep-purple: #32105e;
@@ -2258,7 +2258,7 @@ body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
 .club-logo-slot { background: #fff; }
 
 /* ---------- 2b. Mode sombre de l'application : tout est relu ---------- */
-@media (max-width: 700px) {
+@media (max-width: 700px) and (prefers-color-scheme: dark) {
   /* Classement du Live Center */
   body.pwa-standalone .standings-table tbody th,
   body.pwa-standalone .standings-table tbody td { color: #ece9f2; }
@@ -2507,8 +2507,10 @@ body { background: var(--bg); letter-spacing: 0.005em; }
   .match-card { padding: 16px 18px; border-radius: 18px; }
 }
 
-/* Application installée : barre du bas à pastilles + thème sombre */
+/* Application installée : barre du bas à pastilles */
 body.pwa-standalone .pwa-bottom-nav .pwa-nav-icon { width: 58px; border-radius: var(--radius-pill); }
+
+@media (prefers-color-scheme: dark) {
 body.pwa-standalone .sport-chip { background: #15151b; color: #f3f1f7; box-shadow: none; }
 body.pwa-standalone .sport-chip-icon, body.pwa-standalone .sport-chip-count { background: #272731; color: #d9bcff; }
 body.pwa-standalone .sport-chip.is-active { background: #7425d2; color: #fff; box-shadow: 0 8px 20px rgba(116, 37, 210, 0.35); }
@@ -2523,3 +2525,112 @@ body.pwa-standalone .match-card { border: 0; border-radius: 20px; padding: 16px 
 body.pwa-standalone .match-card.is-live { box-shadow: inset 4px 0 0 #f04452; }
 body.pwa-standalone .match-card .match-score { background: #272731; color: #f3f1f7; }
 body.pwa-standalone .match-list { gap: 14px; }
+}
+
+
+/* =====================================================================
+   APPLICATION — style « app de scores » clair (inspiration LiveScore)
+   Charte Masano243 : violet #42158f · Bebas Neue (titres) · Montserrat (texte)
+   ===================================================================== */
+@media (max-width: 700px) {
+  body.pwa-standalone {
+    --pwa-purple: #42158f;
+    --pwa-deep-purple: #1f0a45;
+    --bg: #f4f2fa;
+    --surface: #ffffff;
+    --text: #1b1630;
+    --muted: #7b7893;
+    --accent: #42158f;
+    background: linear-gradient(180deg, #ebe5f8 0, #f4f2fa 220px);
+    color: var(--text);
+  }
+
+  /* En-tête violet arrondi en bas */
+  body.pwa-standalone .pwa-app-header { border-radius: 0 0 26px 26px; background: linear-gradient(135deg, #5b24b8 0%, #42158f 60%, #2a0c63 100%); box-shadow: 0 10px 26px rgba(42, 12, 99, .25); }
+  body.pwa-standalone .pwa-app-wordmark { font-family: var(--font-title); font-size: 1.7rem; font-weight: 400; letter-spacing: .06em; }
+  body.pwa-standalone .pwa-app-header-actions button { border-radius: 50%; background: rgba(255, 255, 255, .16); color: #fff; }
+
+  /* Pastilles de sport / compétition : capsule violette pleine */
+  body.pwa-standalone .pwa-sport-nav a,
+  body.pwa-standalone .competition-filter,
+  body.pwa-standalone .status-filter {
+    border: 0; border-radius: 999px; background: #fff; color: #4a4560; padding: 10px 18px;
+    box-shadow: 0 3px 12px rgba(42, 12, 99, .08); font-weight: 700;
+  }
+  body.pwa-standalone .pwa-sport-nav a[aria-current="page"],
+  body.pwa-standalone .competition-filter.is-active,
+  body.pwa-standalone .status-filter.is-active {
+    background: linear-gradient(135deg, #6a2fd0, #42158f); color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, .32);
+  }
+  body.pwa-standalone .pill-count { background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .competition-filter.is-active .pill-count { background: rgba(255,255,255,.25); color: #fff; }
+
+  /* Sports (page Rencontres) */
+  body.pwa-standalone .sport-chip { background: #fff; color: #1b1630; box-shadow: 0 3px 12px rgba(42, 12, 99, .08); }
+  body.pwa-standalone .sport-chip-icon, body.pwa-standalone .sport-chip-count { background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .sport-chip.is-active { background: linear-gradient(135deg, #6a2fd0, #42158f); color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, .32); }
+  body.pwa-standalone .sport-chip.is-active .sport-chip-icon,
+  body.pwa-standalone .sport-chip.is-active .sport-chip-count { background: rgba(255,255,255,.22); color: #fff; }
+
+  /* Onglets segmentés (Stats · Compos · Résumé) */
+  body.pwa-standalone .results-view-tabs,
+  body.pwa-standalone .match-detail-tabs { background: #ece6f8; border-radius: 999px; padding: 5px; gap: 4px; border: 0; }
+  body.pwa-standalone .results-tab,
+  body.pwa-standalone .match-detail-tab { border: 0; border-radius: 999px; color: #7b7893; font-weight: 700; }
+  body.pwa-standalone .results-tab.is-active,
+  body.pwa-standalone .match-detail-tab.is-active { background: linear-gradient(135deg, #6a2fd0, #42158f); color: #fff; border: 0; box-shadow: 0 6px 14px rgba(66, 21, 143, .3); }
+
+  /* Titres de section : « Matchs » + « Voir tout » */
+  body.pwa-standalone .section-title,
+  body.pwa-standalone .home-live-head h2 { font-family: var(--font-text); font-size: 1.05rem; font-weight: 800; letter-spacing: 0; color: #1b1630; }
+  body.pwa-standalone .home-live-head a { color: #f08a24; font-weight: 700; }
+
+  /* Carte « Live Match » violet profond */
+  body.pwa-standalone .home-live-card.is-match {
+    border: 0; border-radius: 24px; color: #fff;
+    background: radial-gradient(circle at 85% 12%, rgba(185, 133, 255, .35), transparent 45%), linear-gradient(145deg, #3a1280 0%, #2a0c63 55%, #1f0a45 100%);
+    box-shadow: 0 16px 32px rgba(42, 12, 99, .35);
+  }
+  body.pwa-standalone .home-live-card.is-match:hover { border: 0; }
+  body.pwa-standalone .home-live-card.is-match strong,
+  body.pwa-standalone .home-live-row b,
+  body.pwa-standalone .home-live-card.is-match span { color: #fff; }
+  body.pwa-standalone .home-live-status { background: rgba(255, 255, 255, .16); color: #fff; border-radius: 999px; }
+  body.pwa-standalone .home-live-logo { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.14); }
+  body.pwa-standalone .home-live-logo i { color: #fff; }
+
+  /* Lignes de matchs : nom + logo | heure orange + date | logo + nom */
+  body.pwa-standalone .match-list { gap: 14px; }
+  body.pwa-standalone .match-card { padding: 14px 18px; border: 0; border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgba(42, 12, 99, .08); }
+  body.pwa-standalone .match-card-top { margin-bottom: 10px; }
+  body.pwa-standalone .match-card .source-badge,
+  body.pwa-standalone .match-card .match-status { display: none; }
+  body.pwa-standalone .match-competition { color: #9a96ad; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  body.pwa-standalone .match-teams { grid-template-columns: minmax(0,1fr) 70px minmax(0,1fr); gap: 10px; }
+  body.pwa-standalone .home-team { flex-direction: row-reverse; justify-content: flex-end; text-align: right; }
+  body.pwa-standalone .away-team { justify-content: flex-start; text-align: left; }
+  body.pwa-standalone .team-mark { width: 34px; height: 34px; flex-basis: 34px; background: #f4f0fb; color: #42158f; }
+  body.pwa-standalone .match-team strong { color: #1b1630; font-size: .8rem; font-weight: 700; }
+  body.pwa-standalone .match-kickoff { display: grid; gap: 1px; justify-items: center; color: #f08a24; line-height: 1.15; }
+  body.pwa-standalone .match-kickoff .ko-time { font-size: .95rem; font-weight: 800; }
+  body.pwa-standalone .match-kickoff .ko-date { color: #a5a1b8; font-size: .6rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  body.pwa-standalone .match-card .match-score { padding: 5px 12px; background: #efe8fb; color: #42158f; font-size: 1.1rem; font-weight: 800; }
+  body.pwa-standalone .match-card.is-live { box-shadow: inset 4px 0 0 #f04452, 0 6px 20px rgba(42, 12, 99, .08); }
+
+  /* Détail du match : bandeau violet + carte blanche flottante */
+  body.pwa-standalone .match-detail-page,
+  body.pwa-standalone .match-detail-page-content { background: #f4f2fa; }
+  body.pwa-standalone .match-detail-header { background: linear-gradient(145deg, #3a1280, #1f0a45); color: #fff; padding-bottom: 54px; border-radius: 0 0 28px 28px; }
+  body.pwa-standalone .match-detail-competition { color: #fff; font-weight: 800; }
+  body.pwa-standalone .match-detail-close { border-radius: 50%; background: rgba(255,255,255,.16); color: #fff; }
+  body.pwa-standalone .match-detail-overview { margin: -38px 14px 0; padding: 18px; border-radius: 22px; background: #fff; box-shadow: 0 14px 34px rgba(42, 12, 99, .14); }
+  body.pwa-standalone .match-detail-facts p { border-radius: 14px; background: #f4f0fb; }
+  body.pwa-standalone .match-detail-facts strong { color: #1b1630; }
+  body.pwa-standalone .match-detail-facts span { color: #7b7893; }
+
+  /* Barre du bas : pastille violette sur l'onglet actif */
+  body.pwa-standalone .pwa-bottom-nav { border-radius: 24px 24px 0 0; background: #fff; box-shadow: 0 -8px 26px rgba(42, 12, 99, .1); border: 0; }
+  body.pwa-standalone .pwa-bottom-nav > a, body.pwa-standalone .pwa-bottom-nav > button { color: #8a86a0; }
+  body.pwa-standalone .pwa-bottom-nav > .is-active { color: #42158f; }
+  body.pwa-standalone .pwa-bottom-nav > .is-active .pwa-nav-icon { background: #efe8fb; }
+}

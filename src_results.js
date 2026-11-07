@@ -40,6 +40,15 @@ const formatKickoff = (date) => {
     : new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(parsed);
 };
 
+const formatKickoffParts = (date) => {
+  const parsed = date ? new Date(date) : null;
+  if (!parsed || Number.isNaN(parsed.getTime())) return null;
+  return {
+    time: new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" }).format(parsed),
+    day: new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(parsed).replace(".", "")
+  };
+};
+
 const formatMatchDate = (date) => {
   if (!date) return "Date à confirmer";
   const parsed = new Date(date);
@@ -80,7 +89,12 @@ const renderMatch = (match) => {
   const hasScore = match.score_domicile !== null && match.score_visiteur !== null;
   const score = hasScore
     ? `<strong class="match-score">${match.score_domicile}<span>–</span>${match.score_visiteur}</strong>`
-    : `<strong class="match-kickoff">${formatKickoff(match.date_match)}</strong>`;
+    : (() => {
+      const parts = formatKickoffParts(match.date_match);
+      return parts
+        ? `<strong class="match-kickoff"><span class="ko-time">${parts.time}</span><small class="ko-date">${escapeHtml(parts.day)}</small></strong>`
+        : `<strong class="match-kickoff">${formatKickoff(match.date_match)}</strong>`;
+    })();
 
   return `<article class="match-card${isLive ? " is-live" : ""}" data-match-id="${escapeHtml(match.id)}" data-match-detail="${escapeHtml(match.id)}" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Détails du match : ${escapeHtml(match.equipe_domicile)} contre ${escapeHtml(match.equipe_visiteur)}">
     <div class="match-card-top">
