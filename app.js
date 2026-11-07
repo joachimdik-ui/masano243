@@ -67,6 +67,7 @@ const disciplineEventRoutes = {
 
 // Interclubs et International sont désormais de simples pages d'événements (plus d'actualités).
 const footballEventRoutes = {
+  rencontres: { competition: "all", title: "Rencontres", view: "matches", layout: "rencontres" },
   "football/interclubs": { competition: "interclubs", title: "Interclubs (CAF)", view: "matches", layout: "interclubs" },
   "football/international": { competition: "international", title: "International", view: "matches", discipline: "international", layout: "international" }
 };

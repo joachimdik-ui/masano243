@@ -70,14 +70,14 @@ updateInstallButton();
 const isStandalone = isInstalled();
 document.body.classList.toggle("pwa-standalone", isStandalone);
 if (isStandalone && window.location.pathname === "/resultats" && !window.location.hash) {
-  window.location.hash = "football/l1";
+  window.location.hash = "rencontres";
 }
 // La bande « En direct » s’affiche aussi sur le site web, pas seulement dans l’application installée.
 homeTvCleanup = mountTvHomePreview(document.getElementById("pwaHomeTv"));
 
 const updateNavigation = () => {
   const hash = window.location.hash.slice(1).toLowerCase();
-  const isResultsRoute = (window.location.pathname === "/resultats" && !hash) || hash === "resultats"
+  const isResultsRoute = (window.location.pathname === "/resultats" && !hash) || hash === "resultats" || hash === "rencontres"
     || /^football\/(l1|l2|epf-kin|leopards|interclubs|international)(\/|$)/.test(hash)
     || /^(basket-ball|judo|omnisports)\/evenements$/.test(hash);
   const route = isResultsRoute

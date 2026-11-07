@@ -139,6 +139,23 @@ const renderPlayerAvatar = (player, extraClass = "") => {
   return `<span class="player-avatar ${extraClass}" aria-hidden="true"><span class="player-avatar-fallback"${player.photo_url ? " hidden" : ""}>${initials}</span>${player.photo_url ? `<img class="player-avatar-img" src="${escapeHtml(player.photo_url)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
+const FOOTBALL_CATEGORIES = ["linafoot_l1", "linafoot_l2", "epf_kin", "leopards", "interclubs", "international"];
+const FOOTBALL_SCOPES = [
+  ["all", "Tout le football"],
+  ["linafoot_l1", "Linafoot L1"],
+  ["linafoot_l2", "Linafoot L2"],
+  ["epf_kin", "EPF-KIN"],
+  ["leopards", "Léopards"],
+  ["interclubs", "Interclubs"],
+  ["international", "International"]
+];
+const SPORT_CHIPS = [
+  ["football", "Football", "⚽"],
+  ["basketball", "Basketball", "🏀"],
+  ["judo", "Judo", "🥋"],
+  ["omnisports", "Omnisports", "🏅"]
+];
+
 const MATCH_SKELETONS = '<div class="match-skeleton"></div><div class="match-skeleton"></div><div class="match-skeleton"></div>';
 
 // Derniers matchs chargés : réaffichés instantanément quand on change de page (L1 → L2…), puis actualisés en arrière-plan.
@@ -198,6 +215,9 @@ export const mountResults = (root, competitionPage = null) => {
   // live = Live Center ; league / leopards / interclubs / international / events = pages de rubrique
   const layout = competitionPage?.layout || (competitionPage ? "events" : "live");
   const isLiveCenter = layout === "live";
+  // « Rencontres » : toutes les rencontres, sport par sport (football = toutes compétitions réunies).
+  const isAllLayout = layout === "rencontres";
+  root.classList.toggle("is-rencontres", isAllLayout);
   root.classList.toggle("is-live-center", isLiveCenter);
   root.classList.toggle("is-compact", !isLiveCenter);
   const allTabs = [matchesTab, standingsTab, topScorersView, playersTab];
@@ -216,6 +236,9 @@ export const mountResults = (root, competitionPage = null) => {
   let standingsMode = "teams";
   let competitionFilter = competitionPage?.competition || "linafoot_l1";
   let selectedDisciplineCompetition = "";
+  let sportFilter = "football";
+  let footballScope = "all";
+  let sportSwitchEl = null;
   let statusFilter = "all";
   let activeView = "matches";
   let realtimeChannel;
@@ -765,16 +788,69 @@ export const mountResults = (root, competitionPage = null) => {
     return `${sourceLabel} : ${error.message}`;
   };
 
+  const inScope = (match) => {
+    const category = match.competition_category;
+    if (!isAllLayout) return category === competitionFilter;
+    if (sportFilter !== "football") return category === sportFilter;
+    return FOOTBALL_CATEGORIES.includes(category) && (footballScope === "all" || category === footballScope);
+  };
+
+  function updateSportCounts() {
+    if (!sportSwitchEl) return;
+    const counts = {
+      football: matches.filter((match) => FOOTBALL_CATEGORIES.includes(match.competition_category)).length
+    };
+    ["basketball", "judo", "omnisports"].forEach((key) => {
+      counts[key] = matches.filter((match) => match.competition_category === key).length;
+    });
+    sportSwitchEl.querySelectorAll("[data-sport-count]").forEach((badge) => {
+      const total = counts[badge.dataset.sportCount];
+      badge.textContent = total ? String(total) : "";
+      badge.hidden = !total;
+    });
+  }
+
+  function renderScopePills() {
+    let buttons;
+    if (sportFilter === "football") {
+      buttons = FOOTBALL_SCOPES.map(([value, label]) => {
+        const selected = value === footballScope;
+        const total = matches.filter((match) => (value === "all"
+          ? FOOTBALL_CATEGORIES.includes(match.competition_category)
+          : match.competition_category === value)).length;
+        return `<button type="button" class="competition-filter${selected ? " is-active" : ""}" role="tab" aria-selected="${selected}" data-football-scope="${value}">${label}${total ? `<span class="pill-count">${total}</span>` : ""}</button>`;
+      });
+    } else {
+      const competitions = [...new Set(matches
+        .filter((match) => match.competition_category === sportFilter)
+        .map((match) => match.competition)
+        .filter(Boolean))].sort();
+      if (!competitions.includes(selectedDisciplineCompetition)) selectedDisciplineCompetition = "";
+      if (!competitions.length) {
+        disciplineCompetitionControls.innerHTML = "";
+        disciplineCompetitionControls.hidden = true;
+        return;
+      }
+      buttons = ["", ...competitions].map((competition) => {
+        const selected = competition === selectedDisciplineCompetition;
+        const label = competition || "Toutes les compétitions";
+        return `<button type="button" class="competition-filter${selected ? " is-active" : ""}" role="tab" aria-selected="${selected}" data-discipline-competition="${escapeHtml(competition)}">${escapeHtml(label)}</button>`;
+      });
+    }
+    disciplineCompetitionControls.innerHTML = buttons.join("");
+    disciplineCompetitionControls.hidden = false;
+  }
+
   const filteredMatches = () => matches.filter((match) => {
-    const matchesCompetition = isLiveCenter || match.competition_category === competitionFilter;
+    const matchesCompetition = isLiveCenter || inScope(match);
     const matchesNamedCompetition = !selectedDisciplineCompetition || match.competition === selectedDisciplineCompetition;
-    const matchesLeague = isLiveCenter || match.source !== "local"
+    const matchesLeague = isLiveCenter || isAllLayout || match.source !== "local"
       || !match.ligue
       || match.ligue === linafootLeague.value;
-    const matchesGroup = isLiveCenter || match.source !== "local"
+    const matchesGroup = isLiveCenter || isAllLayout || match.source !== "local"
       || !match.groupe
       || match.groupe === linafootGroup.value;
-    const matchesEpfSeries = isLiveCenter || match.source !== "epf_kin"
+    const matchesEpfSeries = isLiveCenter || isAllLayout || match.source !== "epf_kin"
       || match.serie === epfKinSeries.value;
     // Live Center : uniquement les matchs en direct / en cours.
     const matchesStatus = isLiveCenter
@@ -785,6 +861,10 @@ export const mountResults = (root, competitionPage = null) => {
   });
 
   const renderDisciplineCompetitionTabs = () => {
+    if (isAllLayout) {
+      renderScopePills();
+      return;
+    }
     if (!competitionPage?.discipline) {
       disciplineCompetitionControls.hidden = true;
       return;
@@ -806,10 +886,11 @@ export const mountResults = (root, competitionPage = null) => {
   const renderMatches = () => {
     const liveCount = matches.filter((match) => match.statut === "live").length;
     count.textContent = String(liveCount);
+    if (isAllLayout) updateSportCounts();
     if (liveFilterButton) {
       const scopeLive = isLiveCenter
         ? liveCount
-        : matches.filter((match) => match.competition_category === competitionFilter && match.statut === "live").length;
+        : matches.filter((match) => inScope(match) && match.statut === "live").length;
       liveFilterButton.textContent = scopeLive ? `🔴 En direct (${scopeLive})` : "🔴 En direct";
     }
     document.querySelectorAll(".nav-live").forEach((link) => {
@@ -825,7 +906,7 @@ export const mountResults = (root, competitionPage = null) => {
       const playoffPreview = competitionFilter === "linafoot_l1" && linafootGroup.value === "PO";
       const scopeHasMatches = isLiveCenter
         ? matches.length > 0
-        : matches.some((match) => match.competition_category === competitionFilter);
+        : matches.some(inScope);
       const message = isLiveCenter
         ? "Aucun match ni événement en direct pour le moment."
         : playoffPreview
@@ -1270,7 +1351,7 @@ export const mountResults = (root, competitionPage = null) => {
 
   if (competitionPage) {
     resultsTitle.textContent = competitionPage.title;
-    resultsSubtitle.textContent = "";
+    resultsSubtitle.textContent = isAllLayout ? "Tous les résultats, calendriers et directs, sport par sport." : "";
     root.querySelector(".competition-filters").hidden = true;
     linafootControls.hidden = !["linafoot_l1", "linafoot_l2"].includes(competitionFilter);
     if (["linafoot_l1", "linafoot_l2"].includes(competitionFilter)) {
@@ -1297,18 +1378,54 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(standingsTab, false);
       setTab(topScorersView, false);
       setTab(playersTab, true);
-    } else if (layout === "interclubs" || layout === "international" || layout === "events") {
+    } else if (layout === "interclubs" || layout === "international" || layout === "events" || layout === "rencontres") {
       // Pas d'onglets : les rencontres s'affichent directement sur la page.
       setTab(standingsTab, false);
       setTab(topScorersView, false);
     }
     // Filtre par statut : uniquement pour le Live Center et les championnats (Linafoot, EPF-KIN).
     // Le Live Center n'affiche que les matchs en direct : pas de filtre de statut.
-    statusFilters.hidden = layout !== "league";
+    statusFilters.hidden = layout !== "league" && !isAllLayout;
     const visibleTabs = [...tabsBar.querySelectorAll(".results-tab")].filter((tab) => !tab.hidden);
     tabsBar.hidden = isLiveCenter || visibleTabs.length < 2;
   };
   configureLayout();
+
+  // Sélecteur de sport (page Rencontres) : Football · Basketball · Judo · Omnisports.
+  root.querySelector("#sportSwitch")?.remove();
+  sportSwitchEl = null;
+  if (isAllLayout) {
+    sportSwitchEl = document.createElement("div");
+    sportSwitchEl.id = "sportSwitch";
+    sportSwitchEl.className = "sport-switch";
+    sportSwitchEl.setAttribute("role", "tablist");
+    sportSwitchEl.setAttribute("aria-label", "Choisir un sport");
+    sportSwitchEl.innerHTML = SPORT_CHIPS.map(([key, label, icon]) => `<button type="button" class="sport-chip${key === sportFilter ? " is-active" : ""}" role="tab" aria-selected="${key === sportFilter}" data-sport="${key}"><span class="sport-chip-icon" aria-hidden="true">${icon}</span><span class="sport-chip-label">${label}</span><b class="sport-chip-count" data-sport-count="${key}" hidden></b></button>`).join("");
+    root.querySelector(".results-toolbar").prepend(sportSwitchEl);
+    sportSwitchEl.addEventListener("click", (event) => {
+      const chip = event.target.closest("[data-sport]");
+      if (!chip) return;
+      sportFilter = chip.dataset.sport;
+      footballScope = "all";
+      selectedDisciplineCompetition = "";
+      sportSwitchEl.querySelectorAll("[data-sport]").forEach((item) => {
+        const active = item === chip;
+        item.classList.toggle("is-active", active);
+        item.setAttribute("aria-selected", String(active));
+      });
+      renderScopePills();
+      renderMatches();
+    }, { signal });
+    disciplineCompetitionControls.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-football-scope]");
+      if (!button) return;
+      footballScope = button.dataset.footballScope;
+      renderScopePills();
+      renderMatches();
+    }, { signal });
+    renderScopePills();
+    updateSportCounts();
+  }
 
   matchesTab.addEventListener("click", () => {
     activeView = "matches";

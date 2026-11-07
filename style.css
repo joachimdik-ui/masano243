@@ -2350,3 +2350,176 @@ body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
   .home-live-card.is-match { width: 214px; }
   .home-live-card.is-tv { width: 246px; }
 }
+
+/* =====================================================================
+   REFONTE ÉLÉGANTE — boutons arrondis façon WhatsApp, composants espacés
+   ===================================================================== */
+:root {
+  --bg: #f5f3fa;
+  --border: #ece8f5;
+  --radius: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --shadow: 0 8px 28px rgba(42, 12, 99, 0.07);
+  --shadow-soft: 0 3px 12px rgba(42, 12, 99, 0.07);
+  --shadow-lift: 0 16px 38px rgba(42, 12, 99, 0.14);
+  --accent-soft: #efe8fb;
+  --accent-grad: linear-gradient(135deg, #6a2fd0 0%, #42158f 100%);
+  --space-1: 8px;
+  --space-2: 14px;
+  --space-3: 22px;
+  --space-4: 32px;
+}
+
+body { background: var(--bg); letter-spacing: 0.005em; }
+.page-shell { padding-top: 32px; }
+.container { gap: var(--space-4); }
+
+/* Recherche + réseaux : pastilles rondes */
+.top-search-wrap input[type="search"] {
+  padding: 14px 26px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-soft);
+}
+.social-links { gap: 12px; }
+.social-link { width: 44px; height: 44px; border: 0; box-shadow: var(--shadow-soft); }
+
+/* Navigation principale : capsule + boutons ronds */
+.nav-row {
+  gap: 12px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+.nav-left { gap: 6px; }
+.nav-left a {
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.nav-left a:hover { background: var(--accent-soft); color: var(--accent); }
+.nav-left a.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 6px 16px rgba(66, 21, 143, 0.28); }
+.nav-row > .pwa-install-button { width: 44px; height: 44px; border-radius: 50%; box-shadow: var(--shadow-soft); }
+
+.section-nav-row {
+  margin-top: var(--space-2);
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-soft);
+}
+.section-nav { gap: 8px; }
+.section-nav a { padding: 9px 16px; border-radius: var(--radius-pill); font-weight: 600; }
+.section-nav a:hover { background: var(--accent-soft); color: var(--accent); }
+.section-nav a.is-active { background: var(--accent-grad); color: #fff; }
+
+/* Boutons de partage / actions */
+.btn-share { display: inline-grid; width: 42px; height: 42px; place-items: center; border: 0; border-radius: 50%; background: var(--surface); box-shadow: var(--shadow-soft); text-decoration: none; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+.btn-share:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+/* En-tête Live Center / Rencontres */
+.live-center-header { gap: var(--space-3); margin-bottom: var(--space-4); padding: 34px 38px; border-radius: var(--radius-lg); }
+.live-count { padding: 12px 20px; }
+
+/* La page Rencontres garde son bandeau de titre (les autres pages le masquent) */
+.results-view.is-compact.is-rencontres .live-center-header {
+  position: static; width: auto; height: auto; margin: 0 0 var(--space-4); padding: 30px 34px;
+  overflow: visible; clip: auto; white-space: normal;
+}
+.results-view.is-compact.is-rencontres .live-center-header h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
+
+/* Barre d'outils : plus d'air entre les blocs */
+.results-toolbar { gap: var(--space-2); margin-bottom: var(--space-3); }
+
+/* Sélecteur de sport (page Rencontres) */
+.sport-switch { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.sport-chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 0;
+  padding: 12px 18px; border: 0; border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow-soft);
+  font: 700 0.9rem var(--font-text); cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+}
+.sport-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.sport-chip-icon { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; border-radius: 50%; background: var(--accent-soft); font-size: 1.05rem; }
+.sport-chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sport-chip-count { min-width: 22px; padding: 2px 7px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); font-size: 0.7rem; text-align: center; }
+.sport-chip-count[hidden] { display: none; }
+.sport-chip.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 10px 24px rgba(66, 21, 143, 0.32); }
+.sport-chip.is-active .sport-chip-icon { background: rgba(255, 255, 255, 0.2); }
+.sport-chip.is-active .sport-chip-count { background: rgba(255, 255, 255, 0.24); color: #fff; }
+
+/* Onglets en contrôle segmenté */
+.results-view-tabs { gap: 4px; padding: 5px; border: 0; border-radius: var(--radius-pill); background: var(--accent-soft); }
+.results-tab { padding: 10px 20px; border: 0; border-radius: var(--radius-pill); transition: background .2s ease, color .2s ease; }
+.results-tab.is-active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-soft); }
+
+/* Pastilles de filtre */
+.competition-filters, .match-status-filters { gap: 10px; padding: 4px 2px 10px; }
+.competition-filter, .status-filter {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px; border: 0; border-radius: var(--radius-pill);
+  background: var(--surface); box-shadow: var(--shadow-soft);
+  font-size: 0.82rem; font-weight: 700;
+}
+.competition-filter:hover, .status-filter:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.competition-filter.is-active, .status-filter.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, 0.3); }
+.pill-count { min-width: 20px; padding: 1px 7px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); font-size: 0.68rem; line-height: 1.6; text-align: center; }
+.competition-filter.is-active .pill-count { background: rgba(255, 255, 255, 0.25); color: #fff; }
+.match-status-filters { margin-bottom: var(--space-2); }
+
+/* Listes déroulantes et recherche joueurs */
+.linafoot-controls { gap: 12px; margin: 4px 0 var(--space-2); }
+.linafoot-controls select, .players-toolbar input, .players-toolbar select, .standings-toolbar select {
+  padding: 11px 18px; border: 0; border-radius: var(--radius-pill); box-shadow: var(--shadow-soft);
+}
+.players-toolbar { gap: 12px; margin-bottom: var(--space-3); }
+
+/* Cartes de match */
+.match-list { gap: var(--space-3); }
+.match-card { padding: 20px 22px; border: 0; border-radius: var(--radius); box-shadow: var(--shadow-soft); }
+.match-card:hover { border: 0; box-shadow: var(--shadow-lift); }
+.match-card.is-live { border-left: 0; box-shadow: inset 5px 0 0 #f04452, var(--shadow-soft); }
+.match-card-top { gap: 10px; margin-bottom: 20px; }
+.match-card .match-score { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: var(--radius-pill); background: var(--accent-soft); }
+
+/* Cartes et blocs généraux */
+.scoop-widget, .article-view, .main-column { border-radius: var(--radius); }
+.sidebar-column { gap: var(--space-3); }
+
+@media (max-width: 640px) {
+  .page-shell { padding: 20px 14px 0; }
+  .nav-row { padding: 6px 8px; }
+  .nav-left a { padding: 9px 14px; }
+  .section-nav-row { padding: 6px 8px; }
+  .live-center-header, .results-view.is-compact.is-rencontres .live-center-header { padding: 24px 22px; border-radius: 24px; }
+  .sport-switch { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+  .sport-switch::-webkit-scrollbar { display: none; }
+  .sport-chip { flex: 0 0 auto; padding: 10px 16px; }
+  .competition-filter, .status-filter { padding: 10px 16px; font-size: 0.78rem; }
+  .results-tab { padding: 9px 12px; }
+  .match-list { gap: 14px; }
+  .match-card { padding: 16px 18px; border-radius: 18px; }
+}
+
+/* Application installée : barre du bas à pastilles + thème sombre */
+body.pwa-standalone .pwa-bottom-nav .pwa-nav-icon { width: 58px; border-radius: var(--radius-pill); }
+body.pwa-standalone .sport-chip { background: #15151b; color: #f3f1f7; box-shadow: none; }
+body.pwa-standalone .sport-chip-icon, body.pwa-standalone .sport-chip-count { background: #272731; color: #d9bcff; }
+body.pwa-standalone .sport-chip.is-active { background: #7425d2; color: #fff; box-shadow: 0 8px 20px rgba(116, 37, 210, 0.35); }
+body.pwa-standalone .sport-chip.is-active .sport-chip-icon,
+body.pwa-standalone .sport-chip.is-active .sport-chip-count { background: rgba(255, 255, 255, 0.22); color: #fff; }
+body.pwa-standalone .results-view-tabs { background: #1b1b23; }
+body.pwa-standalone .results-tab.is-active { background: #2a2338; color: #e0c6ff; border-bottom-color: transparent; box-shadow: none; }
+body.pwa-standalone .competition-filter, body.pwa-standalone .status-filter { border: 0; border-radius: var(--radius-pill); padding: 10px 17px; box-shadow: none; }
+body.pwa-standalone .competition-filter.is-active, body.pwa-standalone .status-filter.is-active { background: #7425d2; box-shadow: 0 8px 20px rgba(116, 37, 210, 0.35); }
+body.pwa-standalone .pill-count { background: #272731; color: #d9bcff; }
+body.pwa-standalone .match-card { border: 0; border-radius: 20px; padding: 16px 16px; }
+body.pwa-standalone .match-card.is-live { box-shadow: inset 4px 0 0 #f04452; }
+body.pwa-standalone .match-card .match-score { background: #272731; color: #f3f1f7; }
+body.pwa-standalone .match-list { gap: 14px; }
