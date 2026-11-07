@@ -371,6 +371,33 @@ function matchForm(m={}){
   if(nw){drawG();$("#sheet").onchange=e=>{const n=e.target.dataset.n;if(n==="lg"){lg=cv("lg");gp="A";drawG()}else if(n==="gp"){gp=cv("gp");fill()}}}
 }
 
+const CFG_AUT={table:"matchs",place:"stade",video:true,events:true,ph:"Léopards, Interclubs CAF, International…"};
+const CFG_BK={table:"basket_matchs",place:"lieu",video:false,events:false,ph:"Championnat, coupe…"};
+function scoreMatchForm(cfg,m={}){
+  const nw=!m.id,sc=[m.score_domicile??0,m.score_visiteur??0];
+  sheet(nw?"Nouveau match":esc(m.equipe_domicile)+" – "+esc(m.equipe_visiteur),
+  `${nw||!cfg.events?"":`<button type="button" class="btn pri" id="b_ev" style="width:100%;margin-top:10px">${ic("ball")} Événements du match</button>`}
+  <label>Compétition</label><input id="f_c" value="${esc(m.competition)}" placeholder="${esc(cfg.ph)}">
+  <label>Équipe domicile</label><input id="f_h" value="${esc(m.equipe_domicile)}">
+  <label>Équipe visiteuse</label><input id="f_v" value="${esc(m.equipe_visiteur)}">
+  <label>Score</label><div class="sc">${[0,1].map(i=>`<div><small>${i?"Visiteur":"Domicile"}</small><div class="st"><button type="button" data-i="${i}" data-d="-1">−</button><b id="s${i}">${sc[i]}</b><button type="button" data-i="${i}" data-d="1">+</button></div></div>`).join("")}</div>
+  <label>État du match</label>${chips("st",ST,m.statut||"upcoming")}
+  <label>Date et heure</label><input type="datetime-local" id="f_d" value="${loc(m.date_match)}">
+  <label>${cfg.place==="lieu"?"Lieu":"Stade"}</label><input id="f_s" value="${esc(m[cfg.place])}">
+  ${cfg.video?`<label>Lien du résumé vidéo (facultatif)</label><input type="url" inputmode="url" id="f_video" value="${esc(m.resume_video_url)}" placeholder="https://…">`:""}`,
+  async()=>{
+    const st=cv("st"),up=st==="upcoming",c=$("#f_c").value.trim(),h=$("#f_h").value.trim(),v=$("#f_v").value.trim();
+    if(!c||!h||!v)throw new Error("Compétition et deux équipes obligatoires");
+    const r={competition:c,equipe_domicile:h,equipe_visiteur:v,statut:st,score_domicile:up?null:sc[0],score_visiteur:up?null:sc[1],date_match:$("#f_d").value?new Date($("#f_d").value).toISOString():null};
+    r[cfg.place]=$("#f_s").value.trim()||null;
+    if(cfg.video){const vu=$("#f_video").value.trim();r.resume_video_url=null;
+      if(vu){try{const url=new URL(vu);if(!["http:","https:"].includes(url.protocol))throw new Error();r.resume_video_url=url.href}catch{throw new Error("Saisissez un lien de résumé vidéo valide (http ou https).")}}}
+    await w(nw?sb.from(cfg.table).insert(r):sb.from(cfg.table).update(r).eq("id",m.id));
+  },m.id&&(()=>w(sb.from(cfg.table).delete().eq("id",m.id))));
+  $$(".st button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sc[i]=Math.max(0,sc[i]+ +b.dataset.d);$("#s"+i).textContent=sc[i]});
+  if(!nw&&cfg.events)$("#b_ev").onclick=()=>eventsSheet(m);
+}
+
 function epfKinMatchForm(m={}){
   const nw=!m.id;
   let serie=m.serie||"A";
@@ -430,6 +457,7 @@ function epfKinMatchForm(m={}){
 }
 
 function eventsSheet(m){
+  const hasClubs=!!(m.club_domicile_id&&m.club_visiteur_id);
   const dLogo = mlogo(m, "domicile");
   const vLogo = mlogo(m, "visiteur");
   sheet("Événements du match",`<div class="event-match-header">${clubMark(cshort(m.club_domicile_id,m.equipe_domicile),dLogo)}<span>${esc(m.equipe_domicile)}</span><span>–</span><span>${esc(m.equipe_visiteur)}</span>${clubMark(cshort(m.club_visiteur_id,m.equipe_visiteur),vLogo)}</div><div id="ev" style="margin-top:10px"></div>
@@ -438,11 +466,11 @@ function eventsSheet(m){
   <label>Joueur</label><input id="e_j"><label>Passeur (facultatif)</label><input id="e_p"><label>Détail (facultatif)</label><input id="e_d" placeholder="Ex. : remplace Mukendi">
   <button type="button" class="btn pri" id="e_add" style="width:100%;margin:14px 0">${ic("plus")} Ajouter à la chronologie</button>`,async()=>{},null,"Fermer");
   const ref=async()=>{const{data,error}=await sb.from("match_events").select("*").eq("match_id",m.id).order("minute").order("ordre");
-    $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc(e.type)} ${esc(e.joueur||"")}</b><small>${esc(e.club_id===m.club_domicile_id?m.equipe_domicile:m.equipe_visiteur)}${e.passeur?" · passe de "+esc(e.passeur):""}${e.detail?" · "+esc(e.detail):""}</small></div><button class="x" data-id="${e.id}">✕</button></div>`).join(""):'<p class="mu">Aucun événement pour ce match.</p>';
+    $("#ev").innerHTML=error?`<p class="err">${esc(error.message)}</p>`:data.length?data.map(e=>`<div class="row"><div><b>${e.minute??""}${e.minute_additionnelle?"+"+e.minute_additionnelle:""}′ ${esc(e.type)} ${esc(e.joueur||"")}</b><small>${esc((hasClubs?e.club_id===m.club_domicile_id:e.cote!=="v")?m.equipe_domicile:m.equipe_visiteur)}${e.passeur?" · passe de "+esc(e.passeur):""}${e.detail?" · "+esc(e.detail):""}</small></div><button class="x" data-id="${e.id}">✕</button></div>`).join(""):'<p class="mu">Aucun événement pour ce match.</p>';
     $$("#ev .x").forEach(b=>b.onclick=async()=>{const{error}=await sb.from("match_events").delete().eq("id",b.dataset.id);if(error)toast("Erreur : "+error.message);ref()})};
   ref();
   $("#e_add").onclick=async e=>{e.target.disabled=true;try{const mn=$("#e_m").value;
-    await w(sb.from("match_events").insert({match_id:m.id,club_id:cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id,type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,joueur:$("#e_j").value.trim()||null,passeur:$("#e_p").value.trim()||null,detail:$("#e_d").value.trim()||null,ordre:Date.now()%1e9}));
+    await w(sb.from("match_events").insert({match_id:m.id,...(hasClubs?{club_id:cv("tm")==="h"?m.club_domicile_id:m.club_visiteur_id}:{club_id:null,cote:cv("tm")}),type:cv("et"),minute:mn===""?null:+mn,minute_additionnelle:+$("#e_a").value||null,joueur:$("#e_j").value.trim()||null,passeur:$("#e_p").value.trim()||null,detail:$("#e_d").value.trim()||null,ordre:Date.now()%1e9}));
     ["e_m","e_a","e_j","e_p","e_d"].forEach(i=>$("#"+i).value="");toast("Ajouté ✓");ref()}catch(err){toast("Erreur : "+err.message)}e.target.disabled=false};
 }
 
@@ -518,8 +546,9 @@ function V(){const s=cur();
   if(sec==="news")return s==="flash"?{t:"flash",o:["id",0],open:flashForm,add:()=>flashForm(),row:r=>`<div><b style="white-space:normal">${esc(r.info)}</b></div>`}
     :{t:"articles",o:["created_at",0],open:articleForm,add:()=>articleForm(),row:r=>`${r.photo_1?`<img src="${esc(r.photo_1)}" alt="">`:'<span class="nb"></span>'}<div><b>${esc(r.titre)}</b><small>${esc(r.categorie||"")} · ${fmt(r.created_at)}</small></div>`};
   if(sec==="match"){if(s==="EPF"){const g=gen("em");return{...g,open:epfKinMatchForm,add:()=>epfKinMatchForm(),row:mRow}}
-    if(s==="AUT"){const g=gen("ma");return{...g,flt:q=>q.is("ligue",null)}}
+    if(s==="AUT")return{t:"matchs",o:["date_match",0],flt:q=>q.is("ligue",null),open:r=>scoreMatchForm(CFG_AUT,r),add:()=>scoreMatchForm(CFG_AUT),row:mRow};
     return{t:"matchs",o:["date_match",0],flt:q=>q.eq("ligue",s),open:matchForm,add:()=>matchForm({ligue:s}),row:mRow}}
+  if(sec==="sport"&&s==="bk")return{t:"basket_matchs",o:["date_match",0],open:r=>scoreMatchForm(CFG_BK,r),add:()=>scoreMatchForm(CFG_BK),row:mRow};
   return gen(s)}
 async function load(){
   const L=$("#list");if(sec==="home")return dash(L);

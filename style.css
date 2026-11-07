@@ -2761,3 +2761,21 @@ body.pwa-standalone .match-list { gap: 14px; }
 @media (max-width: 992px) {
   .nav-left { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding: 6px 18px; }
 }
+
+/* ===== PWA · Liste des rencontres : noms d'équipes élégants =====
+   Logo centré au-dessus du nom, nom sur 2 lignes équilibrées (plus de « … »),
+   score / heure au centre, alignés sur la hauteur des logos. */
+body.pwa-standalone .match-teams { grid-template-columns: minmax(0,1fr) 76px minmax(0,1fr); align-items: start; gap: 6px; }
+body.pwa-standalone .match-team,
+body.pwa-standalone .home-team,
+body.pwa-standalone .away-team { flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; padding: 0 2px; text-align: center; }
+body.pwa-standalone .team-mark { width: 42px; height: 42px; flex-basis: 42px; box-shadow: 0 0 0 3px #f4f0fb, 0 4px 10px rgba(42, 12, 99, .10); }
+body.pwa-standalone .team-mark .club-logo { width: 72%; height: 72%; margin: auto; object-fit: contain; }
+body.pwa-standalone .match-team strong { display: -webkit-box; width: 100%; min-height: 2.4em; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; text-overflow: clip; white-space: normal; overflow-wrap: break-word; hyphens: auto; font-size: .78rem; font-weight: 700; line-height: 1.2; letter-spacing: .005em; text-wrap: balance; }
+body.pwa-standalone .match-result { align-self: start; display: grid; min-width: 0; margin-top: 4px; place-items: center; }
+body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font-size: 1.15rem; white-space: nowrap; }
+@media (max-width: 360px) {
+  body.pwa-standalone .match-teams { grid-template-columns: minmax(0,1fr) 66px minmax(0,1fr); }
+  body.pwa-standalone .match-team strong { font-size: .72rem; }
+  body.pwa-standalone .team-mark { width: 38px; height: 38px; flex-basis: 38px; }
+}
