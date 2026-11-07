@@ -2645,3 +2645,40 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .pwa-app-header svg { stroke: currentColor; }
   body.pwa-standalone .pwa-install-button { background: #efe8fb; color: #42158f; }
 }
+
+
+/* ===== En-tête unifié façon WhatsApp : titre + compte + recherche dans un seul bloc ===== */
+@media (max-width: 700px) {
+  body.pwa-standalone { padding-top: calc(144px + env(safe-area-inset-top)); }
+  body.pwa-standalone .pwa-app-header {
+    height: calc(66px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 20px 0 22px;
+    border-radius: 0; background: #fff; box-shadow: none; backdrop-filter: none;
+  }
+  body.pwa-standalone .pwa-app-wordmark { font-size: 1.55rem; font-weight: 800; letter-spacing: .01em; }
+  body.pwa-standalone .pwa-app-header-actions { gap: 10px; }
+  body.pwa-standalone .pwa-app-account-toggle,
+  body.pwa-standalone .pwa-app-header-actions button { width: 46px; height: 46px; border-radius: 50%; background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .pwa-app-account-toggle svg,
+  body.pwa-standalone .pwa-app-header-actions svg { width: 26px; height: 26px; stroke-width: 2; }
+
+  body.pwa-standalone .pwa-app-search {
+    top: calc(66px + env(safe-area-inset-top));
+    height: 68px; padding: 4px 18px 14px;
+    border: 0; border-radius: 0 0 28px 28px; background: #fff;
+    box-shadow: 0 12px 26px rgba(42, 12, 99, .12);
+  }
+  body.pwa-standalone .pwa-app-search input {
+    height: 48px; padding: 0 22px 0 48px; border: 0; border-radius: 999px; background-color: #f1edf9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2342158f' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: 18px center; background-size: 20px;
+    color: #1b1630; font: 500 1rem var(--font-text);
+  }
+  body.pwa-standalone .pwa-sport-nav { top: calc(134px + env(safe-area-inset-top)); margin-top: 8px; border: 0; background: #f4f2fa; }
+
+  /* Boutons et icônes plus grands */
+  body.pwa-standalone .pwa-bottom-nav .pwa-nav-icon { height: 40px; width: 62px; }
+  body.pwa-standalone .pwa-bottom-nav svg { width: 25px; height: 25px; }
+  body.pwa-standalone .pwa-sport-nav a { padding: 11px 20px; font-size: .86rem; }
+  body.pwa-standalone .competition-filter, body.pwa-standalone .status-filter { padding: 12px 20px; font-size: .84rem; }
+}
