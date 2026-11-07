@@ -1595,7 +1595,7 @@ body.has-player-modal { overflow: hidden; }
   body.pwa-standalone .match-detail-tab { padding-right: 7px; padding-left: 7px; font-size: .62rem; }
 }
 
-@media (max-width: 700px) and (prefers-color-scheme: dark) {
+@media not all {
   body.pwa-standalone {
     --pwa-purple: #7425d2;
     --pwa-deep-purple: #32105e;
@@ -2258,7 +2258,7 @@ body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
 .club-logo-slot { background: #fff; }
 
 /* ---------- 2b. Mode sombre de l'application : tout est relu ---------- */
-@media (max-width: 700px) and (prefers-color-scheme: dark) {
+@media not all {
   /* Classement du Live Center */
   body.pwa-standalone .standings-table tbody th,
   body.pwa-standalone .standings-table tbody td { color: #ece9f2; }
@@ -2510,7 +2510,7 @@ body { background: var(--bg); letter-spacing: 0.005em; }
 /* Application installée : barre du bas à pastilles */
 body.pwa-standalone .pwa-bottom-nav .pwa-nav-icon { width: 58px; border-radius: var(--radius-pill); }
 
-@media (prefers-color-scheme: dark) {
+@media not all {
 body.pwa-standalone .sport-chip { background: #15151b; color: #f3f1f7; box-shadow: none; }
 body.pwa-standalone .sport-chip-icon, body.pwa-standalone .sport-chip-count { background: #272731; color: #d9bcff; }
 body.pwa-standalone .sport-chip.is-active { background: #7425d2; color: #fff; box-shadow: 0 8px 20px rgba(116, 37, 210, 0.35); }
@@ -2633,4 +2633,15 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .pwa-bottom-nav > a, body.pwa-standalone .pwa-bottom-nav > button { color: #8a86a0; }
   body.pwa-standalone .pwa-bottom-nav > .is-active { color: #42158f; }
   body.pwa-standalone .pwa-bottom-nav > .is-active .pwa-nav-icon { background: #efe8fb; }
+}
+
+
+/* En-tête clair de l'application, logo en Montserrat */
+@media (max-width: 700px) {
+  body.pwa-standalone .pwa-app-header { background: rgba(255, 255, 255, .96); color: #42158f; border-radius: 0 0 26px 26px; box-shadow: 0 8px 24px rgba(42, 12, 99, .1); backdrop-filter: blur(12px); }
+  body.pwa-standalone .pwa-app-wordmark { color: #42158f; font-family: var(--font-text); font-size: 1.15rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+  body.pwa-standalone .pwa-app-header-actions button,
+  body.pwa-standalone .pwa-app-header-actions a { border-radius: 50%; background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .pwa-app-header svg { stroke: currentColor; }
+  body.pwa-standalone .pwa-install-button { background: #efe8fb; color: #42158f; }
 }
