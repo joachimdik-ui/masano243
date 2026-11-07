@@ -2682,3 +2682,82 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .pwa-sport-nav a { padding: 11px 20px; font-size: .86rem; }
   body.pwa-standalone .competition-filter, body.pwa-standalone .status-filter { padding: 12px 20px; font-size: .84rem; }
 }
+/* =====================================================================
+   MENU PRINCIPAL (web) — lisibilité + une seule ligne glissable
+   - Corrige le texte blanc sur fond blanc (la barre est devenue blanche)
+   - Plus d'effet « étages » : toutes les rubriques sur une seule ligne,
+     que l'on fait glisser (doigt, molette, trackpad ou clic-glisser)
+   ===================================================================== */
+.nav-row {
+  align-items: center;
+  min-width: 0;
+}
+
+.nav-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: nowrap;                 /* jamais de retour à la ligne */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px 18px;                 /* marge pour l'ombre des pastilles + zone de fondu */
+  margin: -6px 0;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;             /* Firefox */
+  -ms-overflow-style: none;
+  cursor: grab;
+  /* petit fondu aux deux bords pour signaler que le menu glisse */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+}
+.nav-left::-webkit-scrollbar { display: none; }
+.nav-left.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.nav-left.is-dragging a { pointer-events: none; }
+.nav-left > * { flex: 0 0 auto; scroll-snap-align: center; }
+
+/* Liens lisibles sur fond blanc */
+.nav-left a,
+.nav-left a.nav-external {
+  color: #2b2340;
+  background: transparent;
+}
+.nav-left a:hover,
+.nav-left a.nav-external:hover,
+.nav-left a:focus-visible {
+  background: var(--accent-soft, #efe9fa);
+  color: var(--accent);
+}
+.nav-left a.is-active,
+.nav-left a.is-active:hover {
+  background: var(--accent-grad, linear-gradient(135deg, #5b21b6, #42158f));
+  color: #fff;
+}
+.nav-left a.nav-live.is-live,
+.nav-left a.nav-live.is-live:hover {
+  background: #a91f2b;
+  color: #fff;
+}
+
+/* Sous-rubriques : même principe (une ligne, sans barre de défilement visible) */
+.section-nav {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+}
+.section-nav::-webkit-scrollbar { display: none; }
+.section-nav.is-dragging { cursor: grabbing; user-select: none; }
+.section-nav.is-dragging a { pointer-events: none; }
+.section-nav > * { flex: 0 0 auto; }
+.section-nav a { color: #2b2340; }
+.section-nav a:hover { color: var(--accent); }
+.section-nav a.is-active, .section-nav a.is-active:hover { color: #fff; }
+
+/* Tablette : on garde la même ligne glissable (annule le flex-wrap du bloc 992px) */
+@media (max-width: 992px) {
+  .nav-left { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding: 6px 18px; }
+}

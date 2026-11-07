@@ -345,3 +345,53 @@ if ("serviceWorker" in navigator) {
       .catch((error) => console.error("Impossible d’enregistrer la PWA Masano243.", error));
   }, { once: true });
 }
+// Menus des rubriques : une seule ligne, glissable à la souris (clic-glisser), molette verticale convertie en défilement horizontal,
+// et la rubrique active est ramenée dans la zone visible.
+(() => {
+  const menus = document.querySelectorAll(".nav-left, .section-nav");
+  menus.forEach((menu) => {
+    let startX = 0;
+    let startScroll = 0;
+    let pressed = false;
+    let moved = false;
+
+    menu.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      pressed = true;
+      moved = false;
+      startX = event.clientX;
+      startScroll = menu.scrollLeft;
+    });
+    window.addEventListener("pointermove", (event) => {
+      if (!pressed) return;
+      const delta = event.clientX - startX;
+      if (!moved && Math.abs(delta) > 5) {
+        moved = true;
+        menu.classList.add("is-dragging");
+      }
+      if (moved) menu.scrollLeft = startScroll - delta;
+    });
+    const stopDrag = () => {
+      pressed = false;
+      // petit délai pour que le clic de fin de glissement n'ouvre pas un lien
+      setTimeout(() => menu.classList.remove("is-dragging"), 0);
+    };
+    window.addEventListener("pointerup", stopDrag);
+    window.addEventListener("pointercancel", stopDrag);
+
+    menu.addEventListener("wheel", (event) => {
+      if (menu.scrollWidth <= menu.clientWidth) return;
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      event.preventDefault();
+      menu.scrollLeft += event.deltaY;
+    }, { passive: false });
+  });
+
+  const revealActive = () => {
+    document.querySelectorAll(".nav-left a.is-active, .section-nav a.is-active").forEach((link) => {
+      link.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    });
+  };
+  window.addEventListener("hashchange", () => setTimeout(revealActive, 50));
+  window.addEventListener("load", () => setTimeout(revealActive, 300), { once: true });
+})();
