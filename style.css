@@ -2969,3 +2969,9 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
 .home-live-card.is-match .home-live-name { min-width: 0; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .home-live-card.is-match .home-live-row b { flex: 0 0 auto; min-width: 1.2ch; padding-left: 4px; white-space: nowrap; }
 .home-live-card.is-match .home-live-top { min-width: 0; }
+/* Clubs cliquables dans les classements et les buteurs */
+.club-link { cursor: pointer; border-radius: 10px; transition: color .15s ease; }
+.club-link:hover > span:last-child,
+.club-link:focus-visible > span:last-child { color: #42158f; text-decoration: underline; text-underline-offset: 3px; }
+.club-link:focus-visible { outline: 2px solid #42158f; outline-offset: 3px; }
+.club-link:hover .club-logo-slot { box-shadow: 0 0 0 2px #42158f; }

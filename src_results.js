@@ -71,6 +71,9 @@ const renderTeamMark = (team, logo, clickable = false) => {
   return `<span class="team-mark"${attributes}><span class="team-mark-fallback"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
+// Attributs d'un nom de club cliquable (classements, buteurs) : ouvre ses matchs.
+const clubLinkAttrs = (team) => ` role="button" tabindex="0" data-club-open="${escapeHtml(team)}" aria-label="Voir les matchs de ${escapeHtml(team)}" title="Voir les matchs de ${escapeHtml(team)}"`;
+
 const renderClubLogo = (team, logo) => {
   const initials = escapeHtml(team.slice(0, 1).toUpperCase());
   return `<span class="club-logo-slot" aria-hidden="true"><span class="club-logo-placeholder"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
@@ -1000,7 +1003,7 @@ export const mountResults = (root, competitionPage = null) => {
   // Live Center : uniquement les matchs en direct / en cours.
   const filteredMatches = () => scopedMatches().filter(matchesStatusFilter);
 
-  const decorateMatch = (match) => renderMatch(match, { clubFilter: roundMode }).replace(
+  const decorateMatch = (match) => renderMatch(match, { clubFilter: true }).replace(
     `class="match-card${match.statut === "live" ? " is-live" : ""}"`,
     `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
   );
@@ -1017,11 +1020,23 @@ export const mountResults = (root, competitionPage = null) => {
     }).join("");
   };
 
+  // Périmètre des matchs d'un club selon la page : championnat = sa compétition/ligue ;
+  // Rencontres = tout le sport affiché ; Live Center = tous les matchs.
+  const clubScope = (match) => {
+    if (isLiveCenter) return true;
+    if (isAllLayout) {
+      return sportFilter === "football"
+        ? FOOTBALL_CATEGORIES.includes(match.competition_category)
+        : match.competition_category === sportFilter;
+    }
+    if (!inScope(match)) return false;
+    return !roundMode || match.source !== "local" || !match.ligue || match.ligue === linafootLeague.value;
+  };
+
   // Vue d'un club : tous ses matchs précédents et suivants dans la compétition.
   const renderClubView = () => {
     const key = clubFilter.key;
-    const own = matches.filter((match) => inScope(match)
-      && (match.source !== "local" || !match.ligue || match.ligue === linafootLeague.value)
+    const own = matches.filter((match) => clubScope(match)
       && (teamKey(match.equipe_domicile) === key || teamKey(match.equipe_visiteur) === key));
     const upcoming = own.filter((match) => match.statut !== "finished").sort(byDateAsc);
     const played = own.filter((match) => match.statut === "finished").sort((a, b) => -byDateAsc(a, b));
@@ -1086,7 +1101,7 @@ export const mountResults = (root, competitionPage = null) => {
       link.classList.toggle("is-live", liveCount > 0);
       link.setAttribute("aria-label", `Live Center, ${liveCount} match${liveCount === 1 ? "" : "s"} en direct`);
     });
-    if (roundMode && clubFilter) {
+    if (clubFilter) {
       list.innerHTML = renderClubView();
       openPendingHomeMatch();
       return;
@@ -1158,7 +1173,7 @@ export const mountResults = (root, competitionPage = null) => {
   };
 
   // Clic (ou Entrée / Espace) sur le logo d'un club : matchs précédents et suivants de ce club.
-  if (roundMode) {
+  {
     const handleClubTarget = (event) => {
       if (event.target.closest("[data-club-clear]")) {
         event.preventDefault();
@@ -1331,7 +1346,7 @@ export const mountResults = (root, competitionPage = null) => {
             const team = row.club?.nom || row.equipe || row.equipe_nom || row.team || "Équipe";
             return `<tr>
               <td><span class="standing-position">${index % 4 + 1}</span></td>
-              <th scope="row"><span class="standing-team">${renderClubLogo(team, row.club?.logo_url)}<span>${escapeHtml(team)}</span></span></th>
+              <th scope="row"><span class="standing-team club-link"${clubLinkAttrs(team)}>${renderClubLogo(team, row.club?.logo_url)}<span>${escapeHtml(team)}</span></span></th>
               <td>Groupe ${row.playoffGroup}</td>
               <td><strong>${Number(row.points ?? row.pts ?? 0)}</strong></td>
             </tr>`;
@@ -1430,7 +1445,7 @@ export const mountResults = (root, competitionPage = null) => {
           const isBottomFour = visibleStandings.length >= 4 && position >= visibleStandings.length - 3;
           return `<tr class="${isTopFour ? "qualification-place" : isBottomFour ? "relegation-place" : ""}">
             <td><span class="standing-position">${position}</span></td>
-            <th scope="row"><span class="standing-team">${logo}<span>${escapeHtml(team)}</span></span></th>
+            <th scope="row"><span class="standing-team club-link"${clubLinkAttrs(team)}>${logo}<span>${escapeHtml(team)}</span></span></th>
             <td>${Number(row.joues ?? row.matches_played ?? row.played ?? 0)}</td>
             <td>${Number(row.gagnes ?? row.victoires ?? row.wins ?? row.won ?? 0)}</td>
             <td>${Number(row.nuls ?? row.draws ?? row.draw ?? 0)}</td>
@@ -1479,7 +1494,7 @@ export const mountResults = (root, competitionPage = null) => {
           return `<tr>
             <td><span class="standing-position">${index + 1}</span></td>
             <th scope="row">${escapeHtml(scorer.nom || "Joueur à confirmer")}</th>
-            <td><span class="scorer-club">${clubLogo}<span>${escapeHtml(clubName)}</span></span></td>
+            <td><span class="scorer-club club-link"${clubLinkAttrs(clubName)}>${clubLogo}<span>${escapeHtml(clubName)}</span></span></td>
             ${isEpfKin ? `<td>Série ${escapeHtml(scorer.serie || "—")}</td>` : ""}
             <td>${Number(scorer.matches_joues ?? 0)}</td>
             <td><strong class="scorer-goals">${Number(scorer.buts ?? 0)}</strong></td>
@@ -1627,6 +1642,7 @@ export const mountResults = (root, competitionPage = null) => {
     sportSwitchEl.addEventListener("click", (event) => {
       const chip = event.target.closest("[data-sport]");
       if (!chip) return;
+      clubFilter = null;
       sportFilter = chip.dataset.sport;
       footballScope = "all";
       selectedDisciplineCompetition = "";
@@ -1641,6 +1657,7 @@ export const mountResults = (root, competitionPage = null) => {
     disciplineCompetitionControls.addEventListener("click", (event) => {
       const button = event.target.closest("[data-football-scope]");
       if (!button) return;
+      clubFilter = null;
       footballScope = button.dataset.footballScope;
       renderScopePills();
       renderMatches();
@@ -1648,6 +1665,20 @@ export const mountResults = (root, competitionPage = null) => {
     renderScopePills();
     updateSportCounts();
   }
+
+  // Clic sur un club dans les classements / buteurs : retour aux matchs, filtrés sur ce club.
+  const openClubFromTable = (event) => {
+    const target = event.target.closest("[data-club-open]");
+    if (!target) return;
+    if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    matchesTab.click();
+    setClubFilter(target.dataset.clubOpen);
+  };
+  [standingsContainer, topScorersContainer].forEach((container) => {
+    container.addEventListener("click", openClubFromTable, { signal });
+    container.addEventListener("keydown", openClubFromTable, { signal });
+  });
 
   matchesTab.addEventListener("click", () => {
     activeView = "matches";
@@ -1662,11 +1693,13 @@ export const mountResults = (root, competitionPage = null) => {
   disciplineCompetitionControls.addEventListener("click", (event) => {
     const button = event.target.closest("[data-discipline-competition]");
     if (!button) return;
+    clubFilter = null;
     selectedDisciplineCompetition = button.dataset.disciplineCompetition;
     renderDisciplineCompetitionTabs();
     renderMatches();
   }, { signal });
   root.querySelectorAll("[data-competition]").forEach((button) => button.addEventListener("click", () => {
+    clubFilter = null;
     competitionFilter = button.dataset.competition;
     linafootControls.hidden = !["linafoot_l1", "linafoot_l2"].includes(competitionFilter);
     epfKinControls.hidden = competitionFilter !== "epf_kin";
@@ -1690,6 +1723,7 @@ export const mountResults = (root, competitionPage = null) => {
     if (activeView === "standings") renderStandings();
   }, { signal }));
   root.querySelectorAll("[data-status]").forEach((button) => button.addEventListener("click", () => {
+    clubFilter = null;
     statusFilter = button.dataset.status;
     root.querySelectorAll("[data-status]").forEach((item) => {
       const active = item === button;
@@ -1701,6 +1735,7 @@ export const mountResults = (root, competitionPage = null) => {
   standingsCompetition.addEventListener("change", renderStandings, { signal });
   standingsGroup.addEventListener("change", renderStandings, { signal });
   linafootLeague.addEventListener("change", () => {
+    clubFilter = null;
     competitionFilter = linafootLeague.value === "L2" ? "linafoot_l2" : "linafoot_l1";
     updateLinafootGroupOptions();
     topScorersView.hidden = false;
@@ -1714,10 +1749,12 @@ export const mountResults = (root, competitionPage = null) => {
     if (activeView === "standings") renderStandings();
   }, { signal });
   linafootGroup.addEventListener("change", () => {
+    clubFilter = null;
     renderMatches();
     if (activeView === "standings") renderStandings();
   }, { signal });
   epfKinSeries.addEventListener("change", () => {
+    clubFilter = null;
     renderMatches();
     updateTopScorersLabel();
     if (activeView === "standings") renderStandings();
