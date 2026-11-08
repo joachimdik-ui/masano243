@@ -958,7 +958,30 @@ export const mountResults = (root, competitionPage = null) => {
     ? match.statut === "live"
     : statusFilter === "all" || match.statut === statusFilter);
 
-  const scopedMatches = () => matches.filter((match) => {
+  // Page « Rencontres » : pour Linafoot L1/L2 et EPF-KIN, seulement la journée précédente
+  // (matchs joués récemment) et la journée suivante, calculées par compétition / groupe / série.
+  const LEAGUE_CATEGORIES = ["linafoot_l1", "linafoot_l2", "epf_kin"];
+  const leagueWindowIds = () => {
+    const groups = new Map();
+    matches.forEach((match) => {
+      if (!LEAGUE_CATEGORIES.includes(match.competition_category)) return;
+      const key = `${match.competition_category}|${match.ligue || ""}|${match.groupe || match.serie || ""}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(match);
+    });
+    const ids = new Set();
+    groups.forEach((items) => {
+      const picks = pickRoundWindow(buildRounds(items));
+      if (!picks.length) items.forEach((match) => ids.add(match.id));
+      picks.forEach(({ round }) => round.matches.forEach((match) => ids.add(match.id)));
+    });
+    return ids;
+  };
+
+  const scopedMatches = () => {
+    const windowIds = isAllLayout ? leagueWindowIds() : null;
+    return matches.filter((match) => {
+    if (windowIds && LEAGUE_CATEGORIES.includes(match.competition_category) && !windowIds.has(match.id)) return false;
     const matchesCompetition = isLiveCenter || inScope(match);
     const matchesNamedCompetition = !selectedDisciplineCompetition || match.competition === selectedDisciplineCompetition;
     const matchesLeague = isLiveCenter || isAllLayout || match.source !== "local"
@@ -971,7 +994,8 @@ export const mountResults = (root, competitionPage = null) => {
       || match.serie === epfKinSeries.value;
     return matchesCompetition && matchesNamedCompetition && matchesLeague && matchesGroup
       && matchesEpfSeries;
-  });
+    });
+  };
 
   // Live Center : uniquement les matchs en direct / en cours.
   const filteredMatches = () => scopedMatches().filter(matchesStatusFilter);

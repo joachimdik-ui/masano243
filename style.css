@@ -2962,3 +2962,10 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
   }
   body.pwa-standalone .article-list-excerpt { display: none; }
 }
+
+/* Matchs en direct (accueil) : noms longs tronqués avec « … », score toujours visible */
+.home-live-card.is-match { grid-template-columns: minmax(0, 1fr); }
+.home-live-card.is-match .home-live-row { min-width: 0; grid-template-columns: 24px minmax(0, 1fr) auto; }
+.home-live-card.is-match .home-live-name { min-width: 0; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-live-card.is-match .home-live-row b { flex: 0 0 auto; min-width: 1.2ch; padding-left: 4px; white-space: nowrap; }
+.home-live-card.is-match .home-live-top { min-width: 0; }
