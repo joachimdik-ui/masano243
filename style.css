@@ -2975,3 +2975,27 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
 .club-link:focus-visible > span:last-child { color: #42158f; text-decoration: underline; text-underline-offset: 3px; }
 .club-link:focus-visible { outline: 2px solid #42158f; outline-offset: 3px; }
 .club-link:hover .club-logo-slot { box-shadow: 0 0 0 2px #42158f; }
+
+/* Fenêtre d'un club : matchs suivants et précédents */
+.club-modal { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; padding: 16px; }
+.club-modal[hidden] { display: none; }
+.club-modal-backdrop { position: absolute; inset: 0; background: rgba(15, 8, 32, .6); }
+.club-modal-dialog { position: relative; width: min(640px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; padding: 22px 18px 20px; border-radius: 22px; background: #fff; color: #202124; box-shadow: 0 24px 60px rgba(0, 0, 0, .3); outline: none; overscroll-behavior: contain; }
+.club-modal-close { position: absolute; top: 10px; right: 12px; display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: #f4f0fb; color: #42158f; font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.club-modal-close:hover, .club-modal-close:focus-visible { background: #42158f; color: #fff; outline: 0; }
+.club-modal-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding-right: 40px; }
+.club-modal-header .team-mark { flex: 0 0 52px; width: 52px; height: 52px; background: #f4f0fb; }
+.club-modal-heading { min-width: 0; }
+.club-modal-heading h3 { margin: 0; overflow: hidden; font-size: 1.15rem; line-height: 1.2; text-overflow: ellipsis; }
+.club-modal-heading p { margin: 3px 0 0; color: #5f6368; font-size: .78rem; }
+.club-modal-title { margin: 16px 0 8px; color: #42158f; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.club-modal-list { display: grid; gap: 8px; }
+body.has-club-modal { overflow: hidden; }
+@media (max-width: 640px) {
+  .club-modal { padding: 0; align-items: end; }
+  .club-modal-dialog { max-height: 90vh; border-radius: 22px 22px 0 0; }
+}
+
+/* Logos du détail du match cliquables */
+.match-detail-logo.club-link-logo { cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
+.match-detail-logo.club-link-logo:hover, .match-detail-logo.club-link-logo:focus-visible { box-shadow: 0 0 0 3px #42158f; transform: scale(1.04); outline: 0; }

@@ -623,7 +623,7 @@ export const mountResults = (root, competitionPage = null) => {
         return `<tr class="${rowClass}">
           <td><span class="match-detail-standings-position">${rank}</span></td>
           ${grouped ? `<td>${escapeHtml(row.group || "—")}</td>` : ""}
-          <th scope="row"><span class="match-detail-standings-team">${logo}<span>${escapeHtml(team)}</span></span></th>
+          <th scope="row"><span class="match-detail-standings-team club-link"${clubLinkAttrs(team)}>${logo}<span>${escapeHtml(team)}</span></span></th>
           <td>${formatStandingNumber(row.played)}</td>
           <td>${formatStandingNumber(row.won)}</td>
           <td>${formatStandingNumber(row.draw)}</td>
@@ -791,7 +791,7 @@ export const mountResults = (root, competitionPage = null) => {
 
   const openMatchDetail = (match, trigger) => {
     if (!detailModal || !detailDialog) return;
-    matchDetailReturnFocus = trigger;
+    if (detailModal.hidden) matchDetailReturnFocus = trigger;
     activeDetailMatchId = match.id;
     const standingsTab = detailModal.querySelector("#matchTabStandings");
     standingsTab.hidden = false;
@@ -807,6 +807,14 @@ export const mountResults = (root, competitionPage = null) => {
     detailModal.querySelector("#matchDetailAwayName").textContent = match.equipe_visiteur;
     homeLogo.innerHTML = logoMarkup(match.equipe_domicile, match.logo_domicile);
     awayLogo.innerHTML = logoMarkup(match.equipe_visiteur, match.logo_visiteur);
+    [[homeLogo, match.equipe_domicile], [awayLogo, match.equipe_visiteur]].forEach(([element, name]) => {
+      element.classList.add("club-link-logo");
+      element.setAttribute("role", "button");
+      element.tabIndex = 0;
+      element.dataset.clubOpen = name;
+      element.setAttribute("aria-label", `Voir les matchs de ${name}`);
+      element.title = `Voir les matchs de ${name}`;
+    });
     const hasScore = match.score_domicile !== null && match.score_visiteur !== null;
     detailModal.querySelector("#matchDetailScore").textContent = hasScore ? `${match.score_domicile} – ${match.score_visiteur}` : "– : –";
     detailModal.querySelector("#matchDetailStatus").textContent = match.statut === "finished"
@@ -841,7 +849,7 @@ export const mountResults = (root, competitionPage = null) => {
     detailModal.querySelectorAll("[data-match-panel]").forEach((panel) => {
       panel.hidden = panel.dataset.matchPanel !== "lineup";
     });
-    previousPageScrollY = window.scrollY;
+    if (detailModal.hidden) previousPageScrollY = window.scrollY;
     document.body.classList.add("has-match-detail-page");
     detailModal.hidden = false;
     detailModal.scrollTop = 0;
@@ -1033,36 +1041,98 @@ export const mountResults = (root, competitionPage = null) => {
     return !roundMode || match.source !== "local" || !match.ligue || match.ligue === linafootLeague.value;
   };
 
-  // Vue d'un club : tous ses matchs précédents et suivants dans la compétition.
-  const renderClubView = () => {
-    const key = clubFilter.key;
+  // Fenêtre (modale) d'un club : matchs suivants et précédents, sans toucher à la liste ni au détail ouvert.
+  const ensureClubModal = () => {
+    let modal = document.getElementById("clubModal");
+    if (modal) return modal;
+    modal = document.createElement("div");
+    modal.id = "clubModal";
+    modal.className = "club-modal";
+    modal.hidden = true;
+    modal.innerHTML = `<div class="club-modal-backdrop" data-club-close></div>
+      <section class="club-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="clubModalName" tabindex="-1">
+        <button type="button" class="club-modal-close" data-club-close aria-label="Fermer">&times;</button>
+        <div id="clubModalBody"></div>
+      </section>`;
+    document.body.appendChild(modal);
+    return modal;
+  };
+  const clubModal = ensureClubModal();
+  const clubModalBody = clubModal.querySelector("#clubModalBody");
+  let clubModalReturnFocus = null;
+
+  const renderClubModal = (name) => {
+    const key = teamKey(name);
     const own = matches.filter((match) => clubScope(match)
       && (teamKey(match.equipe_domicile) === key || teamKey(match.equipe_visiteur) === key));
+    const logo = own.map((match) => (teamKey(match.equipe_domicile) === key ? match.logo_domicile : match.logo_visiteur))
+      .find(Boolean) || "";
     const upcoming = own.filter((match) => match.statut !== "finished").sort(byDateAsc);
     const played = own.filter((match) => match.statut === "finished").sort((a, b) => -byDateAsc(a, b));
     const summary = own.length
       ? `${played.length} match${played.length > 1 ? "s" : ""} joué${played.length > 1 ? "s" : ""} · ${upcoming.length} à venir`
       : "Aucun match enregistré";
-    const bar = `<div class="club-filter-bar">${renderTeamMark(clubFilter.name, clubFilter.logo)}<div class="club-filter-text"><strong>${escapeHtml(clubFilter.name)}</strong><span>${summary}</span></div><button type="button" class="club-filter-clear" data-club-clear>Tout afficher</button></div>`;
     const section = (title, items) => (items.length
-      ? `<h3 class="match-round-title">${title}</h3>${items.map(decorateMatch).join("")}`
+      ? `<h4 class="club-modal-title">${title}</h4><div class="match-list club-modal-list">${items.map((match) => renderMatch(match, { clubFilter: true })).join("")}</div>`
       : "");
-    return `${bar}${section("Matchs suivants", upcoming)}${section("Matchs précédents", played)}`;
+    clubModalBody.innerHTML = `<header class="club-modal-header">${renderTeamMark(name, logo)}<div class="club-modal-heading"><h3 id="clubModalName">${escapeHtml(name)}</h3><p>${summary}</p></div></header>${section("Matchs suivants", upcoming)}${section("Matchs précédents", played)}${own.length ? "" : '<p class="results-empty">Aucun match n\u2019est disponible pour ce club pour le moment.</p>'}`;
   };
 
-  const setClubFilter = (name) => {
-    if (!name) {
-      clubFilter = null;
-    } else {
-      const key = teamKey(name);
-      const logo = matches.map((match) => (teamKey(match.equipe_domicile) === key ? match.logo_domicile : teamKey(match.equipe_visiteur) === key ? match.logo_visiteur : ""))
-        .find(Boolean) || "";
-      clubFilter = { key, name, logo };
-    }
-    renderMatches();
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    list.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+  const openClubModal = (name, trigger) => {
+    if (!name) return;
+    if (clubModal.hidden) clubModalReturnFocus = trigger || document.activeElement;
+    renderClubModal(name);
+    clubModal.hidden = false;
+    document.body.classList.add("has-club-modal");
+    const dialog = clubModal.querySelector(".club-modal-dialog");
+    dialog.scrollTop = 0;
+    dialog.focus();
   };
+
+  const closeClubModal = ({ restoreFocus = true } = {}) => {
+    if (clubModal.hidden) return;
+    clubModal.hidden = true;
+    document.body.classList.remove("has-club-modal");
+    if (restoreFocus) clubModalReturnFocus?.focus?.();
+  };
+
+  clubModal.addEventListener("click", (event) => {
+    if (event.target.closest("[data-club-close]")) {
+      closeClubModal();
+      return;
+    }
+    const mark = event.target.closest("[data-club-filter]");
+    if (mark) {
+      event.preventDefault();
+      openClubModal(mark.dataset.clubFilter, mark);
+      return;
+    }
+    const trigger = event.target.closest("[data-match-detail]");
+    const match = trigger && matches.find((item) => item.id === trigger.dataset.matchDetail);
+    if (!match) return;
+    const focusTarget = clubModalReturnFocus || trigger;
+    closeClubModal({ restoreFocus: false });
+    openMatchDetail(match, focusTarget);
+  }, { signal });
+  clubModal.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeClubModal();
+      return;
+    }
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const mark = event.target.closest("[data-club-filter]");
+    if (mark) {
+      event.preventDefault();
+      openClubModal(mark.dataset.clubFilter, mark);
+      return;
+    }
+    const trigger = event.target.closest("[data-match-detail]");
+    if (trigger && event.target === trigger) {
+      event.preventDefault();
+      trigger.click();
+    }
+  }, { signal });
 
   const renderDisciplineCompetitionTabs = () => {
     if (isAllLayout) {
@@ -1101,11 +1171,6 @@ export const mountResults = (root, competitionPage = null) => {
       link.classList.toggle("is-live", liveCount > 0);
       link.setAttribute("aria-label", `Live Center, ${liveCount} match${liveCount === 1 ? "" : "s"} en direct`);
     });
-    if (clubFilter) {
-      list.innerHTML = renderClubView();
-      openPendingHomeMatch();
-      return;
-    }
     const filtered = filteredMatches();
     if (!filtered.length && loadingMatches) {
       list.innerHTML = MATCH_SKELETONS;
@@ -1172,20 +1237,14 @@ export const mountResults = (root, competitionPage = null) => {
     openMatchDetail(pendingMatch, trigger);
   };
 
-  // Clic (ou Entrée / Espace) sur le logo d'un club : matchs précédents et suivants de ce club.
+  // Clic (ou Entrée / Espace) sur le logo d'un club : fenêtre avec ses matchs précédents et suivants.
   {
     const handleClubTarget = (event) => {
-      if (event.target.closest("[data-club-clear]")) {
-        event.preventDefault();
-        event.stopPropagation();
-        setClubFilter(null);
-        return true;
-      }
       const mark = event.target.closest("[data-club-filter]");
       if (!mark) return false;
       event.preventDefault();
       event.stopPropagation();
-      setClubFilter(mark.dataset.clubFilter);
+      openClubModal(mark.dataset.clubFilter, mark);
       return true;
     };
     list.addEventListener("click", handleClubTarget, { capture: true, signal });
@@ -1666,16 +1725,15 @@ export const mountResults = (root, competitionPage = null) => {
     updateSportCounts();
   }
 
-  // Clic sur un club dans les classements / buteurs : retour aux matchs, filtrés sur ce club.
+  // Clic sur un club dans les classements / buteurs / détail du match : fenêtre du club.
   const openClubFromTable = (event) => {
     const target = event.target.closest("[data-club-open]");
     if (!target) return;
     if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
-    matchesTab.click();
-    setClubFilter(target.dataset.clubOpen);
+    openClubModal(target.dataset.clubOpen, target);
   };
-  [standingsContainer, topScorersContainer].forEach((container) => {
+  [standingsContainer, topScorersContainer, detailPage].filter(Boolean).forEach((container) => {
     container.addEventListener("click", openClubFromTable, { signal });
     container.addEventListener("keydown", openClubFromTable, { signal });
   });
@@ -1967,6 +2025,7 @@ export const mountResults = (root, competitionPage = null) => {
   return () => {
     stopped = true;
     controller.abort();
+    closeClubModal({ restoreFocus: false });
     if (playerModal && !playerModal.hidden) {
       playerModal.hidden = true;
       document.body.classList.remove("has-player-modal");
