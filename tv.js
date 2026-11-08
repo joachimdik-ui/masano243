@@ -453,7 +453,7 @@ export const mountTv = (root) => {
       ${["Toutes","Football","Basketball","Judo"].map((sport) => `<button type="button" class="${activeSport === sport ? "is-active" : ""}" data-tv-sport="${sport}" aria-pressed="${activeSport === sport}">${sport}</button>`).join("")}
     </nav>
     <header class="tv-page-header">
-      <p class="tv-eyebrow">MASANO243 · CHAÎNE SPORTIVE</p>
+      <p class="tv-eyebrow">Masano243 · Chaîne sportive</p>
       <h1>MASANO <span>TV</span></h1>
       <p>Les directs, émissions et temps forts du sport congolais.</p>
     </header>

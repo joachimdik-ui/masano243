@@ -63,9 +63,12 @@ const matchStatusLabel = (match) => {
   return formatKickoff(match.date_match);
 };
 
-const renderTeamMark = (team, logo) => {
+const renderTeamMark = (team, logo, clickable = false) => {
   const initials = escapeHtml(team.slice(0, 1).toUpperCase());
-  return `<span class="team-mark" aria-hidden="true"><span class="team-mark-fallback"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
+  const attributes = clickable
+    ? ` role="button" tabindex="0" data-club-filter="${escapeHtml(team)}" aria-label="Voir les matchs de ${escapeHtml(team)}" title="Voir les matchs de ${escapeHtml(team)}"`
+    : ' aria-hidden="true"';
+  return `<span class="team-mark"${attributes}><span class="team-mark-fallback"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
 const renderClubLogo = (team, logo) => {
@@ -73,7 +76,7 @@ const renderClubLogo = (team, logo) => {
   return `<span class="club-logo-slot" aria-hidden="true"><span class="club-logo-placeholder"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
-const renderMatch = (match) => {
+const renderMatch = (match, { clubFilter = false } = {}) => {
   const sourceLabel = match.source === "local"
     ? (match.competition_category === "linafoot_l2" ? "Linafoot L2" : "Linafoot L1")
     : match.source === "epf_kin"
@@ -103,9 +106,9 @@ const renderMatch = (match) => {
       ${isLive ? `<span class="live-match-badge"><span class="live-pulse" aria-hidden="true"></span>${escapeHtml(matchStatusLabel(match))}</span>` : `<span class="match-status">${escapeHtml(matchStatusLabel(match))}</span>`}
     </div>
     <div class="match-teams">
-      <div class="match-team home-team">${renderTeamMark(match.equipe_domicile, match.logo_domicile)}<strong>${escapeHtml(match.equipe_domicile)}</strong></div>
+      <div class="match-team home-team">${renderTeamMark(match.equipe_domicile, match.logo_domicile, clubFilter)}<strong>${escapeHtml(match.equipe_domicile)}</strong></div>
       <div class="match-result">${score}</div>
-      <div class="match-team away-team">${renderTeamMark(match.equipe_visiteur, match.logo_visiteur)}<strong>${escapeHtml(match.equipe_visiteur)}</strong></div>
+      <div class="match-team away-team">${renderTeamMark(match.equipe_visiteur, match.logo_visiteur, clubFilter)}<strong>${escapeHtml(match.equipe_visiteur)}</strong></div>
     </div>
   </article>`;
 };
@@ -176,6 +179,99 @@ const MATCH_SKELETONS = '<div class="match-skeleton"></div><div class="match-ske
 let matchesCache = null;
 
 const scoreOf = (match) => `${match.score_domicile ?? ""}:${match.score_visiteur ?? ""}`;
+
+// ===== Journées (Linafoot, EPF-KIN) =====
+// Si la base fournit un numéro de journée, on l'utilise ; sinon on reconstitue les journées par date :
+// une nouvelle journée commence quand une équipe rejoue ou après un trou de plus de 4 jours.
+const ROUND_FIELDS = ["journee", "numero_journee", "journee_numero", "matchday", "round"];
+const ROUND_GAP_MS = 4 * 24 * 60 * 60 * 1000;
+const PENDING_GRACE_MS = 36 * 60 * 60 * 1000;
+const teamKey = (name) => normalizeSearch(name);
+const matchTime = (match) => {
+  if (!match.date_match) return null;
+  const time = new Date(match.date_match).getTime();
+  return Number.isFinite(time) ? time : null;
+};
+const roundNumberOf = (match) => {
+  for (const field of ROUND_FIELDS) {
+    const raw = match[field];
+    if (raw === null || raw === undefined || raw === "") continue;
+    const parsed = Number.parseInt(String(raw).replace(/\D+/g, ""), 10);
+    if (Number.isFinite(parsed) && parsed > 0) return parsed;
+  }
+  return null;
+};
+const byDateAsc = (a, b) => (matchTime(a) ?? Infinity) - (matchTime(b) ?? Infinity);
+
+const buildRounds = (items) => {
+  if (!items.length) return [];
+  let rounds;
+  if (items.every((match) => roundNumberOf(match) !== null)) {
+    const byNumber = new Map();
+    items.forEach((match) => {
+      const number = roundNumberOf(match);
+      if (!byNumber.has(number)) byNumber.set(number, { number, matches: [] });
+      byNumber.get(number).matches.push(match);
+    });
+    rounds = [...byNumber.values()].sort((a, b) => a.number - b.number);
+  } else {
+    rounds = [];
+    let current = null;
+    let seen = new Set();
+    let lastTime = 0;
+    items.filter((match) => matchTime(match) !== null).sort(byDateAsc).forEach((match) => {
+      const time = matchTime(match);
+      const home = teamKey(match.equipe_domicile);
+      const away = teamKey(match.equipe_visiteur);
+      if (!current || seen.has(home) || seen.has(away) || time - lastTime > ROUND_GAP_MS) {
+        current = { number: null, matches: [] };
+        rounds.push(current);
+        seen = new Set();
+      }
+      current.matches.push(match);
+      seen.add(home);
+      seen.add(away);
+      lastTime = time;
+    });
+  }
+  rounds.forEach((round) => {
+    const times = round.matches.map(matchTime).filter((time) => time !== null);
+    round.start = times.length ? Math.min(...times) : null;
+    round.end = times.length ? Math.max(...times) : null;
+  });
+  return rounds;
+};
+
+// La « journée suivante » est la première qui contient encore un match à jouer ou en direct ;
+// la « journée précédente » est celle qui la précède. Un match en retard jamais mis à jour n'empêche pas d'avancer.
+const pickRoundWindow = (rounds, now = Date.now()) => {
+  if (!rounds.length) return [];
+  const isPending = (match) => match.statut === "live"
+    || (match.statut !== "finished" && (matchTime(match) ?? -Infinity) >= now - PENDING_GRACE_MS);
+  const pivot = rounds.findIndex((round) => round.matches.some(isPending));
+  if (pivot === -1) return [{ round: rounds[rounds.length - 1], role: "previous" }];
+  const picked = [];
+  if (pivot > 0) picked.push({ round: rounds[pivot - 1], role: "previous" });
+  picked.push({ round: rounds[pivot], role: rounds[pivot].matches.some((match) => match.statut === "finished") ? "current" : "next" });
+  return picked;
+};
+
+const formatRoundRange = (round) => {
+  if (round.start === null) return "";
+  const day = (time) => new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(new Date(time));
+  const first = day(round.start);
+  const last = day(round.end);
+  return first === last ? first : `${first} – ${last}`;
+};
+
+const roundTitle = ({ round, role }) => {
+  const label = { previous: "Journée précédente", current: "Journée en cours", next: "Journée suivante" }[role];
+  const parts = [label];
+  if (round.number) parts.push(`J${round.number}`);
+  const range = formatRoundRange(round);
+  if (range) parts.push(range);
+  return parts.join(" · ");
+};
 
 export const mountResults = (root, competitionPage = null) => {
   if (!root) return () => {};
@@ -254,6 +350,9 @@ export const mountResults = (root, competitionPage = null) => {
   let footballScope = "all";
   let sportSwitchEl = null;
   let statusFilter = "all";
+  let clubFilter = null;
+  // Journées + filtre par club : championnats (Linafoot L1/L2, EPF-KIN) uniquement.
+  const roundMode = layout === "league";
   let activeView = "matches";
   let realtimeChannel;
   let standingsChannel;
@@ -855,7 +954,11 @@ export const mountResults = (root, competitionPage = null) => {
     disciplineCompetitionControls.hidden = false;
   }
 
-  const filteredMatches = () => matches.filter((match) => {
+  const matchesStatusFilter = (match) => (isLiveCenter
+    ? match.statut === "live"
+    : statusFilter === "all" || match.statut === statusFilter);
+
+  const scopedMatches = () => matches.filter((match) => {
     const matchesCompetition = isLiveCenter || inScope(match);
     const matchesNamedCompetition = !selectedDisciplineCompetition || match.competition === selectedDisciplineCompetition;
     const matchesLeague = isLiveCenter || isAllLayout || match.source !== "local"
@@ -866,13 +969,61 @@ export const mountResults = (root, competitionPage = null) => {
       || match.groupe === linafootGroup.value;
     const matchesEpfSeries = isLiveCenter || isAllLayout || match.source !== "epf_kin"
       || match.serie === epfKinSeries.value;
-    // Live Center : uniquement les matchs en direct / en cours.
-    const matchesStatus = isLiveCenter
-      ? match.statut === "live"
-      : statusFilter === "all" || match.statut === statusFilter;
     return matchesCompetition && matchesNamedCompetition && matchesLeague && matchesGroup
-      && matchesEpfSeries && matchesStatus;
+      && matchesEpfSeries;
   });
+
+  // Live Center : uniquement les matchs en direct / en cours.
+  const filteredMatches = () => scopedMatches().filter(matchesStatusFilter);
+
+  const decorateMatch = (match) => renderMatch(match, { clubFilter: roundMode }).replace(
+    `class="match-card${match.statut === "live" ? " is-live" : ""}"`,
+    `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
+  );
+
+  // Deux journées seulement : la précédente et la suivante (ou en cours).
+  const renderRoundView = () => {
+    const picks = pickRoundWindow(buildRounds(scopedMatches()));
+    if (!picks.length) return null;
+    return picks.map((pick) => {
+      const items = pick.round.matches.filter(matchesStatusFilter).sort(byDateAsc);
+      return items.length
+        ? `<h3 class="match-round-title">${escapeHtml(roundTitle(pick))}</h3>${items.map(decorateMatch).join("")}`
+        : "";
+    }).join("");
+  };
+
+  // Vue d'un club : tous ses matchs précédents et suivants dans la compétition.
+  const renderClubView = () => {
+    const key = clubFilter.key;
+    const own = matches.filter((match) => inScope(match)
+      && (match.source !== "local" || !match.ligue || match.ligue === linafootLeague.value)
+      && (teamKey(match.equipe_domicile) === key || teamKey(match.equipe_visiteur) === key));
+    const upcoming = own.filter((match) => match.statut !== "finished").sort(byDateAsc);
+    const played = own.filter((match) => match.statut === "finished").sort((a, b) => -byDateAsc(a, b));
+    const summary = own.length
+      ? `${played.length} match${played.length > 1 ? "s" : ""} joué${played.length > 1 ? "s" : ""} · ${upcoming.length} à venir`
+      : "Aucun match enregistré";
+    const bar = `<div class="club-filter-bar">${renderTeamMark(clubFilter.name, clubFilter.logo)}<div class="club-filter-text"><strong>${escapeHtml(clubFilter.name)}</strong><span>${summary}</span></div><button type="button" class="club-filter-clear" data-club-clear>Tout afficher</button></div>`;
+    const section = (title, items) => (items.length
+      ? `<h3 class="match-round-title">${title}</h3>${items.map(decorateMatch).join("")}`
+      : "");
+    return `${bar}${section("Matchs suivants", upcoming)}${section("Matchs précédents", played)}`;
+  };
+
+  const setClubFilter = (name) => {
+    if (!name) {
+      clubFilter = null;
+    } else {
+      const key = teamKey(name);
+      const logo = matches.map((match) => (teamKey(match.equipe_domicile) === key ? match.logo_domicile : teamKey(match.equipe_visiteur) === key ? match.logo_visiteur : ""))
+        .find(Boolean) || "";
+      clubFilter = { key, name, logo };
+    }
+    renderMatches();
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    list.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+  };
 
   const renderDisciplineCompetitionTabs = () => {
     if (isAllLayout) {
@@ -911,6 +1062,11 @@ export const mountResults = (root, competitionPage = null) => {
       link.classList.toggle("is-live", liveCount > 0);
       link.setAttribute("aria-label", `Live Center, ${liveCount} match${liveCount === 1 ? "" : "s"} en direct`);
     });
+    if (roundMode && clubFilter) {
+      list.innerHTML = renderClubView();
+      openPendingHomeMatch();
+      return;
+    }
     const filtered = filteredMatches();
     if (!filtered.length && loadingMatches) {
       list.innerHTML = MATCH_SKELETONS;
@@ -933,6 +1089,14 @@ export const mountResults = (root, competitionPage = null) => {
       list.innerHTML = `<p class="results-empty">${message}</p>`;
       return;
     }
+    if (roundMode) {
+      const roundsHtml = renderRoundView();
+      if (roundsHtml !== null) {
+        list.innerHTML = roundsHtml || '<p class="results-empty">Aucun match ne correspond à ces filtres pour ces deux journées.</p>';
+        openPendingHomeMatch();
+        return;
+      }
+    }
     list.innerHTML = filtered
       .sort((a, b) => {
         const statusOrder = { live: 0, upcoming: 1, finished: 2 };
@@ -941,10 +1105,7 @@ export const mountResults = (root, competitionPage = null) => {
         const dateDifference = new Date(a.date_match || 0) - new Date(b.date_match || 0);
         return a.statut === "finished" ? -dateDifference : dateDifference;
       })
-      .map((match) => renderMatch(match).replace(
-        `class="match-card${match.statut === "live" ? " is-live" : ""}"`,
-        `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
-      ))
+      .map(decorateMatch)
       .join("");
     openPendingHomeMatch();
   };
@@ -971,6 +1132,28 @@ export const mountResults = (root, competitionPage = null) => {
       .find((element) => element.dataset.matchDetail === String(pendingMatch.id)) || null;
     openMatchDetail(pendingMatch, trigger);
   };
+
+  // Clic (ou Entrée / Espace) sur le logo d'un club : matchs précédents et suivants de ce club.
+  if (roundMode) {
+    const handleClubTarget = (event) => {
+      if (event.target.closest("[data-club-clear]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        setClubFilter(null);
+        return true;
+      }
+      const mark = event.target.closest("[data-club-filter]");
+      if (!mark) return false;
+      event.preventDefault();
+      event.stopPropagation();
+      setClubFilter(mark.dataset.clubFilter);
+      return true;
+    };
+    list.addEventListener("click", handleClubTarget, { capture: true, signal });
+    list.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") handleClubTarget(event);
+    }, { capture: true, signal });
+  }
 
   if (detailPage && detailPageContent) {
     const highlightImage = detailPage.querySelector("#matchDetailHighlightImage");
@@ -1351,6 +1534,7 @@ export const mountResults = (root, competitionPage = null) => {
     linafootLeagueLabel.hidden = false;
     linafootGroup.value = "A";
     epfKinSeries.value = "A";
+    clubFilter = null;
     standingsCompetition.value = "";
     standingsGroup.value = "";
     root.querySelectorAll("[data-status]").forEach((item) => {

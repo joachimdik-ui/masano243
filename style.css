@@ -2639,7 +2639,7 @@ body.pwa-standalone .match-list { gap: 14px; }
 /* En-tête clair de l'application, logo en Montserrat */
 @media (max-width: 700px) {
   body.pwa-standalone .pwa-app-header { background: rgba(255, 255, 255, .96); color: #42158f; border-radius: 0 0 26px 26px; box-shadow: 0 8px 24px rgba(42, 12, 99, .1); backdrop-filter: blur(12px); }
-  body.pwa-standalone .pwa-app-wordmark { color: #42158f; font-family: var(--font-text); font-size: 1.15rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+  body.pwa-standalone .pwa-app-wordmark { color: #42158f; font-family: var(--font-text); font-size: 1.15rem; font-weight: 800; letter-spacing: .02em; text-transform: none; }
   body.pwa-standalone .pwa-app-header-actions button,
   body.pwa-standalone .pwa-app-header-actions a { border-radius: 50%; background: #efe8fb; color: #42158f; }
   body.pwa-standalone .pwa-app-header svg { stroke: currentColor; }
@@ -2782,3 +2782,183 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
 /* Menu des rubriques sportives : sans icônes */
 .sport-chip-icon { display: none !important; }
 .sport-chip { gap: 8px; }
+/* =====================================================================
+   PWA · Design sobre façon Google (couleurs Masano243 conservées)
+   Fond blanc, filets fins 1 px, peu d'ombres, pastilles discrètes,
+   texte sombre lisible, violet #42158f en accent unique.
+   Les hauteurs de l'entête / recherche / barres sticky sont inchangées :
+   seul l'habillage est simplifié, la structure existante n'est pas touchée.
+   ===================================================================== */
+@media (max-width: 700px) {
+  body.pwa-standalone {
+    --g-line: #e8eaed;
+    --g-text: #202124;
+    --g-muted: #5f6368;
+    --g-chip: #f1f3f4;
+    background: #fff;
+    color: var(--g-text);
+  }
+
+  /* Entête : « Masano243 » en casse normale, fond blanc, simple filet */
+  body.pwa-standalone .pwa-app-header { background: #fff; box-shadow: none; border-bottom: 0; }
+  body.pwa-standalone .pwa-app-wordmark { font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em; text-transform: none; color: #42158f; }
+  body.pwa-standalone .pwa-app-account-toggle,
+  body.pwa-standalone .pwa-app-header-actions button { width: 40px; height: 40px; background: #42158f; color: #fff; }
+  body.pwa-standalone .pwa-app-account-toggle svg,
+  body.pwa-standalone .pwa-app-header-actions svg { width: 22px; height: 22px; stroke-width: 1.8; }
+
+  /* Recherche : pastille grise arrondie, sans ombre */
+  body.pwa-standalone .pwa-app-search { background: #fff; box-shadow: none; border-radius: 0; border-bottom: 1px solid var(--g-line); }
+  body.pwa-standalone .pwa-app-search input { height: 46px; background-color: var(--g-chip); color: var(--g-text); font-size: .95rem; }
+  body.pwa-standalone .pwa-app-search input:focus { outline: 2px solid #42158f33; background-color: #fff; box-shadow: 0 1px 6px #20212433; }
+
+  /* Rubriques / filtres : pastilles à contour fin, actif = teinte violette */
+  body.pwa-standalone .pwa-sport-nav { background: #fff; border-bottom: 1px solid var(--g-line); margin-top: 0; }
+  body.pwa-standalone .pwa-sport-nav a,
+  body.pwa-standalone .competition-filter,
+  body.pwa-standalone .status-filter,
+  body.pwa-standalone .sport-chip { padding: 8px 16px; border: 1px solid #dadce0; background: #fff; color: var(--g-text); box-shadow: none; font-size: .82rem; font-weight: 600; }
+  body.pwa-standalone .pwa-sport-nav a[aria-current="page"],
+  body.pwa-standalone .competition-filter.is-active,
+  body.pwa-standalone .status-filter.is-active,
+  body.pwa-standalone .sport-chip.is-active { border-color: #42158f; background: #efe8fb; color: #42158f; box-shadow: none; }
+  body.pwa-standalone .pill-count,
+  body.pwa-standalone .sport-chip-count { background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .competition-filter.is-active .pill-count,
+  body.pwa-standalone .sport-chip.is-active .sport-chip-count { background: #fff; color: #42158f; }
+
+  /* Onglets : texte + soulignement (plus de capsule dégradée) */
+  body.pwa-standalone .results-view-tabs { gap: 0; padding: 0; border-bottom: 1px solid var(--g-line); border-radius: 0; background: transparent; }
+  body.pwa-standalone .results-tab { padding: 12px 14px; border-radius: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--g-muted); box-shadow: none; }
+  body.pwa-standalone .results-tab.is-active { border-bottom-color: #42158f; background: transparent; color: #42158f; box-shadow: none; }
+
+  /* Titres de section et liens */
+  body.pwa-standalone .section-title,
+  body.pwa-standalone .home-live-head h2 { color: var(--g-text); font-size: 1.1rem; font-weight: 700; }
+  body.pwa-standalone .home-live-head a { color: #42158f; }
+
+  /* Articles : cartes plates, image arrondie, titre en gras comme un fil d'actualité */
+  body.pwa-standalone .hero-img { border-radius: 14px; }
+  body.pwa-standalone .hero-title { color: var(--g-text); font-weight: 600; letter-spacing: -.01em; }
+  body.pwa-standalone .hero-meta { color: var(--g-muted); }
+  body.pwa-standalone .post-mini { border: 0; border-bottom: 1px solid var(--g-line); border-radius: 0; background: transparent; box-shadow: none; padding: 12px 0; }
+  body.pwa-standalone .post-mini img { border-radius: 10px; }
+  body.pwa-standalone .post-mini-title { color: var(--g-text); font-weight: 600; }
+
+  /* Matchs : cartes blanches à filet fin, sans ombre */
+  body.pwa-standalone .match-list { gap: 10px; }
+  body.pwa-standalone .match-card { border: 1px solid var(--g-line); border-radius: 14px; background: #fff; box-shadow: none; transform: none; }
+  body.pwa-standalone .match-card:hover { border-color: #cbb8ef; box-shadow: none; transform: none; }
+  body.pwa-standalone .match-card.is-live { box-shadow: inset 3px 0 0 #d93025; }
+  body.pwa-standalone .match-competition { color: var(--g-muted); letter-spacing: .04em; }
+  body.pwa-standalone .match-team strong { color: var(--g-text); }
+  body.pwa-standalone .team-mark { background: #fff; box-shadow: 0 0 0 1px var(--g-line); }
+  body.pwa-standalone .match-card .match-score { background: var(--g-chip); color: var(--g-text); }
+
+  /* Carte « direct » : mêmes couleurs, relief retiré */
+  body.pwa-standalone .home-live-card.is-match { border-radius: 16px; box-shadow: none; }
+  body.pwa-standalone .pwa-tv-live-card { border-radius: 14px; }
+  body.pwa-standalone .pwa-home-live-row { border-radius: 14px; box-shadow: none; }
+
+  /* Détail du match */
+  body.pwa-standalone .match-detail-header { border-radius: 0; background: #42158f; }
+  body.pwa-standalone .match-detail-overview { border: 1px solid var(--g-line); border-radius: 16px; box-shadow: none; }
+  body.pwa-standalone .match-detail-facts p { background: var(--g-chip); }
+  body.pwa-standalone .match-detail-page,
+  body.pwa-standalone .match-detail-page-content { background: #fff; }
+
+  /* Barre du bas : plate, filet fin */
+  body.pwa-standalone .pwa-bottom-nav { border: 0; border-top: 1px solid var(--g-line); border-radius: 0; background: #fff; box-shadow: none; }
+  body.pwa-standalone .pwa-bottom-nav > a,
+  body.pwa-standalone .pwa-bottom-nav > button { color: var(--g-muted); }
+  body.pwa-standalone .pwa-bottom-nav > .is-active { color: #42158f; }
+  body.pwa-standalone .pwa-bottom-nav > .is-active .pwa-nav-icon { background: #efe8fb; }
+  body.pwa-standalone .pwa-menu-dialog { border-radius: 16px 16px 0 0; box-shadow: 0 -2px 16px #20212426; }
+
+  body.pwa-standalone #matchList { scroll-margin-top: 150px; }
+}
+
+/* =====================================================================
+   Liste des matchs : titres de journée + filtre par club (logo cliquable)
+   ===================================================================== */
+.match-round-title { grid-column: 1 / -1; margin: 10px 2px 0; color: #5f6368; font: 700 .78rem var(--font-text); letter-spacing: .06em; text-transform: uppercase; }
+.match-round-title:first-child { margin-top: 0; }
+.match-list .team-mark[data-club-filter] { cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
+.match-list .team-mark[data-club-filter]:hover,
+.match-list .team-mark[data-club-filter]:focus-visible { box-shadow: 0 0 0 2px #42158f; transform: scale(1.06); outline: 0; }
+.club-filter-bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e0d4f5; border-radius: 14px; background: #f6f1fd; }
+.club-filter-bar .team-mark { flex: 0 0 40px; width: 40px; height: 40px; background: #fff; }
+.club-filter-text { display: grid; min-width: 0; flex: 1; gap: 1px; }
+.club-filter-text strong { overflow: hidden; color: #202124; font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; }
+.club-filter-text span { color: #5f6368; font-size: .72rem; }
+.club-filter-clear { flex: 0 0 auto; padding: 8px 14px; border: 1px solid #42158f; border-radius: 999px; background: #fff; color: #42158f; font: 700 .74rem var(--font-text); cursor: pointer; }
+.club-filter-clear:hover,
+.club-filter-clear:focus-visible { background: #42158f; color: #fff; }
+/* Libellés « Masano243 » en casse normale (PWA) + titres de journée sobres */
+body.pwa-standalone .pwa-account-eyebrow,
+body.pwa-standalone .pwa-install-eyebrow,
+body.pwa-standalone .tv-eyebrow { text-transform: none; letter-spacing: .02em; font-size: .78rem; }
+body.pwa-standalone .match-round-title { margin: 14px 2px 2px; color: #5f6368; font-size: .76rem; letter-spacing: .04em; }
+body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
+
+/* =====================================================================
+   PWA · Inspiration appli Google (flux Discover)
+   Entête : grand logo à gauche + pastille ronde ; bande de matchs en cartes
+   blanches arrondies ; fil d'articles : source, image, titre, filet fin.
+   CSS uniquement : aucune logique modifiée.
+   ===================================================================== */
+@media (max-width: 700px) {
+  /* Entête façon Google */
+  body.pwa-standalone .pwa-app-header { padding: env(safe-area-inset-top) 18px 0 20px; }
+  body.pwa-standalone .pwa-app-wordmark { font-size: 1.85rem; font-weight: 600; letter-spacing: -.045em; color: #42158f; }
+  body.pwa-standalone .pwa-app-account-toggle,
+  body.pwa-standalone .pwa-app-header-actions button { width: 44px; height: 44px; background: #42158f; color: #fff; }
+
+  /* Bande de matchs : cartes blanches, bord fin, coins très arrondis */
+  body.pwa-standalone .home-live-track { gap: 10px; }
+  body.pwa-standalone .home-live-card.is-match {
+    width: 214px; padding: 14px 16px; border: 1px solid #dadce0; border-radius: 20px;
+    background: #fff; color: #202124; box-shadow: none;
+  }
+  body.pwa-standalone .home-live-card.is-match::before { display: none; }
+  body.pwa-standalone .home-live-card.is-match:hover { border: 1px solid #c9b8ea; }
+  body.pwa-standalone .home-live-card.is-match strong,
+  body.pwa-standalone .home-live-card.is-match .home-live-name { color: #202124; }
+  body.pwa-standalone .home-live-card.is-match span { color: #5f6368; }
+  body.pwa-standalone .home-live-card.is-match .home-live-row b { color: #42158f; font: 700 1.1rem/1 var(--font-text); }
+  body.pwa-standalone .home-live-card.is-match .home-live-status { background: #fce8e6; color: #c5221f; }
+  body.pwa-standalone .home-live-card.is-match .home-live-logo { border-color: #e8eaed; background: #fff; }
+  body.pwa-standalone .home-live-card.is-match .home-live-logo i { color: #42158f; }
+
+  /* À la une : grande image arrondie, titre sobre, méta discrète */
+  body.pwa-standalone .hero-img-container { border-radius: 18px; overflow: hidden; }
+  body.pwa-standalone .hero-img { border-radius: 0; }
+  body.pwa-standalone .hero-body { padding: 12px 2px 4px; }
+  body.pwa-standalone .hero-title { font-size: 1.08rem; font-weight: 500; line-height: 1.38; letter-spacing: 0; color: #202124; }
+  body.pwa-standalone .hero-meta { color: #5f6368; font-size: .78rem; }
+
+  /* Rubriques / recherche : carte d'article façon fil Google */
+  body.pwa-standalone #articleList { display: grid; gap: 0; }
+  body.pwa-standalone .article-list-item {
+    display: flex; flex-direction: column; gap: 0; padding: 0 0 14px; margin-bottom: 14px;
+    border: 0; border-bottom: 1px solid #e8eaed; border-radius: 0; background: transparent; box-shadow: none;
+  }
+  body.pwa-standalone .article-list-item:hover { border-color: #e8eaed; }
+  body.pwa-standalone .article-list-body { display: contents; }
+  body.pwa-standalone .article-list-meta {
+    order: 1; display: flex; align-items: center; gap: 10px; padding: 4px 0 12px;
+    color: #202124; font-size: .88rem; font-weight: 500; letter-spacing: 0; text-transform: none;
+  }
+  body.pwa-standalone .article-list-meta::before {
+    content: "M"; display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center;
+    border-radius: 50%; background: #efe8fb; color: #42158f; font-size: .78rem; font-weight: 800;
+  }
+  body.pwa-standalone .article-list-item img {
+    order: 2; width: calc(100% + 32px); height: auto; aspect-ratio: 4 / 3; margin: 0 -16px;
+    border-radius: 0; object-fit: cover; background: #f1f3f4;
+  }
+  body.pwa-standalone .article-list-title {
+    order: 3; padding: 12px 0 0; color: #202124; font-size: 1.05rem; font-weight: 400; line-height: 1.42;
+  }
+  body.pwa-standalone .article-list-excerpt { display: none; }
+}
