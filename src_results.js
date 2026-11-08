@@ -1075,7 +1075,7 @@ export const mountResults = (root, competitionPage = null) => {
     const section = (title, items) => (items.length
       ? `<h4 class="club-modal-title">${title}</h4><div class="match-list club-modal-list">${items.map((match) => renderMatch(match, { clubFilter: true })).join("")}</div>`
       : "");
-    clubModalBody.innerHTML = `<header class="club-modal-header">${renderTeamMark(name, logo)}<div class="club-modal-heading"><h3 id="clubModalName">${escapeHtml(name)}</h3><p>${summary}</p></div></header>${section("Matchs suivants", upcoming)}${section("Matchs précédents", played)}${own.length ? "" : '<p class="results-empty">Aucun match n\u2019est disponible pour ce club pour le moment.</p>'}`;
+    clubModalBody.innerHTML = `<header class="club-modal-header">${renderTeamMark(name, logo)}<div class="club-modal-heading"><h3 id="clubModalName">${escapeHtml(name)}</h3><p>${summary}</p></div></header><div class="club-modal-scroll">${section("Matchs suivants", upcoming)}${section("Matchs précédents", played)}${own.length ? "" : '<p class="results-empty">Aucun match n\u2019est disponible pour ce club pour le moment.</p>'}</div>`;
   };
 
   const openClubModal = (name, trigger) => {
@@ -1085,7 +1085,8 @@ export const mountResults = (root, competitionPage = null) => {
     clubModal.hidden = false;
     document.body.classList.add("has-club-modal");
     const dialog = clubModal.querySelector(".club-modal-dialog");
-    dialog.scrollTop = 0;
+    const scroller = clubModal.querySelector(".club-modal-scroll");
+    if (scroller) scroller.scrollTop = 0;
     dialog.focus();
   };
 

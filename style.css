@@ -2999,3 +2999,12 @@ body.has-club-modal { overflow: hidden; }
 /* Logos du détail du match cliquables */
 .match-detail-logo.club-link-logo { cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
 .match-detail-logo.club-link-logo:hover, .match-detail-logo.club-link-logo:focus-visible { box-shadow: 0 0 0 3px #42158f; transform: scale(1.04); outline: 0; }
+
+/* Fenêtre d'un club : en-tête figé, seule la liste des matchs défile */
+.club-modal-dialog { display: flex; flex-direction: column; overflow: hidden; height: min(640px, calc(100vh - 32px)); max-height: calc(100vh - 32px); padding-bottom: 0; }
+.club-modal-dialog #clubModalBody { display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0; }
+.club-modal-header { flex: 0 0 auto; margin-bottom: 0; padding-bottom: 12px; border-bottom: 1px solid #ece7f6; }
+.club-modal-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 2px 20px; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .club-modal-dialog { height: 90vh; max-height: 90vh; }
+}
