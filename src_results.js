@@ -20,8 +20,7 @@ import {
   unsubscribeButeurs
 } from "./services/linafootService.js";
 import { supabase } from "./supabaseClient.js";
-// Chargé à la demande (import dynamique) : si ce fichier manque ou échoue, seul l'onglet « Joueurs »
-// est touché, jamais le reste du site (articles, scores, boutons).
+
 const loadPlayersService = () => import("./services/leopardsPlayersService.js");
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({
@@ -71,7 +70,6 @@ const renderTeamMark = (team, logo, clickable = false) => {
   return `<span class="team-mark"${attributes}><span class="team-mark-fallback"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
-// Attributs d'un nom de club cliquable (classements, buteurs) : ouvre ses matchs.
 const clubLinkAttrs = (team) => ` role="button" tabindex="0" data-club-open="${escapeHtml(team)}" aria-label="Voir les matchs de ${escapeHtml(team)}" title="Voir les matchs de ${escapeHtml(team)}"`;
 
 const renderClubLogo = (team, logo) => {
@@ -178,14 +176,9 @@ const SPORT_CHIPS = [
 
 const MATCH_SKELETONS = '<div class="match-skeleton"></div><div class="match-skeleton"></div><div class="match-skeleton"></div>';
 
-// Derniers matchs chargés : réaffichés instantanément quand on change de page (L1 → L2…), puis actualisés en arrière-plan.
 let matchesCache = null;
-
 const scoreOf = (match) => `${match.score_domicile ?? ""}:${match.score_visiteur ?? ""}`;
 
-// ===== Journées (Linafoot, EPF-KIN) =====
-// Si la base fournit un numéro de journée, on l'utilise ; sinon on reconstitue les journées par date :
-// une nouvelle journée commence quand une équipe rejoue ou après un trou de plus de 4 jours.
 const ROUND_FIELDS = ["journee", "numero_journee", "journee_numero", "matchday", "round"];
 const ROUND_GAP_MS = 4 * 24 * 60 * 60 * 1000;
 const PENDING_GRACE_MS = 36 * 60 * 60 * 1000;
@@ -245,8 +238,6 @@ const buildRounds = (items) => {
   return rounds;
 };
 
-// La « journée suivante » est la première qui contient encore un match à jouer ou en direct ;
-// la « journée précédente » est celle qui la précède. Un match en retard jamais mis à jour n'empêche pas d'avancer.
 const pickRoundWindow = (rounds, now = Date.now()) => {
   if (!rounds.length) return [];
   const isPending = (match) => match.statut === "live"
@@ -325,10 +316,9 @@ export const mountResults = (root, competitionPage = null) => {
   const liveFilterButton = root.querySelector('[data-status="live"]');
   const playerModal = document.getElementById("playerModal");
   const playerModalBody = document.getElementById("playerModalBody");
-  // live = Live Center ; league / leopards / interclubs / international / events = pages de rubrique
+  
   const layout = competitionPage?.layout || (competitionPage ? "events" : "live");
   const isLiveCenter = layout === "live";
-  // « Rencontres » : toutes les rencontres, sport par sport (football = toutes compétitions réunies).
   const isAllLayout = layout === "rencontres";
   root.classList.toggle("is-rencontres", isAllLayout);
   root.classList.toggle("is-live-center", isLiveCenter);
@@ -354,7 +344,6 @@ export const mountResults = (root, competitionPage = null) => {
   let sportSwitchEl = null;
   let statusFilter = "all";
   let clubFilter = null;
-  // Journées + filtre par club : championnats (Linafoot L1/L2, EPF-KIN) uniquement.
   const roundMode = layout === "league";
   let activeView = "matches";
   let realtimeChannel;
@@ -368,6 +357,28 @@ export const mountResults = (root, competitionPage = null) => {
   let matchDetailReturnFocus;
   let previousPageScrollY = 0;
   let activeDetailMatchId;
+
+  // AJOUT : Filtre par date (Défaut : aujourd'hui "today")
+  let selectedDateFilter = "today"; 
+
+  // Injection de la barre de navigation par date dans la vue
+  const resultsToolbar = root.querySelector(".results-toolbar");
+  if (resultsToolbar) {
+    let dateNavContainer = root.querySelector("#matchDateNavigation");
+    if (!dateNavContainer) {
+      dateNavContainer = document.createElement("div");
+      dateNavContainer.id = "matchDateNavigation";
+      dateNavContainer.className = "match-date-navigation";
+      dateNavContainer.style.cssText = "display: flex; gap: 8px; align-items: center; overflow-x: auto; padding: 4px 0; margin-bottom: 10px;";
+      dateNavContainer.innerHTML = `
+        <button type="button" class="competition-filter ${selectedDateFilter === "yesterday" ? "is-active" : ""}" data-date-filter="yesterday">Hier</button>
+        <button type="button" class="competition-filter ${selectedDateFilter === "today" ? "is-active" : ""}" data-date-filter="today">Aujourd'hui</button>
+        <button type="button" class="competition-filter ${selectedDateFilter === "tomorrow" ? "is-active" : ""}" data-date-filter="tomorrow">Demain</button>
+        <input type="date" id="matchDatepicker" class="competition-filter" value="" aria-label="Choisir une date" style="cursor: pointer; background: var(--surface);" />
+      `;
+      resultsToolbar.appendChild(dateNavContainer);
+    }
+  }
 
   const setDetailRank = (element, position, total) => {
     if (!Number.isFinite(position) || position < 1) {
@@ -888,7 +899,6 @@ export const mountResults = (root, competitionPage = null) => {
     matchDetailReturnFocus?.focus();
   };
 
-  // Les messages techniques ne sont plus affichés aux visiteurs : ils restent dans la console.
   const displayNotice = (messages) => {
     notice.hidden = true;
     notice.textContent = "";
@@ -969,8 +979,35 @@ export const mountResults = (root, competitionPage = null) => {
     ? match.statut === "live"
     : statusFilter === "all" || match.statut === statusFilter);
 
-  // Page « Rencontres » : pour Linafoot L1/L2 et EPF-KIN, seulement la journée précédente
-  // (matchs joués récemment) et la journée suivante, calculées par compétition / groupe / série.
+  // AJOUT : Filtre par date appliqué aux matchs
+  const matchesDateFilter = (match) => {
+    if (!match.date_match) return false;
+    const matchDate = new Date(match.date_match);
+    if (Number.isNaN(matchDate.getTime())) return false;
+
+    const now = new Date();
+    const targetDate = new Date();
+
+    if (selectedDateFilter === "yesterday") {
+      targetDate.setDate(now.getDate() - 1);
+    } else if (selectedDateFilter === "tomorrow") {
+      targetDate.setDate(now.getDate() + 1);
+    } else if (selectedDateFilter === "today") {
+      // aujourd'hui
+    } else if (selectedDateFilter.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const parsedCustom = new Date(selectedDateFilter);
+      if (!Number.isNaN(parsedCustom.getTime())) {
+        targetDate.setTime(parsedCustom.getTime());
+      }
+    }
+
+    return (
+      matchDate.getFullYear() === targetDate.getFullYear() &&
+      matchDate.getMonth() === targetDate.getMonth() &&
+      matchDate.getDate() === targetDate.getDate()
+    );
+  };
+
   const LEAGUE_CATEGORIES = ["linafoot_l1", "linafoot_l2", "epf_kin"];
   const leagueWindowIds = () => {
     const groups = new Map();
@@ -1008,28 +1045,24 @@ export const mountResults = (root, competitionPage = null) => {
     });
   };
 
-  // Live Center : uniquement les matchs en direct / en cours.
-  const filteredMatches = () => scopedMatches().filter(matchesStatusFilter);
+  const filteredMatches = () => scopedMatches().filter((match) => matchesStatusFilter(match) && matchesDateFilter(match));
 
   const decorateMatch = (match) => renderMatch(match, { clubFilter: true }).replace(
     `class="match-card${match.statut === "live" ? " is-live" : ""}"`,
     `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
   );
 
-  // Deux journées seulement : la précédente et la suivante (ou en cours).
   const renderRoundView = () => {
-    const picks = pickRoundWindow(buildRounds(scopedMatches()));
+    const picks = pickRoundWindow(buildRounds(scopedMatches().filter(matchesDateFilter)));
     if (!picks.length) return null;
     return picks.map((pick) => {
-      const items = pick.round.matches.filter(matchesStatusFilter).sort(byDateAsc);
+      const items = pick.round.matches.filter((m) => matchesStatusFilter(m) && matchesDateFilter(m)).sort(byDateAsc);
       return items.length
         ? `<h3 class="match-round-title">${escapeHtml(roundTitle(pick))}</h3>${items.map(decorateMatch).join("")}`
         : "";
     }).join("");
   };
 
-  // Périmètre des matchs d'un club selon la page : championnat = sa compétition/ligue ;
-  // Rencontres = tout le sport affiché ; Live Center = tous les matchs.
   const clubScope = (match) => {
     if (isLiveCenter) return true;
     if (isAllLayout) {
@@ -1041,7 +1074,6 @@ export const mountResults = (root, competitionPage = null) => {
     return !roundMode || match.source !== "local" || !match.ligue || match.ligue === linafootLeague.value;
   };
 
-  // Fenêtre (modale) d'un club : matchs suivants et précédents, sans toucher à la liste ni au détail ouvert.
   const ensureClubModal = () => {
     let modal = document.getElementById("clubModal");
     if (modal) return modal;
@@ -1215,7 +1247,6 @@ export const mountResults = (root, competitionPage = null) => {
     openPendingHomeMatch();
   };
 
-  // Un match cliqué sur l'accueil (bande « En direct ») s'ouvre directement dans le Live Center.
   const openPendingHomeMatch = () => {
     let pending = "";
     try {
@@ -1238,7 +1269,6 @@ export const mountResults = (root, competitionPage = null) => {
     openMatchDetail(pendingMatch, trigger);
   };
 
-  // Clic (ou Entrée / Espace) sur le logo d'un club : fenêtre avec ses matchs précédents et suivants.
   {
     const handleClubTarget = (event) => {
       const mark = event.target.closest("[data-club-filter]");
@@ -1317,7 +1347,6 @@ export const mountResults = (root, competitionPage = null) => {
       loadingMatches = true;
       list.innerHTML = MATCH_SKELETONS;
     }
-    // Premier chargement : chaque source s'affiche dès qu'elle répond, sans attendre la plus lente.
     const incremental = showSkeletons;
     const settled = {};
     const messages = [];
@@ -1612,7 +1641,6 @@ export const mountResults = (root, competitionPage = null) => {
     if (!supportsStandings && activeView !== "matches") matchesTab.click();
   };
 
-  // La vue est réutilisée d'une page à l'autre : on efface tout ce qui vient de la page précédente.
   const resetView = () => {
     list.innerHTML = MATCH_SKELETONS;
     standingsContainer.innerHTML = "";
@@ -1663,7 +1691,6 @@ export const mountResults = (root, competitionPage = null) => {
     renderDisciplineCompetitionTabs();
   }
 
-  // Organisation des onglets selon la rubrique.
   const configureLayout = () => {
     const tabsBar = root.querySelector(".results-view-tabs");
     const setTab = (tab, visible, label) => {
@@ -1676,19 +1703,15 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(topScorersView, false);
       setTab(playersTab, true);
     } else if (layout === "interclubs" || layout === "international" || layout === "events" || layout === "rencontres") {
-      // Pas d'onglets : les rencontres s'affichent directement sur la page.
       setTab(standingsTab, false);
       setTab(topScorersView, false);
     }
-    // Filtre par statut : uniquement pour le Live Center et les championnats (Linafoot, EPF-KIN).
-    // Le Live Center n'affiche que les matchs en direct : pas de filtre de statut.
     statusFilters.hidden = layout !== "league" && !isAllLayout;
     const visibleTabs = [...tabsBar.querySelectorAll(".results-tab")].filter((tab) => !tab.hidden);
     tabsBar.hidden = isLiveCenter || visibleTabs.length < 2;
   };
   configureLayout();
 
-  // Sélecteur de sport (page Rencontres) : Football · Basketball · Judo · Omnisports.
   root.querySelector("#sportSwitch")?.remove();
   sportSwitchEl = null;
   if (isAllLayout) {
@@ -1726,7 +1749,6 @@ export const mountResults = (root, competitionPage = null) => {
     updateSportCounts();
   }
 
-  // Clic sur un club dans les classements / buteurs / détail du match : fenêtre du club.
   const openClubFromTable = (event) => {
     const target = event.target.closest("[data-club-open]");
     if (!target) return;
@@ -1791,6 +1813,29 @@ export const mountResults = (root, competitionPage = null) => {
     });
     renderMatches();
   }, { signal }));
+
+  // AJOUT : Écouteurs d'événements pour la navigation par date
+  root.addEventListener("click", (event) => {
+    const dateBtn = event.target.closest("[data-date-filter]");
+    if (dateBtn) {
+      selectedDateFilter = dateBtn.dataset.dateFilter;
+      root.querySelectorAll("[data-date-filter]").forEach((b) => b.classList.toggle("is-active", b === dateBtn));
+      const picker = root.querySelector("#matchDatepicker");
+      if (picker) picker.value = "";
+      renderMatches();
+    }
+  });
+
+  root.addEventListener("change", (event) => {
+    if (event.target && event.target.id === "matchDatepicker") {
+      if (event.target.value) {
+        selectedDateFilter = event.target.value;
+        root.querySelectorAll("[data-date-filter]").forEach((b) => b.classList.remove("is-active"));
+        renderMatches();
+      }
+    }
+  });
+
   standingsCompetition.addEventListener("change", renderStandings, { signal });
   standingsGroup.addEventListener("change", renderStandings, { signal });
   linafootLeague.addEventListener("change", () => {
@@ -1818,7 +1863,7 @@ export const mountResults = (root, competitionPage = null) => {
     updateTopScorersLabel();
     if (activeView === "standings") renderStandings();
   }, { signal });
-  // ---- Léopards : liste des joueurs + fiche individuelle ----
+
   const renderPlayers = () => {
     const query = normalizeSearch(playersSearch.value);
     const position = playersPosition.value;
@@ -2046,4 +2091,230 @@ export const mountResults = (root, competitionPage = null) => {
     });
     root.dataset.initialized = "false";
   };
-};
+};const renderPlayers = () => {
+    const query = normalizeSearch(playersSearch.value);
+    const position = playersPosition.value;
+    const visible = players.filter((player) => (
+      (!query || normalizeSearch(`${player.nom} ${player.club}`).includes(query))
+      && (!position || playerPositionKey(player.poste) === position)
+    ));
+    if (!players.length) {
+      playersContainer.innerHTML = `<p class="results-empty">${EMPTY_PLAYERS_MESSAGE}</p>`;
+      return;
+    }
+    if (!visible.length) {
+      playersContainer.innerHTML = `<p class="results-empty">Aucun joueur ne correspond à cette recherche.</p>`;
+      return;
+    }
+    const groups = [...PLAYER_POSITIONS, ["autre", "Autres joueurs"]];
+    playersContainer.innerHTML = groups.map(([key, label]) => {
+      const group = visible.filter((player) => playerPositionKey(player.poste) === key);
+      if (!group.length) return "";
+      return `<section class="players-group" aria-label="${label}">
+        <h3 class="players-group-title">${label} <span>${group.length}</span></h3>
+        <div class="players-grid">${group.map((player) => `<button type="button" class="player-card" data-player-id="${escapeHtml(player.id)}" aria-haspopup="dialog">
+          ${renderPlayerAvatar(player)}
+          <span class="player-card-body">
+            <strong>${escapeHtml(player.nom || "Joueur")}</strong>
+            <span>${escapeHtml(player.club || player.poste || "Club à confirmer")}</span>
+          </span>
+          ${player.numero ? `<span class="player-card-number">${escapeHtml(player.numero)}</span>` : ""}
+        </button>`).join("")}</div>
+      </section>`;
+    }).join("");
+  };
+
+  const loadPlayers = async () => {
+    if (playersLoaded) {
+      renderPlayers();
+      return;
+    }
+    playersContainer.innerHTML = `<div class="match-skeleton" aria-hidden="true"></div>`;
+    try {
+      const { fetchLeopardsPlayers } = await loadPlayersService();
+      players = await fetchLeopardsPlayers();
+      if (stopped) return;
+      playersLoaded = true;
+      renderPlayers();
+    } catch (error) {
+      if (stopped) return;
+      console.error("Impossible de charger les joueurs des Léopards.", error);
+      playersContainer.innerHTML = `<p class="results-empty">${EMPTY_PLAYERS_MESSAGE}</p>`;
+    }
+  };
+
+  const renderSelectionStats = (details) => {
+    const selection = details.selection || {};
+    return `${details.season ? `<p class="player-season-label">Saison ${escapeHtml(details.season)}</p>` : ""}
+      <div class="player-stats-grid">
+        <div class="player-stat"><strong>${formatStat(selection.selections)}</strong><span>Sélections</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.buts_selection)}</strong><span>Buts</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.passes_selection)}</strong><span>Passes déc.</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.minutes_selection)}</strong><span>Minutes</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.cartons_jaunes)}</strong><span>Cartons jaunes</span></div>
+        <div class="player-stat"><strong>${formatStat(selection.cartons_rouges)}</strong><span>Cartons rouges</span></div>
+      </div>`;
+  };
+
+  const renderClubPerformances = (rows) => {
+    if (!rows.length) {
+      return `<p class="match-detail-empty">Aucune performance en club n'est disponible pour le moment.</p>`;
+    }
+    const sum = (key) => rows.reduce((total, row) => total + (Number(row[key]) || 0), 0);
+    const ratings = rows.map((row) => Number(row.note)).filter((note) => Number.isFinite(note) && note > 0);
+    const average = ratings.length ? (ratings.reduce((total, note) => total + note, 0) / ratings.length).toFixed(1) : "—";
+    return `<div class="player-stats-grid">
+        <div class="player-stat"><strong>${sum("matchs")}</strong><span>Matchs</span></div>
+        <div class="player-stat"><strong>${sum("minutes")}</strong><span>Minutes</span></div>
+        <div class="player-stat"><strong>${sum("buts")}</strong><span>Buts</span></div>
+        <div class="player-stat"><strong>${sum("passes")}</strong><span>Passes déc.</span></div>
+        <div class="player-stat"><strong>${average}</strong><span>Note moy.</span></div>
+      </div>
+      <div class="standings-scroll"><table class="standings-table player-performance-table">
+        <thead><tr><th>Club</th><th>Compétition</th><th>MJ</th><th>Min</th><th>B</th><th>PD</th><th>Note</th></tr></thead>
+        <tbody>${rows.map((row) => `<tr>
+          <th scope="row">${escapeHtml(row.club || "—")}${row.saison ? ` <small>${escapeHtml(row.saison)}</small>` : ""}</th>
+          <td>${escapeHtml(row.competition || "—")}</td>
+          <td>${formatStat(row.matchs)}</td>
+          <td>${formatStat(row.minutes)}</td>
+          <td>${formatStat(row.buts)}</td>
+          <td>${formatStat(row.passes)}</td>
+          <td>${formatStat(row.note)}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>`;
+  };
+
+  const playerIdentityLine = (player, details = {}) => {
+    const age = details.player?.age ?? player.age ?? playerAge(details.player?.date_naissance || player.date_naissance);
+    const poste = details.player?.poste || player.poste;
+    return [poste, age !== null && age !== undefined ? `${age} ans` : "", details.club || player.club, details.championnat || player.championnat]
+      .filter(Boolean).map(escapeHtml).join(" · ");
+  };
+
+  const openPlayerModal = (player, trigger) => {
+    if (!playerModal || !playerModalBody) return;
+    playerReturnFocus = trigger;
+    activePlayerId = player.id;
+    playerModalBody.innerHTML = `<header class="player-modal-header">
+        ${renderPlayerAvatar(player, "is-large")}
+        <div>
+          <h3 id="playerModalName">${escapeHtml(player.nom || "Joueur")}${player.numero ? ` <span class="player-modal-number">#${escapeHtml(player.numero)}</span>` : ""}</h3>
+          <p id="playerIdentity">${playerIdentityLine(player) || "Informations à confirmer"}</p>
+        </div>
+      </header>
+      <section class="player-modal-section">
+        <h4>Statistiques individuelles · sélection</h4>
+        <div id="playerSelectionStats"><div class="match-skeleton" aria-hidden="true"></div></div>
+      </section>
+      <section class="player-modal-section">
+        <h4>Suivi en club</h4>
+        <div id="playerPerformances"><div class="match-skeleton" aria-hidden="true"></div></div>
+      </section>`;
+    document.body.classList.add("has-player-modal");
+    playerModal.hidden = false;
+    playerModal.querySelector(".player-modal-dialog").scrollTop = 0;
+    playerModal.querySelector(".player-modal-dialog").focus();
+    loadPlayersService().then(({ fetchPlayerDetails }) => fetchPlayerDetails(player)).then((details) => {
+      if (activePlayerId !== player.id || playerModal.hidden) return;
+      playerModalBody.querySelector("#playerIdentity").innerHTML = playerIdentityLine(player, details) || "Informations à confirmer";
+      playerModalBody.querySelector("#playerSelectionStats").innerHTML = renderSelectionStats(details);
+      playerModalBody.querySelector("#playerPerformances").innerHTML = renderClubPerformances(details.club_stats || []);
+    }).catch((error) => {
+      if (activePlayerId !== player.id || playerModal.hidden) return;
+      console.error("Impossible de charger les statistiques du joueur.", error);
+      const empty = `<p class="match-detail-empty">${EMPTY_DATA_MESSAGE}</p>`;
+      playerModalBody.querySelector("#playerSelectionStats").innerHTML = empty;
+      playerModalBody.querySelector("#playerPerformances").innerHTML = empty;
+    });
+  };
+
+  const closePlayerModal = () => {
+    if (!playerModal || playerModal.hidden) return;
+    playerModal.hidden = true;
+    activePlayerId = null;
+    document.body.classList.remove("has-player-modal");
+    playerReturnFocus?.focus();
+  };
+
+  playersTab.addEventListener("click", () => {
+    activeView = "players";
+    showPanel(playersPanel);
+    markTab(playersTab);
+    loadPlayers();
+  }, { signal });
+  playersSearch.addEventListener("input", renderPlayers, { signal });
+  playersPosition.addEventListener("change", renderPlayers, { signal });
+  playersContainer.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-player-id]");
+    if (!trigger) return;
+    const player = players.find((item) => String(item.id) === trigger.dataset.playerId);
+    if (player) openPlayerModal(player, trigger);
+  }, { signal });
+  if (playerModal) {
+    playerModal.addEventListener("click", (event) => {
+      if (event.target.closest("[data-player-close]")) closePlayerModal();
+    }, { signal });
+    playerModal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePlayerModal();
+      }
+    }, { signal });
+    playerModal.addEventListener("error", (event) => {
+      const image = event.target;
+      if (image instanceof HTMLImageElement && image.classList.contains("player-avatar-img")) {
+        image.hidden = true;
+        if (image.previousElementSibling) image.previousElementSibling.hidden = false;
+      }
+    }, { capture: true, signal });
+  }
+
+  if (matchesCache) {
+    matches = matchesCache;
+    renderDisciplineCompetitionTabs();
+    renderMatches();
+    refreshMatches(false);
+  } else {
+    refreshMatches(true);
+  }
+  try {
+    realtimeChannel = subscribeMatchsLocaux(() => refreshMatches());
+    standingsChannel = subscribeClassementsLocaux(() => {
+      if (activeView === "standings" && standingsMode === "teams") renderStandings();
+    });
+    refreshTimer = window.setInterval(() => refreshMatches(), 60000);
+  } catch (error) {
+    console.error("Impossible d’activer Supabase Realtime pour les matchs.", error);
+    displayNotice([`Mise à jour en direct indisponible : ${error.message}`]);
+  }
+  try {
+    buteursChannel = subscribeButeurs(() => {
+      if (activeView === "scorers" && standingsMode === "scorers") renderTopScorers();
+    });
+  } catch (error) {
+    console.error("Impossible d’activer Supabase Realtime pour les buteurs L1.", error);
+    displayNotice([`Mise à jour en direct des buteurs indisponible : ${error.message}`]);
+  }
+  return () => {
+    stopped = true;
+    controller.abort();
+    closeClubModal({ restoreFocus: false });
+    if (playerModal && !playerModal.hidden) {
+      playerModal.hidden = true;
+      document.body.classList.remove("has-player-modal");
+    }
+    window.clearInterval(refreshTimer);
+    if (detailPage && !detailPage.hidden) {
+      detailPage.hidden = true;
+      document.body.classList.remove("has-match-detail-page");
+      window.scrollTo(0, previousPageScrollY);
+    }
+    if (realtimeChannel) unsubscribeMatchsLocaux(realtimeChannel);
+    if (standingsChannel) unsubscribeMatchsLocaux(standingsChannel);
+    if (buteursChannel) unsubscribeButeurs(buteursChannel);
+    document.querySelectorAll(".nav-live").forEach((link) => {
+      link.classList.remove("is-live");
+      link.setAttribute("aria-label", "Live Center, aucun match en direct");
+    });
+    root.dataset.initialized = "false";
+  };
