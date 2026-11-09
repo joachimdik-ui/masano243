@@ -587,29 +587,28 @@ async function load(){
   const makeQuery=()=>{let q=sb.from(v.t).select("*");if(v.flt)q=v.flt(q);return q};
   let data,error;
   if(isMatchList){
-    const now=new Date().toISOString();
-    const[recent,upcoming,live]=await Promise.all([
-      makeQuery().order("date_match",{ascending:false}).limit(100),
-      makeQuery().eq("statut","upcoming").gte("date_match",now).order("date_match",{ascending:true}).limit(100),
-      makeQuery().eq("statut","live").order("date_match",{ascending:false}).limit(100)
-    ]);
-    error=recent.error||upcoming.error||live.error;
+    const pageSize=500;
+    data=[];
+    for(let from=0;;from+=pageSize){
+      const page=await makeQuery().order("date_match",{ascending:true}).range(from,from+pageSize-1);
+      if(page.error){error=page.error;break}
+      data.push(...page.data);
+      if(page.data.length<pageSize)break;
+    }
     if(!error){
-      const byId=new Map([...recent.data,...upcoming.data,...live.data].map(match=>[match.id,match]));
       const nowTime=Date.now();
       const statusRank=match=>{
         const time=Date.parse(match.date_match);
         if(match.statut==="upcoming"&&Number.isFinite(time)&&time>=nowTime)return 0;
-        if(match.statut==="live")return 1;
-        if(match.statut==="paused")return 2;
-        if(match.statut==="upcoming")return 3;
-        return 4;
+        if(match.statut==="live"||match.statut==="paused")return 1;
+        if(match.statut==="finished"||(Number.isFinite(time)&&time<nowTime))return 2;
+        return 3;
       };
-      data=[...byId.values()].sort((a,b)=>{
+      data.sort((a,b)=>{
         const rank=statusRank(a)-statusRank(b);
         if(rank)return rank;
         const dateA=Date.parse(a.date_match)||0,dateB=Date.parse(b.date_match)||0;
-        return statusRank(a)===0?dateA-dateB:dateB-dateA;
+        return rank===0?dateA-dateB:dateB-dateA;
       });
     }
   }else{
