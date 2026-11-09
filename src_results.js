@@ -383,20 +383,23 @@ export const mountResults = (root, competitionPage = null) => {
   let previousPageScrollY = 0;
   let activeDetailMatchId;
 
-  // Navigation par date (page Rencontres uniquement) : ‹ Hier | Aujourd'hui | Demain › + sélecteur de date
+  // Navigation par date (page Rencontres uniquement)
   let selectedDay = startOfDay(new Date());
   let dateNavEl = null;
 
   const syncDateNav = () => {
     if (!dateNavEl) return;
     const offset = dayOffset(selectedDay);
-    dateNavEl.querySelectorAll("[data-date-quick]").forEach((button) => {
-      const active = Number(button.dataset.dateQuick) === offset;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
     dateNavEl.querySelector("#matchDatepicker").value = dayKey(selectedDay);
-    dateNavEl.querySelector("#matchDateLabel").textContent = longDayLabel(selectedDay);
+    const dateLabel = offset === 0
+      ? "Aujourd’hui"
+      : offset === -1
+        ? "Hier"
+        : offset === 1
+          ? "Demain"
+          : longDayLabel(selectedDay);
+    dateNavEl.querySelector("#matchDateLabel").textContent = dateLabel;
+    dateNavEl.querySelector("#matchDateLabel").setAttribute("aria-label", `Choisir une date, ${dateLabel}`);
   };
 
   const setSelectedDay = (day) => {
@@ -417,14 +420,12 @@ export const mountResults = (root, competitionPage = null) => {
       <div class="date-nav-row">
         <button type="button" class="date-nav-arrow" data-date-step="-1" aria-label="Jour précédent">&#8249;</button>
         <div class="date-nav-quick">
-          <button type="button" class="competition-filter" data-date-quick="-1" aria-pressed="false">Hier</button>
-          <button type="button" class="competition-filter" data-date-quick="0" aria-pressed="false">Aujourd'hui</button>
-          <button type="button" class="competition-filter" data-date-quick="1" aria-pressed="false">Demain</button>
-          <input type="date" id="matchDatepicker" class="competition-filter" aria-label="Choisir une date" />
+          <button type="button" class="date-nav-label" id="matchDateLabel" aria-live="polite"></button>
+          <input type="date" id="matchDatepicker" class="date-nav-picker" tabindex="-1" aria-label="Choisir une date" />
         </div>
         <button type="button" class="date-nav-arrow" data-date-step="1" aria-label="Jour suivant">&#8250;</button>
       </div>
-      <p class="date-nav-label" id="matchDateLabel" aria-live="polite"></p>`;
+      `;
     matchesPanel.insertBefore(dateNavEl, statusFilters);
     syncDateNav();
 
@@ -434,10 +435,10 @@ export const mountResults = (root, competitionPage = null) => {
         setSelectedDay(new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate() + Number(step.dataset.dateStep)));
         return;
       }
-      const quick = event.target.closest("[data-date-quick]");
-      if (quick) {
-        const today = startOfDay(new Date());
-        setSelectedDay(new Date(today.getFullYear(), today.getMonth(), today.getDate() + Number(quick.dataset.dateQuick)));
+      if (event.target.closest("#matchDateLabel")) {
+        const picker = dateNavEl.querySelector("#matchDatepicker");
+        if (typeof picker.showPicker === "function") picker.showPicker();
+        else picker.click();
       }
     }, { signal });
     dateNavEl.querySelector("#matchDatepicker").addEventListener("change", (event) => {
@@ -1778,7 +1779,8 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(topScorersView, false);
       setTab(playersTab, true);
     } else if (layout === "rencontres") {
-      setTab(standingsTab, true, "Classements");
+      setTab(matchesTab, true, "Calendrier");
+      setTab(standingsTab, true, "Classement");
       setTab(topScorersView, true, "Buteurs");
     } else if (layout === "interclubs" || layout === "international" || layout === "events") {
       setTab(standingsTab, false);
@@ -1821,8 +1823,21 @@ export const mountResults = (root, competitionPage = null) => {
       if (!button) return;
       clubFilter = null;
       footballScope = button.dataset.footballScope;
+      if (STANDINGS_CATEGORIES.includes(footballScope)) {
+        competitionFilter = footballScope;
+        if (footballScope === "linafoot_l1") linafootLeague.value = "L1";
+        if (footballScope === "linafoot_l2") linafootLeague.value = "L2";
+        updateLinafootGroupOptions();
+        updateTopScorersLabel();
+      } else if (footballScope === "all" && !STANDINGS_CATEGORIES.includes(competitionFilter)) {
+        competitionFilter = "linafoot_l1";
+        linafootLeague.value = "L1";
+        updateLinafootGroupOptions();
+        updateTopScorersLabel();
+      }
       renderScopePills();
       renderMatches();
+      syncRencontresControls();
     }, { signal });
     renderScopePills();
     updateSportCounts();
@@ -1861,6 +1876,7 @@ export const mountResults = (root, competitionPage = null) => {
   root.querySelectorAll("[data-competition]").forEach((button) => button.addEventListener("click", () => {
     clubFilter = null;
     competitionFilter = button.dataset.competition;
+    if (isAllLayout && STANDINGS_CATEGORIES.includes(competitionFilter)) footballScope = competitionFilter;
     linafootControls.hidden = !["linafoot_l1", "linafoot_l2"].includes(competitionFilter);
     epfKinControls.hidden = competitionFilter !== "epf_kin";
     topScorersView.hidden = !["linafoot_l1", "linafoot_l2", "epf_kin", "leopards"].includes(competitionFilter);
@@ -1903,13 +1919,14 @@ export const mountResults = (root, competitionPage = null) => {
     };
     const isFootball = sportFilter === "football";
     const inTables = activeView === "standings" || activeView === "scorers";
-    if (!isFootball && inTables) {
+    const supportsTables = STANDINGS_CATEGORIES.includes(footballScope === "all" ? competitionFilter : footballScope);
+    if ((!isFootball || !supportsTables) && inTables) {
       matchesTab.click();
       return;
     }
     setShown(root.querySelector(".results-view-tabs"), isFootball);
-    standingsTab.hidden = !isFootball;
-    topScorersView.hidden = !isFootball;
+    standingsTab.hidden = !isFootball || !supportsTables;
+    topScorersView.hidden = !isFootball || !supportsTables;
     setShown(sportSwitchEl, !inTables);
     if (inTables) {
       setShown(disciplineCompetitionControls, false);
@@ -1939,6 +1956,7 @@ export const mountResults = (root, competitionPage = null) => {
   linafootLeague.addEventListener("change", () => {
     clubFilter = null;
     competitionFilter = linafootLeague.value === "L2" ? "linafoot_l2" : "linafoot_l1";
+    if (isAllLayout) footballScope = competitionFilter;
     updateLinafootGroupOptions();
     topScorersView.hidden = false;
     updateTopScorersLabel();

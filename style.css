@@ -3216,3 +3216,74 @@ body.has-club-modal { overflow: hidden; }
 .date-nav-arrow:hover, .date-nav-arrow:focus-visible { border-color: var(--accent); background: var(--accent); color: #fff; }
 .date-nav-label { margin: 0; color: var(--muted); font: 600 0.82rem var(--font-text); text-align: center; }
 body.pwa-standalone .date-nav-arrow { background: #15151b; color: #f3f1f7; }
+
+/* Ajustements demandés pour la page Rencontres */
+.results-view.is-compact.is-rencontres .live-count {
+  border-color: #42158f;
+  background: #42158f;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(66, 21, 143, 0.22);
+}
+.results-view.is-compact.is-rencontres .live-count strong { color: #fff; }
+.results-view.is-compact.is-rencontres .live-count .live-pulse {
+  background: #d8c6ff;
+  box-shadow: 0 0 0 0 rgba(216, 198, 255, 0.65);
+}
+.results-view.is-compact.is-rencontres .match-date-navigation .date-nav-row { justify-content: center; }
+.results-view.is-compact.is-rencontres .date-nav-quick {
+  position: relative;
+  flex: 0 1 auto;
+  overflow: visible;
+}
+.results-view.is-compact.is-rencontres .date-nav-label {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  text-align: center;
+  min-height: 42px;
+  padding: 9px 22px;
+  border: 1px solid rgba(66, 21, 143, 0.28);
+  border-radius: var(--radius-pill, 999px);
+  background: var(--surface, #fff);
+  color: #42158f;
+  font: 700 0.86rem var(--font-text);
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.results-view.is-compact.is-rencontres .date-nav-label:hover,
+.results-view.is-compact.is-rencontres .date-nav-label:focus-visible {
+  border-color: #42158f;
+  background: #f5f0ff;
+  box-shadow: 0 0 0 3px rgba(66, 21, 143, 0.1);
+  outline: 0;
+}
+.results-view.is-compact.is-rencontres #matchDatepicker {
+  min-width: 0;
+}
+.results-view.is-compact.is-rencontres .date-nav-picker {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.results-view.is-compact.is-rencontres .date-nav-arrow {
+  width: 38px;
+  height: 38px;
+}
+body.pwa-standalone .results-view.is-compact.is-rencontres .live-count {
+  border-color: #42158f;
+  background: #42158f;
+  color: #fff;
+}
+body.pwa-standalone .results-view.is-compact.is-rencontres .live-count strong { color: #fff; }
+body.pwa-standalone .results-view.is-compact.is-rencontres .date-nav-label {
+  border-color: #7654bd;
+  background: #20192d;
+  color: #e0c6ff;
+}
