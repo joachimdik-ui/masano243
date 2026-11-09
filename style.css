@@ -3107,7 +3107,7 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
 @media (max-width: 700px) {
   /* Entête façon Google */
   body.pwa-standalone .pwa-app-header { padding: env(safe-area-inset-top) 18px 0 20px; }
-  body.pwa-standalone .pwa-app-wordmark { font-size: 1.85rem; font-weight: 600; letter-spacing: -.045em; color: #42158f; }
+  body.pwa-standalone .pwa-app-wordmark { font-size: 1.85rem; font-weight: 800; letter-spacing: -.045em; color: #42158f; }
   body.pwa-standalone .pwa-app-account-toggle,
   body.pwa-standalone .pwa-app-header-actions button { width: 44px; height: 44px; background: #42158f; color: #fff; }
 
