@@ -64,6 +64,13 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .row{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cd);border:0;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 1px 8px #2a0c630f}
 .row img:not(.club-row-logo),.row .nb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--sf);flex:none}
 .row>div{min-width:0;flex:1}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.match-search{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:2px 0 14px}
+.match-search input{width:100%;min-width:0;padding:12px 14px;border:1px solid var(--bd);border-radius:13px;background:var(--cd);outline:none}
+.match-search input:focus{border-color:var(--ac);box-shadow:0 0 0 3px #42158f18}
+.match-search-count{color:var(--mu);font-size:.76rem;font-weight:700;white-space:nowrap}
+.row.is-next{position:relative;display:grid;grid-template-columns:minmax(0,1fr);border:1px solid #d9c9f4;box-shadow:0 5px 16px #42158f12}
+.match-next-badge{justify-self:start;margin-bottom:-5px;padding:5px 8px;border-radius:99px;background:#efe8fb;color:var(--ac);font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.match-search-empty{padding:18px;border:1px dashed var(--bd);border-radius:14px;color:var(--mu);text-align:center}
 .scorer-row-heading{display:flex;align-items:center;gap:12px}.scorer-row-heading>b{flex:1;min-width:0}
 .scorer-goals{display:grid;width:36px;height:36px;flex:0 0 36px;place-items:center;border-radius:50%;background:var(--ac);color:#fff;font-size:.88rem;font-weight:800;font-variant-numeric:tabular-nums}
 .mt{display:grid;grid-template-columns:minmax(0,1fr) minmax(56px,auto) minmax(0,1fr);gap:8px;align-items:center}.mt span{display:flex;min-width:0;align-items:center;gap:6px;font-weight:600;font-size:.88rem}.mt span>b{min-width:0;overflow:hidden;color:var(--ac);font-size:1rem;text-overflow:ellipsis;white-space:nowrap}.mt span:last-child{justify-content:flex-end;text-align:right}.mt>b{min-width:56px;text-align:center;font-size:1.25rem;color:var(--ac);font-variant-numeric:tabular-nums;white-space:nowrap}.row .mt>b{font-size:1rem}
@@ -566,16 +573,70 @@ function V(){const s=cur();
   return gen(s)}
 async function load(){
   const L=$("#list");if(sec==="home")return dash(L);
-  const v=V();$("#fab").hidden=!v.add;
+  const v=V(),isMatchList=sec==="match";$("#fab").hidden=!v.add;
   $("#fab").setAttribute("aria-label",sec==="tv"?"Créer un direct OBS":"Ajouter");
   $("#fab").title=sec==="tv"?"Créer un direct OBS":"Ajouter";
-  L.innerHTML=(SECS[sec][2]?`<div class="pills">${SECS[sec][2].map(([k,l])=>`<button class="pill${k===cur()?" on":""}" data-s="${k}">${l}</button>`).join("")}</div>`:"")+'<div id="rl"><p class="mu">Chargement…</p></div>';
+  L.innerHTML=(SECS[sec][2]?`<div class="pills">${SECS[sec][2].map(([k,l])=>`<button class="pill${k===cur()?" on":""}" data-s="${k}">${l}</button>`).join("")}</div>`:"")+
+    (isMatchList?'<div class="match-search"><input type="search" id="matchSearch" placeholder="Rechercher un club, une compétition, une date…" aria-label="Rechercher un match"><span class="match-search-count" id="matchSearchCount" aria-live="polite"></span></div>':"")+
+    '<div id="rl"><p class="mu">Chargement…</p></div>';
   $$(".pill").forEach(b=>b.onclick=()=>{sub[sec]=b.dataset.s;load()});
-  let q=sb.from(v.t).select("*");if(v.flt)q=v.flt(q);const{data,error}=await q.order(v.o[0],{ascending:!!v.o[1]}).limit(100);
+  const makeQuery=()=>{let q=sb.from(v.t).select("*");if(v.flt)q=v.flt(q);return q};
+  let data,error;
+  if(isMatchList){
+    const now=new Date().toISOString();
+    const[recent,upcoming,live]=await Promise.all([
+      makeQuery().order("date_match",{ascending:false}).limit(100),
+      makeQuery().eq("statut","upcoming").gte("date_match",now).order("date_match",{ascending:true}).limit(100),
+      makeQuery().eq("statut","live").order("date_match",{ascending:false}).limit(100)
+    ]);
+    error=recent.error||upcoming.error||live.error;
+    if(!error){
+      const byId=new Map([...recent.data,...upcoming.data,...live.data].map(match=>[match.id,match]));
+      const nowTime=Date.now();
+      const statusRank=match=>{
+        const time=Date.parse(match.date_match);
+        if(match.statut==="upcoming"&&Number.isFinite(time)&&time>=nowTime)return 0;
+        if(match.statut==="live")return 1;
+        if(match.statut==="paused")return 2;
+        if(match.statut==="upcoming")return 3;
+        return 4;
+      };
+      data=[...byId.values()].sort((a,b)=>{
+        const rank=statusRank(a)-statusRank(b);
+        if(rank)return rank;
+        const dateA=Date.parse(a.date_match)||0,dateB=Date.parse(b.date_match)||0;
+        return statusRank(a)===0?dateA-dateB:dateB-dateA;
+      });
+    }
+  }else{
+    const result=await makeQuery().order(v.o[0],{ascending:!!v.o[1]}).limit(100);
+    data=result.data;error=result.error;
+  }
   if(error){$("#fab").hidden=true;$("#rl").innerHTML=miss(error)?`<div class="note"><b>Bientôt disponible</b><p>Cette rubrique est prête dans l’admin, mais la table <code>${v.t}</code> n’existe pas encore dans la base.</p></div>`:`<p class="err">${esc(error.message)}</p>`;return}
-  rows=data;if(!rows.length){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(sec==="tv"?" Touchez + pour créer un direct et générer sa clé OBS.":v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
-  $("#rl").innerHTML=rows.map((r,i)=>`<button class="row" data-i="${i}">${v.row(r)}</button>`).join("");
-  if(v.open)$$("#rl .row").forEach(b=>b.onclick=()=>v.open(rows[+b.dataset.i]));
+  rows=data;
+  if(!rows.length){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(sec==="tv"?" Touchez + pour créer un direct et générer sa clé OBS.":v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
+  const nextMatchIndex=isMatchList?rows.findIndex(match=>match.statut==="upcoming"&&Date.parse(match.date_match)>=Date.now()):-1;
+  const renderRows=search=>{
+    const normalize=value=>String(value??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("fr-FR").trim();
+    const term=normalize(search);
+    const matches=rows.map((match,index)=>({match,index})).filter(({match})=>{
+      if(!term)return true;
+      const status=ST.find(([key])=>key===match.statut)?.[1]||match.statut;
+      return normalize([
+        mn(match,"domicile"),mn(match,"visiteur"),match.competition,match.ligue,match.groupe,
+        match.serie,match.stade,match.date_match,fmt(match.date_match),status,
+        match.date_match?new Date(match.date_match).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"}):""
+      ].join(" ")).includes(term);
+    });
+    if(isMatchList)$("#matchSearchCount").textContent=`${matches.length} match${matches.length===1?"":"s"} / ${rows.length}`;
+    $("#rl").innerHTML=matches.length?matches.map(({match,index})=>{
+      const isNext=index===nextMatchIndex;
+      return `<button class="row${isNext?" is-next":""}" data-i="${index}">${isNext?'<span class="match-next-badge">Prochain match</span>':""}${v.row(match)}</button>`;
+    }).join(""):`<p class="match-search-empty">Aucun match ne correspond à cette recherche.</p>`;
+    if(v.open)$$("#rl .row").forEach(button=>button.onclick=()=>v.open(rows[+button.dataset.i]));
+  };
+  if(isMatchList)$("#matchSearch").addEventListener("input",event=>renderRows(event.currentTarget.value));
+  renderRows("");
 }
 async function dash(L){
   $("#fab").hidden=true;
