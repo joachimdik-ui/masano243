@@ -267,6 +267,31 @@ const roundTitle = ({ round, role }) => {
   return parts.join(" · ");
 };
 
+// ---- Navigation par jour (page Rencontres) : helpers en heure locale ----
+const DAY_MS = 24 * 60 * 60 * 1000;
+const startOfDay = (value) => {
+  const date = new Date(value);
+  date.setHours(0, 0, 0, 0);
+  return date;
+};
+const dayKey = (value) => {
+  const date = new Date(value);
+  const pad = (number) => String(number).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+};
+const parseDayKey = (key) => {
+  const [year, month, day] = String(key).split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+const dayOffset = (value) => Math.round((startOfDay(value) - startOfDay(new Date())) / DAY_MS);
+const longDayLabel = (value) => {
+  const label = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(value);
+  return label.charAt(0).toUpperCase() + label.slice(1);
+};
+const shortDayLabel = (key) => new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short" })
+  .format(parseDayKey(key)).replace(/\./g, "");
+const STANDINGS_CATEGORIES = ["linafoot_l1", "linafoot_l2", "epf_kin"];
+
 export const mountResults = (root, competitionPage = null) => {
   if (!root) return () => {};
   root.dataset.initialized = "true";
@@ -337,7 +362,7 @@ export const mountResults = (root, competitionPage = null) => {
   let matches = [];
   let standings = [];
   let standingsMode = "teams";
-  let competitionFilter = competitionPage?.competition || "linafoot_l1";
+  let competitionFilter = isAllLayout ? "linafoot_l1" : (competitionPage?.competition || "linafoot_l1");
   let selectedDisciplineCompetition = "";
   let sportFilter = "football";
   let footballScope = "all";
@@ -358,29 +383,73 @@ export const mountResults = (root, competitionPage = null) => {
   let previousPageScrollY = 0;
   let activeDetailMatchId;
 
-  // AJOUT : Filtre par date (Défaut : aujourd'hui "today")
-  let selectedDateFilter = "today"; 
+  // Navigation par date (page Rencontres uniquement) : ‹ Hier | Aujourd'hui | Demain › + sélecteur de date
+  let selectedDay = startOfDay(new Date());
+  let dateNavEl = null;
 
-  // Injection de la barre de navigation par date dans la vue
-  const resultsToolbar = root.querySelector(".results-toolbar");
-  if (resultsToolbar) {
-    let dateNavContainer = root.querySelector("#matchDateNavigation");
-    if (!dateNavContainer) {
-      dateNavContainer = document.createElement("div");
-      dateNavContainer.id = "matchDateNavigation";
-      dateNavContainer.className = "match-date-navigation";
-      dateNavContainer.style.cssText = "display: flex; gap: 8px; align-items: center; overflow-x: auto; padding: 4px 0; margin-bottom: 10px;";
-      dateNavContainer.innerHTML = `
-        <button type="button" class="competition-filter ${selectedDateFilter === "yesterday" ? "is-active" : ""}" data-date-filter="yesterday">Hier</button>
-        <button type="button" class="competition-filter ${selectedDateFilter === "today" ? "is-active" : ""}" data-date-filter="today">Aujourd'hui</button>
-        <button type="button" class="competition-filter ${selectedDateFilter === "tomorrow" ? "is-active" : ""}" data-date-filter="tomorrow">Demain</button>
-        <input type="date" id="matchDatepicker" class="competition-filter" value="" aria-label="Choisir une date" style="cursor: pointer; background: var(--surface);" />
-      `;
-      resultsToolbar.appendChild(dateNavContainer);
-    }
+  const syncDateNav = () => {
+    if (!dateNavEl) return;
+    const offset = dayOffset(selectedDay);
+    dateNavEl.querySelectorAll("[data-date-quick]").forEach((button) => {
+      const active = Number(button.dataset.dateQuick) === offset;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    dateNavEl.querySelector("#matchDatepicker").value = dayKey(selectedDay);
+    dateNavEl.querySelector("#matchDateLabel").textContent = longDayLabel(selectedDay);
+  };
+
+  const setSelectedDay = (day) => {
+    selectedDay = startOfDay(day);
+    clubFilter = null;
+    syncDateNav();
+    renderMatches();
+  };
+
+  root.querySelectorAll("#matchDateNavigation").forEach((element) => element.remove());
+  if (isAllLayout && matchesPanel && statusFilters) {
+    dateNavEl = document.createElement("div");
+    dateNavEl.id = "matchDateNavigation";
+    dateNavEl.className = "match-date-navigation";
+    dateNavEl.setAttribute("role", "group");
+    dateNavEl.setAttribute("aria-label", "Naviguer par date");
+    dateNavEl.innerHTML = `
+      <div class="date-nav-row">
+        <button type="button" class="date-nav-arrow" data-date-step="-1" aria-label="Jour précédent">&#8249;</button>
+        <div class="date-nav-quick">
+          <button type="button" class="competition-filter" data-date-quick="-1" aria-pressed="false">Hier</button>
+          <button type="button" class="competition-filter" data-date-quick="0" aria-pressed="false">Aujourd'hui</button>
+          <button type="button" class="competition-filter" data-date-quick="1" aria-pressed="false">Demain</button>
+          <input type="date" id="matchDatepicker" class="competition-filter" aria-label="Choisir une date" />
+        </div>
+        <button type="button" class="date-nav-arrow" data-date-step="1" aria-label="Jour suivant">&#8250;</button>
+      </div>
+      <p class="date-nav-label" id="matchDateLabel" aria-live="polite"></p>`;
+    matchesPanel.insertBefore(dateNavEl, statusFilters);
+    syncDateNav();
+
+    dateNavEl.addEventListener("click", (event) => {
+      const step = event.target.closest("[data-date-step]");
+      if (step) {
+        setSelectedDay(new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate() + Number(step.dataset.dateStep)));
+        return;
+      }
+      const quick = event.target.closest("[data-date-quick]");
+      if (quick) {
+        const today = startOfDay(new Date());
+        setSelectedDay(new Date(today.getFullYear(), today.getMonth(), today.getDate() + Number(quick.dataset.dateQuick)));
+      }
+    }, { signal });
+    dateNavEl.querySelector("#matchDatepicker").addEventListener("change", (event) => {
+      if (event.target.value) setSelectedDay(parseDayKey(event.target.value));
+    }, { signal });
+    list.addEventListener("click", (event) => {
+      const jump = event.target.closest("[data-date-jump]");
+      if (jump) setSelectedDay(parseDayKey(jump.dataset.dateJump));
+    }, { signal });
   }
 
-  const setDetailRank = (element, position, total) => {
+    const setDetailRank = (element, position, total) => {
     if (!Number.isFinite(position) || position < 1) {
       element.textContent = "Rang indisponible";
       element.className = "match-rank-badge";
@@ -932,10 +1001,10 @@ export const mountResults = (root, competitionPage = null) => {
   function updateSportCounts() {
     if (!sportSwitchEl) return;
     const counts = {
-      football: matches.filter((match) => FOOTBALL_CATEGORIES.includes(match.competition_category)).length
+      football: matches.filter((match) => FOOTBALL_CATEGORIES.includes(match.competition_category) && matchesDateFilter(match)).length
     };
     ["basketball", "judo", "omnisports"].forEach((key) => {
-      counts[key] = matches.filter((match) => match.competition_category === key).length;
+      counts[key] = matches.filter((match) => match.competition_category === key && matchesDateFilter(match)).length;
     });
     sportSwitchEl.querySelectorAll("[data-sport-count]").forEach((badge) => {
       const total = counts[badge.dataset.sportCount];
@@ -951,7 +1020,7 @@ export const mountResults = (root, competitionPage = null) => {
         const selected = value === footballScope;
         const total = matches.filter((match) => (value === "all"
           ? FOOTBALL_CATEGORIES.includes(match.competition_category)
-          : match.competition_category === value)).length;
+          : match.competition_category === value) && matchesDateFilter(match)).length;
         return `<button type="button" class="competition-filter${selected ? " is-active" : ""}" role="tab" aria-selected="${selected}" data-football-scope="${value}">${label}${total ? `<span class="pill-count">${total}</span>` : ""}</button>`;
       });
     } else {
@@ -979,57 +1048,20 @@ export const mountResults = (root, competitionPage = null) => {
     ? match.statut === "live"
     : statusFilter === "all" || match.statut === statusFilter);
 
-  // AJOUT : Filtre par date appliqué aux matchs
-  const matchesDateFilter = (match) => {
-    if (!match.date_match) return false;
-    const matchDate = new Date(match.date_match);
-    if (Number.isNaN(matchDate.getTime())) return false;
-
-    const now = new Date();
-    const targetDate = new Date();
-
-    if (selectedDateFilter === "yesterday") {
-      targetDate.setDate(now.getDate() - 1);
-    } else if (selectedDateFilter === "tomorrow") {
-      targetDate.setDate(now.getDate() + 1);
-    } else if (selectedDateFilter === "today") {
-      // aujourd'hui
-    } else if (selectedDateFilter.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      const parsedCustom = new Date(selectedDateFilter);
-      if (!Number.isNaN(parsedCustom.getTime())) {
-        targetDate.setTime(parsedCustom.getTime());
-      }
-    }
-
-    return (
-      matchDate.getFullYear() === targetDate.getFullYear() &&
-      matchDate.getMonth() === targetDate.getMonth() &&
-      matchDate.getDate() === targetDate.getDate()
-    );
+  // Filtre par jour (page Rencontres) : un match live reste visible dans la vue « Aujourd'hui »
+  const matchDayKey = (match) => {
+    const time = matchTime(match);
+    return time === null ? null : dayKey(time);
   };
-
-  const LEAGUE_CATEGORIES = ["linafoot_l1", "linafoot_l2", "epf_kin"];
-  const leagueWindowIds = () => {
-    const groups = new Map();
-    matches.forEach((match) => {
-      if (!LEAGUE_CATEGORIES.includes(match.competition_category)) return;
-      const key = `${match.competition_category}|${match.ligue || ""}|${match.groupe || match.serie || ""}`;
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(match);
-    });
-    const ids = new Set();
-    groups.forEach((items) => {
-      const picks = pickRoundWindow(buildRounds(items));
-      if (!picks.length) items.forEach((match) => ids.add(match.id));
-      picks.forEach(({ round }) => round.matches.forEach((match) => ids.add(match.id)));
-    });
-    return ids;
+  const matchesDateFilter = (match) => {
+    if (!isAllLayout) return true;
+    const selectedKey = dayKey(selectedDay);
+    if (matchDayKey(match) === selectedKey) return true;
+    return match.statut === "live" && selectedKey === dayKey(new Date());
   };
 
   const scopedMatches = () => {
-    const windowIds = isAllLayout ? leagueWindowIds() : null;
     return matches.filter((match) => {
-    if (windowIds && LEAGUE_CATEGORIES.includes(match.competition_category) && !windowIds.has(match.id)) return false;
     const matchesCompetition = isLiveCenter || inScope(match);
     const matchesNamedCompetition = !selectedDisciplineCompetition || match.competition === selectedDisciplineCompetition;
     const matchesLeague = isLiveCenter || isAllLayout || match.source !== "local"
@@ -1051,6 +1083,29 @@ export const mountResults = (root, competitionPage = null) => {
     `class="match-card${match.statut === "live" ? " is-live" : ""}"`,
     `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
   );
+
+  const renderDayView = (items) => {
+    const sorted = [...items].sort((a, b) => {
+      const liveGap = (b.statut === "live") - (a.statut === "live");
+      return liveGap || (matchTime(a) ?? Infinity) - (matchTime(b) ?? Infinity);
+    });
+    const groups = new Map();
+    sorted.forEach((match) => {
+      const key = match.competition || "Autres matchs";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(match);
+    });
+    if (groups.size < 2) return sorted.map(decorateMatch).join("");
+    return [...groups].map(([name, items]) => `<h3 class="match-round-title">${escapeHtml(name)}</h3>${items.map(decorateMatch).join("")}`).join("");
+  };
+
+  const nearestMatchDay = () => {
+    const selectedKey = dayKey(selectedDay);
+    const keys = [...new Set(scopedMatches().filter(matchesStatusFilter).map(matchDayKey).filter(Boolean))];
+    const after = keys.filter((key) => key > selectedKey).sort()[0];
+    const before = keys.filter((key) => key < selectedKey).sort().reverse()[0];
+    return after || before || null;
+  };
 
   const renderRoundView = () => {
     const picks = pickRoundWindow(buildRounds(scopedMatches().filter(matchesDateFilter)));
@@ -1193,7 +1248,10 @@ export const mountResults = (root, competitionPage = null) => {
   const renderMatches = () => {
     const liveCount = matches.filter((match) => match.statut === "live").length;
     count.textContent = String(liveCount);
-    if (isAllLayout) updateSportCounts();
+    if (isAllLayout) {
+      updateSportCounts();
+      if (activeView === "matches") renderScopePills();
+    }
     if (liveFilterButton) {
       const scopeLive = isLiveCenter
         ? liveCount
@@ -1209,8 +1267,19 @@ export const mountResults = (root, competitionPage = null) => {
       list.innerHTML = MATCH_SKELETONS;
       return;
     }
+    if (!filtered.length && isAllLayout) {
+      if (!matches.some(inScope)) {
+        list.innerHTML = `<p class="results-empty">${EMPTY_EVENTS_MESSAGE}</p>`;
+        return;
+      }
+      const jumpKey = nearestMatchDay();
+      list.innerHTML = `<p class="results-empty">Aucun match pour le ${escapeHtml(longDayLabel(selectedDay).toLowerCase())}.${jumpKey
+        ? ` <button type="button" class="competition-filter" data-date-jump="${jumpKey}">${jumpKey > dayKey(selectedDay) ? "Prochains matchs" : "Derniers matchs"} : ${escapeHtml(shortDayLabel(jumpKey))}</button>`
+        : ""}</p>`;
+      return;
+    }
     if (!filtered.length) {
-      const playoffPreview = competitionFilter === "linafoot_l1" && linafootGroup.value === "PO";
+      const playoffPreview = !isAllLayout && competitionFilter === "linafoot_l1" && linafootGroup.value === "PO";
       const scopeHasMatches = isLiveCenter
         ? matches.length > 0
         : matches.some(inScope);
@@ -1233,6 +1302,11 @@ export const mountResults = (root, competitionPage = null) => {
         openPendingHomeMatch();
         return;
       }
+    }
+    if (isAllLayout) {
+      list.innerHTML = renderDayView(filtered);
+      openPendingHomeMatch();
+      return;
     }
     list.innerHTML = filtered
       .sort((a, b) => {
@@ -1610,6 +1684,7 @@ export const mountResults = (root, competitionPage = null) => {
   };
 
   const updateTopScorersLabel = () => {
+    if (isAllLayout) return;
     topScorersView.textContent = competitionFilter === "epf_kin"
       ? "Buteurs EPF-KIN"
       : competitionFilter === "leopards"
@@ -1702,7 +1777,10 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(standingsTab, false);
       setTab(topScorersView, false);
       setTab(playersTab, true);
-    } else if (layout === "interclubs" || layout === "international" || layout === "events" || layout === "rencontres") {
+    } else if (layout === "rencontres") {
+      setTab(standingsTab, true, "Classements");
+      setTab(topScorersView, true, "Buteurs");
+    } else if (layout === "interclubs" || layout === "international" || layout === "events") {
       setTab(standingsTab, false);
       setTab(topScorersView, false);
     }
@@ -1736,6 +1814,7 @@ export const mountResults = (root, competitionPage = null) => {
       });
       renderScopePills();
       renderMatches();
+      syncRencontresControls();
     }, { signal });
     disciplineCompetitionControls.addEventListener("click", (event) => {
       const button = event.target.closest("[data-football-scope]");
@@ -1801,7 +1880,7 @@ export const mountResults = (root, competitionPage = null) => {
         .forEach((item) => { item.hidden = true; });
     }
     renderMatches();
-    if (activeView === "standings") renderStandings();
+    if (activeView === "standings" || (isAllLayout && activeView === "scorers")) renderStandings();
   }, { signal }));
   root.querySelectorAll("[data-status]").forEach((button) => button.addEventListener("click", () => {
     clubFilter = null;
@@ -1814,29 +1893,48 @@ export const mountResults = (root, competitionPage = null) => {
     renderMatches();
   }, { signal }));
 
-  // AJOUT : Écouteurs d'événements pour la navigation par date
-  root.addEventListener("click", (event) => {
-    const dateBtn = event.target.closest("[data-date-filter]");
-    if (dateBtn) {
-      selectedDateFilter = dateBtn.dataset.dateFilter;
-      root.querySelectorAll("[data-date-filter]").forEach((b) => b.classList.toggle("is-active", b === dateBtn));
-      const picker = root.querySelector("#matchDatepicker");
-      if (picker) picker.value = "";
-      renderMatches();
+  // Page Rencontres : Calendrier (navigation par jour) | Classements (ligue + groupe) | Buteurs (par ligue)
+  function syncRencontresControls() {
+    if (!isAllLayout) return;
+    const setShown = (element, shown) => {
+      if (!element) return;
+      element.hidden = !shown;
+      element.style.display = shown ? "" : "none";
+    };
+    const isFootball = sportFilter === "football";
+    const inTables = activeView === "standings" || activeView === "scorers";
+    if (!isFootball && inTables) {
+      matchesTab.click();
+      return;
     }
-  });
-
-  root.addEventListener("change", (event) => {
-    if (event.target && event.target.id === "matchDatepicker") {
-      if (event.target.value) {
-        selectedDateFilter = event.target.value;
-        root.querySelectorAll("[data-date-filter]").forEach((b) => b.classList.remove("is-active"));
-        renderMatches();
-      }
+    setShown(root.querySelector(".results-view-tabs"), isFootball);
+    standingsTab.hidden = !isFootball;
+    topScorersView.hidden = !isFootball;
+    setShown(sportSwitchEl, !inTables);
+    if (inTables) {
+      setShown(disciplineCompetitionControls, false);
+    } else {
+      renderScopePills();
+      disciplineCompetitionControls.style.display = "";
     }
-  });
+    root.querySelectorAll("[data-competition]").forEach((button) => {
+      button.hidden = !STANDINGS_CATEGORIES.includes(button.dataset.competition);
+      const active = button.dataset.competition === competitionFilter;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    setShown(root.querySelector(".competition-filters"), inTables);
+    linafootLeague.hidden = true;
+    linafootLeagueLabel.hidden = true;
+    const showGroups = activeView === "standings";
+    setShown(linafootControls, showGroups && ["linafoot_l1", "linafoot_l2"].includes(competitionFilter));
+    setShown(epfKinControls, showGroups && competitionFilter === "epf_kin");
+  }
+  [matchesTab, standingsTab, topScorersView].forEach((tab) => tab.addEventListener("click", syncRencontresControls, { signal }));
+  root.querySelectorAll("[data-competition]").forEach((button) => button.addEventListener("click", syncRencontresControls, { signal }));
+  syncRencontresControls();
 
-  standingsCompetition.addEventListener("change", renderStandings, { signal });
+    standingsCompetition.addEventListener("change", renderStandings, { signal });
   standingsGroup.addEventListener("change", renderStandings, { signal });
   linafootLeague.addEventListener("change", () => {
     clubFilter = null;

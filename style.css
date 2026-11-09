@@ -3008,3 +3008,14 @@ body.has-club-modal { overflow: hidden; }
 @media (max-width: 640px) {
   .club-modal-dialog { height: 90vh; max-height: 90vh; }
 }
+
+/* ===== Page Rencontres : navigation par date (ajout, ne modifie aucune règle existante) ===== */
+.match-date-navigation { display: grid; gap: 8px; margin-bottom: var(--space-2, 12px); }
+.match-date-navigation .date-nav-row { display: flex; align-items: center; gap: 8px; }
+.date-nav-quick { display: flex; flex: 1 1 auto; align-items: center; justify-content: center; gap: 8px; min-width: 0; padding: 2px; overflow-x: auto; scrollbar-width: none; }
+.date-nav-quick::-webkit-scrollbar { display: none; }
+.date-nav-quick input[type="date"] { cursor: pointer; }
+.date-nav-arrow { display: grid; flex: 0 0 auto; width: 40px; height: 40px; place-items: center; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--accent); font: 700 1.4rem/1 var(--font-text); cursor: pointer; transition: var(--transition); }
+.date-nav-arrow:hover, .date-nav-arrow:focus-visible { border-color: var(--accent); background: var(--accent); color: #fff; }
+.date-nav-label { margin: 0; color: var(--muted); font: 600 0.82rem var(--font-text); text-align: center; }
+body.pwa-standalone .date-nav-arrow { background: #15151b; color: #f3f1f7; }
