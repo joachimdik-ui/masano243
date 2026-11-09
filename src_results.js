@@ -206,6 +206,15 @@ const roundNumberOf = (match) => {
 };
 const byDateAsc = (a, b) => (matchTime(a) ?? Infinity) - (matchTime(b) ?? Infinity);
 
+// Rencontres : clé locale "YYYY-MM-DD" d'un timestamp + libellé français du jour.
+const DAY_MS = 24 * 60 * 60 * 1000;
+const dayKeyOf = (time) => {
+  const d = new Date(time);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const formatDayKey = (key) => new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date(`${key}T12:00:00`));
+const activeDayKey = () => selectedDayKey || dayKeyOf(Date.now() + selectedDayOffset * DAY_MS);
+
 const buildRounds = (items) => {
   if (!items.length) return [];
   let rounds;
@@ -352,8 +361,14 @@ export const mountResults = (root, competitionPage = null) => {
   let sportFilter = "football";
   let footballScope = "all";
   let sportSwitchEl = null;
+  let dateNavEl = null;
+  let standingsSourceSelect = null;
   let statusFilter = "all";
   let clubFilter = null;
+  // Rencontres : jour sélectionné (offset -1/0/+1 ou date exacte YYYY-MM-DD)
+  let selectedDayOffset = 0;
+  let selectedDayKey = null;
+  let standingsSource = "l1a";
   // Journées + filtre par club : championnats (Linafoot L1/L2, EPF-KIN) uniquement.
   const roundMode = layout === "league";
   let activeView = "matches";
@@ -990,9 +1005,13 @@ export const mountResults = (root, competitionPage = null) => {
   };
 
   const scopedMatches = () => {
-    const windowIds = isAllLayout ? leagueWindowIds() : null;
+    // Rencontres : seulement les matchs du jour sélectionné.
+    const dayKey = isAllLayout ? activeDayKey() : null;
     return matches.filter((match) => {
-    if (windowIds && LEAGUE_CATEGORIES.includes(match.competition_category) && !windowIds.has(match.id)) return false;
+    if (dayKey) {
+      const time = matchTime(match);
+      if (time === null || dayKeyOf(time) !== dayKey) return false;
+    }
     const matchesCompetition = isLiveCenter || inScope(match);
     const matchesNamedCompetition = !selectedDisciplineCompetition || match.competition === selectedDisciplineCompetition;
     const matchesLeague = isLiveCenter || isAllLayout || match.source !== "local"
@@ -1178,6 +1197,12 @@ export const mountResults = (root, competitionPage = null) => {
       return;
     }
     if (!filtered.length) {
+      if (isAllLayout) {
+        const dayLabel = formatDayKey(activeDayKey());
+        const daySportSuffix = { football: "", basketball: " de basketball", judo: " de judo", omnisports: " d'omnisports" }[sportFilter] || "";
+        list.innerHTML = `<h3 class="match-round-title match-day-title">${escapeHtml(dayLabel)}</h3><p class="results-empty">Aucun match${daySportSuffix} programmé le ${escapeHtml(dayLabel)}.</p>`;
+        return;
+      }
       const playoffPreview = competitionFilter === "linafoot_l1" && linafootGroup.value === "PO";
       const scopeHasMatches = isLiveCenter
         ? matches.length > 0
@@ -1202,7 +1227,8 @@ export const mountResults = (root, competitionPage = null) => {
         return;
       }
     }
-    list.innerHTML = filtered
+    const dayHeading = isAllLayout ? `<h3 class="match-round-title match-day-title">${escapeHtml(formatDayKey(activeDayKey()))}</h3>` : "";
+    list.innerHTML = dayHeading + filtered
       .sort((a, b) => {
         const statusOrder = { live: 0, upcoming: 1, finished: 2 };
         const statusDifference = statusOrder[a.statut] - statusOrder[b.statut];
@@ -1419,11 +1445,78 @@ export const mountResults = (root, competitionPage = null) => {
     }
   };
 
+  // Rencontres : classements et buteurs par ligue / groupe / série.
+  const STANDING_SOURCES = {
+    l1a: { label: "Linafoot L1 · Groupe A", fetch: () => getClassement("L1", "A") },
+    l1b: { label: "Linafoot L1 · Groupe B", fetch: () => getClassement("L1", "B") },
+    l2a: { label: "Linafoot L2 · Zone Est", fetch: () => getClassement("L2", "A") },
+    l2b: { label: "Linafoot L2 · Zone Ouest", fetch: () => getClassement("L2", "B") },
+    l2c: { label: "Linafoot L2 · Zone Centre-Sud", fetch: () => getClassement("L2", "C") },
+    epfa: { label: "EPF-KIN · Série A", fetch: () => fetchEpfKinStandings("2026-2027", "A") },
+    epfb: { label: "EPF-KIN · Série B", fetch: () => fetchEpfKinStandings("2026-2027", "B") },
+    epfc: { label: "EPF-KIN · Série C", fetch: () => fetchEpfKinStandings("2026-2027", "C") }
+  };
+
+  const hideGenericStandingsControls = () => {
+    if (standingsSourceSelect) standingsSourceSelect.hidden = false;
+    standingsToolbar.querySelectorAll('label[for="standingsCompetition"], label[for="standingsGroup"]').forEach((label) => { label.hidden = true; });
+    standingsCompetition.hidden = true;
+    standingsGroup.hidden = true;
+  };
+
+  const renderRencontresStandings = async (requestId) => {
+    standingsToolbar.hidden = false;
+    hideGenericStandingsControls();
+    const source = STANDING_SOURCES[standingsSource] || STANDING_SOURCES.l1a;
+    try {
+      const rows = await source.fetch();
+      if (stopped || requestId !== standingsRequestId) return;
+      if (!rows.length) {
+        standingsContainer.innerHTML = `<p class="results-empty">Aucun classement disponible pour ${escapeHtml(source.label)}.</p>`;
+        return;
+      }
+      const visibleStandings = [...rows].sort((first, second) => {
+        const firstPosition = Number(first.position ?? first.rang ?? Number.NaN);
+        const secondPosition = Number(second.position ?? second.rang ?? Number.NaN);
+        if (Number.isFinite(firstPosition) && Number.isFinite(secondPosition) && firstPosition !== secondPosition) return firstPosition - secondPosition;
+        return Number(second.points ?? second.pts ?? 0) - Number(first.points ?? first.pts ?? 0);
+      });
+      standingsContainer.innerHTML = `<div class="standings-scroll"><table class="standings-table">
+        <thead><tr><th>#</th><th>Équipe</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Diff</th><th>Pts</th></tr></thead>
+        <tbody>${visibleStandings.map((row, index) => {
+          const position = Number(row.position ?? row.rang ?? index + 1);
+          const team = row.club?.nom || row.equipe || row.equipe_nom || row.nom || row.team || "Équipe";
+          const logo = renderClubLogo(team, row.club?.logo_url || row.logo_url);
+          const isTopFour = position <= 4;
+          const isBottomFour = visibleStandings.length >= 4 && position >= visibleStandings.length - 3;
+          return `<tr class="${isTopFour ? "qualification-place" : isBottomFour ? "relegation-place" : ""}">
+            <td><span class="standing-position">${position}</span></td>
+            <th scope="row"><span class="standing-team club-link"${clubLinkAttrs(team)}>${logo}<span>${escapeHtml(team)}</span></span></th>
+            <td>${Number(row.joues ?? row.matches_played ?? row.played ?? 0)}</td>
+            <td>${Number(row.gagnes ?? row.victoires ?? row.wins ?? row.won ?? 0)}</td>
+            <td>${Number(row.nuls ?? row.draws ?? row.draw ?? 0)}</td>
+            <td>${Number(row.defaites ?? row.losses ?? row.lost ?? 0)}</td>
+            <td>${Number(row.difference_buts ?? row.goal_difference ?? 0)}</td>
+            <td><strong>${Number(row.points ?? row.pts ?? 0)}</strong></td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>`;
+    } catch (error) {
+      if (stopped || requestId !== standingsRequestId) return;
+      console.error("Impossible de charger le classement (page Rencontres).", error);
+      standingsContainer.innerHTML = `<p class="results-empty">Classement indisponible : ${escapeHtml(error.message)}</p>`;
+    }
+  };
+
   let standingsRequestId = 0;
   const renderStandings = async () => {
     const requestId = ++standingsRequestId;
     if (standingsMode === "scorers") {
       await renderTopScorers();
+      return;
+    }
+    if (isAllLayout) {
+      await renderRencontresStandings(requestId);
       return;
     }
     if (competitionFilter === "linafoot_l1" && linafootGroup.value === "PO") {
@@ -1522,9 +1615,53 @@ export const mountResults = (root, competitionPage = null) => {
     }
   };
 
+  const renderRencontresScorers = async (requestId) => {
+    const source = STANDING_SOURCES[standingsSource] || STANDING_SOURCES.l1a;
+    const isEpf = standingsSource.startsWith("epf");
+    const serie = standingsSource.slice(3);
+    topScorersContainer.innerHTML = `<div class="match-skeleton"></div>`;
+    hideGenericStandingsControls();
+    try {
+      const allScorers = isEpf
+        ? await fetchEpfKinTopScorers("2026-2027")
+        : await fetchTopButeurs(standingsSource.startsWith("l2") ? "L2" : "L1");
+      if (stopped || requestId !== topScorersRequestId) return;
+      const scorers = isEpf
+        ? (allScorers || []).filter((scorer) => !scorer.serie || scorer.serie === serie)
+        : (allScorers || []);
+      if (!scorers.length) {
+        topScorersContainer.innerHTML = `<p class="results-empty">Aucun buteur disponible pour ${escapeHtml(source.label)}.</p>`;
+        return;
+      }
+      topScorersContainer.innerHTML = `<div class="standings-scroll"><table class="standings-table">
+        <thead><tr><th>#</th><th>Joueur</th><th>Équipe</th>${isEpf ? "<th>Série</th>" : ""}<th>MJ</th><th>Buts</th></tr></thead>
+        <tbody>${scorers.map((scorer, index) => {
+          const clubName = scorer.club?.nom || scorer.club?.sigle || scorer.club_nom || "Club à confirmer";
+          const clubLogo = renderClubLogo(clubName, scorer.club?.logo_url);
+          return `<tr>
+            <td><span class="standing-position">${index + 1}</span></td>
+            <th scope="row">${escapeHtml(scorer.nom || "Joueur à confirmer")}</th>
+            <td><span class="scorer-club club-link"${clubLinkAttrs(clubName)}>${clubLogo}<span>${escapeHtml(clubName)}</span></span></td>
+            ${isEpf ? `<td>Série ${escapeHtml(scorer.serie || "—")}</td>` : ""}
+            <td>${Number(scorer.matches_joues ?? 0)}</td>
+            <td><strong class="scorer-goals">${Number(scorer.buts ?? 0)}</strong></td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>`;
+    } catch (error) {
+      if (stopped || requestId !== topScorersRequestId) return;
+      console.error("Impossible de charger les buteurs (page Rencontres).", error);
+      topScorersContainer.innerHTML = `<p class="results-empty">Classement des buteurs indisponible : ${escapeHtml(error.message)}</p>`;
+    }
+  };
+
   let topScorersRequestId = 0;
   const renderTopScorers = async () => {
     const requestId = ++topScorersRequestId;
+    if (isAllLayout) {
+      await renderRencontresScorers(requestId);
+      return;
+    }
     const ligue = linafootLeague.value;
     const isEpfKin = competitionFilter === "epf_kin";
     const isLeopards = competitionFilter === "leopards";
@@ -1576,7 +1713,7 @@ export const mountResults = (root, competitionPage = null) => {
     markTab(showScorers ? topScorersView : standingsTab);
     standingsContainer.hidden = showScorers;
     topScorersContainer.hidden = !showScorers;
-    standingsToolbar.hidden = showScorers || ["linafoot_l1", "linafoot_l2", "epf_kin"].includes(competitionFilter);
+    standingsToolbar.hidden = isAllLayout ? false : showScorers || ["linafoot_l1", "linafoot_l2", "epf_kin"].includes(competitionFilter);
     if (activeView === "standings" || activeView === "scorers") renderStandings();
   };
 
@@ -1675,14 +1812,19 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(standingsTab, false);
       setTab(topScorersView, false);
       setTab(playersTab, true);
-    } else if (layout === "interclubs" || layout === "international" || layout === "events" || layout === "rencontres") {
-      // Pas d'onglets : les rencontres s'affichent directement sur la page.
+    } else if (layout === "rencontres") {
+      // Rencontres : matchs du jour, classements et buteurs par ligue / groupe / série.
+      setTab(matchesTab, true, "Matchs du jour");
+      setTab(standingsTab, true, "Classements");
+      setTab(topScorersView, true, "Buteurs");
+    } else if (layout === "interclubs" || layout === "international" || layout === "events") {
+      // Pages d'événements : les rencontres s'affichent directement sur la page.
       setTab(standingsTab, false);
       setTab(topScorersView, false);
     }
     // Filtre par statut : uniquement pour le Live Center et les championnats (Linafoot, EPF-KIN).
     // Le Live Center n'affiche que les matchs en direct : pas de filtre de statut.
-    statusFilters.hidden = layout !== "league" && !isAllLayout;
+    statusFilters.hidden = layout !== "league";
     const visibleTabs = [...tabsBar.querySelectorAll(".results-tab")].filter((tab) => !tab.hidden);
     tabsBar.hidden = isLiveCenter || visibleTabs.length < 2;
   };
@@ -1690,7 +1832,11 @@ export const mountResults = (root, competitionPage = null) => {
 
   // Sélecteur de sport (page Rencontres) : Football · Basketball · Judo · Omnisports.
   root.querySelector("#sportSwitch")?.remove();
+  root.querySelector(".date-nav")?.remove();
+  root.querySelector("#standingsSource")?.remove();
   sportSwitchEl = null;
+  dateNavEl = null;
+  standingsSourceSelect = null;
   if (isAllLayout) {
     sportSwitchEl = document.createElement("div");
     sportSwitchEl.id = "sportSwitch";
@@ -1722,6 +1868,58 @@ export const mountResults = (root, competitionPage = null) => {
       renderScopePills();
       renderMatches();
     }, { signal });
+
+    // Navigation par date : hier / aujourd'hui / demain + date libre.
+    dateNavEl = document.createElement("div");
+    dateNavEl.className = "date-nav";
+    dateNavEl.setAttribute("role", "group");
+    dateNavEl.setAttribute("aria-label", "Filtrer les rencontres par date");
+    dateNavEl.innerHTML = [
+      `<button type="button" class="date-nav-btn" data-day-offset="-1">Hier</button>`,
+      `<button type="button" class="date-nav-btn is-active" data-day-offset="0">Aujourd'hui</button>`,
+      `<button type="button" class="date-nav-btn" data-day-offset="1">Demain</button>`,
+      `<label class="date-nav-picker"><span>Date</span><input type="date" id="dateNavInput" aria-label="Choisir une date"></label>`
+    ].join("");
+    root.querySelector(".results-toolbar").prepend(dateNavEl);
+    dateNavEl.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-day-offset]");
+      if (!button) return;
+      selectedDayOffset = Number(button.dataset.dayOffset) || 0;
+      selectedDayKey = null;
+      const input = dateNavEl.querySelector("#dateNavInput");
+      if (input) input.value = "";
+      dateNavEl.querySelectorAll(".date-nav-btn").forEach((item) => item.classList.toggle("is-active", item === button));
+      renderMatches();
+    });
+    dateNavEl.querySelector("#dateNavInput").addEventListener("change", (event) => {
+      const value = event.target.value;
+      if (!value) return;
+      selectedDayKey = value;
+      selectedDayOffset = 0;
+      dateNavEl.querySelectorAll(".date-nav-btn").forEach((item) => item.classList.remove("is-active"));
+      renderMatches();
+    });
+
+    // Sélecteur de ligue / groupe / série pour les classements et les buteurs.
+    standingsSourceSelect = document.createElement("select");
+    standingsSourceSelect.id = "standingsSource";
+    standingsSourceSelect.setAttribute("aria-label", "Choisir une ligue, un groupe ou une série");
+    standingsSourceSelect.innerHTML = [
+      ["l1a", "Linafoot L1 · Groupe A"],
+      ["l1b", "Linafoot L1 · Groupe B"],
+      ["l2a", "Linafoot L2 · Zone Est"],
+      ["l2b", "Linafoot L2 · Zone Ouest"],
+      ["l2c", "Linafoot L2 · Zone Centre-Sud"],
+      ["epfa", "EPF-KIN · Série A"],
+      ["epfb", "EPF-KIN · Série B"],
+      ["epfc", "EPF-KIN · Série C"]
+    ].map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    standingsToolbar.append(standingsSourceSelect);
+    standingsSourceSelect.addEventListener("change", () => {
+      standingsSource = standingsSourceSelect.value;
+      if (activeView === "standings" || activeView === "scorers") renderStandings();
+    });
+
     renderScopePills();
     updateSportCounts();
   }

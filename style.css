@@ -3008,3 +3008,42 @@ body.has-club-modal { overflow: hidden; }
 @media (max-width: 640px) {
   .club-modal-dialog { height: 90vh; max-height: 90vh; }
 }
+
+/* =====================================================================
+   RENCONTRES · navigation par date (hier / aujourd'hui / demain + date)
+   ===================================================================== */
+.date-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.date-nav-btn {
+  padding: 11px 20px; border: 0; border-radius: var(--radius-pill, 999px);
+  background: var(--surface); box-shadow: var(--shadow-soft);
+  color: var(--text); font: 700 0.82rem var(--font-text); cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+}
+.date-nav-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.date-nav-btn.is-active {
+  background: var(--accent-grad, linear-gradient(135deg, #6a2fd0, #42158f));
+  color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, 0.3);
+}
+.date-nav-picker { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; color: var(--muted); font-size: 0.78rem; font-weight: 700; }
+.date-nav-picker input {
+  padding: 10px 14px; border: 0; border-radius: var(--radius-pill, 999px);
+  background: var(--surface); box-shadow: var(--shadow-soft);
+  color: var(--text); font: 600 0.82rem var(--font-text);
+}
+.match-day-title { margin: 2px 2px 4px; text-transform: capitalize; }
+#standingsSource { max-width: 100%; }
+
+@media (max-width: 640px) {
+  .date-nav { gap: 8px; }
+  .date-nav-btn { padding: 10px 16px; font-size: 0.78rem; }
+  .date-nav-picker { width: 100%; margin-left: 0; }
+  .date-nav-picker input { flex: 1; min-width: 0; }
+}
+
+/* Application installée (thème sombre) */
+@media not all {
+  body.pwa-standalone .date-nav-btn { background: #15151b; color: #f3f1f7; box-shadow: none; }
+  body.pwa-standalone .date-nav-btn.is-active { background: #7425d2; color: #fff; box-shadow: 0 8px 20px rgba(116, 37, 210, 0.35); }
+  body.pwa-standalone .date-nav-picker { color: var(--pwa-muted, #c1bec9); }
+  body.pwa-standalone .date-nav-picker input { background: #1a1a21; color: #f7f6fa; box-shadow: none; }
+}
