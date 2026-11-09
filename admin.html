@@ -68,6 +68,10 @@ main{max-width:1080px;margin:0 auto;padding:14px 22px calc(150px + env(safe-area
 .match-search input{width:100%;min-width:0;padding:12px 14px;border:1px solid var(--bd);border-radius:13px;background:var(--cd);outline:none}
 .match-search input:focus{border-color:var(--ac);box-shadow:0 0 0 3px #42158f18}
 .match-search-count{color:var(--mu);font-size:.76rem;font-weight:700;white-space:nowrap}
+.match-status-filters{display:flex;gap:8px;overflow-x:auto;margin:2px 0 12px;padding:2px 0 6px;scrollbar-width:none}
+.match-status-filters::-webkit-scrollbar{display:none}
+.match-status-filter{flex:none;padding:8px 13px;border:1px solid var(--bd);border-radius:99px;background:var(--cd);color:var(--mu);font-size:.76rem;font-weight:700;white-space:nowrap}
+.match-status-filter.on{border-color:var(--ac);background:var(--ac);color:#fff}
 .row.is-next{position:relative;display:grid;grid-template-columns:minmax(0,1fr);border:1px solid #d9c9f4;box-shadow:0 5px 16px #42158f12}
 .match-next-badge{justify-self:start;margin-bottom:-5px;padding:5px 8px;border-radius:99px;background:#efe8fb;color:var(--ac);font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .match-search-empty{padding:18px;border:1px dashed var(--bd);border-radius:14px;color:var(--mu);text-align:center}
@@ -577,7 +581,7 @@ async function load(){
   $("#fab").setAttribute("aria-label",sec==="tv"?"Créer un direct OBS":"Ajouter");
   $("#fab").title=sec==="tv"?"Créer un direct OBS":"Ajouter";
   L.innerHTML=(SECS[sec][2]?`<div class="pills">${SECS[sec][2].map(([k,l])=>`<button class="pill${k===cur()?" on":""}" data-s="${k}">${l}</button>`).join("")}</div>`:"")+
-    (isMatchList?'<div class="match-search"><input type="search" id="matchSearch" placeholder="Rechercher un club, une compétition, une date…" aria-label="Rechercher un match"><span class="match-search-count" id="matchSearchCount" aria-live="polite"></span></div>':"")+
+    (isMatchList?'<div class="match-status-filters" role="group" aria-label="Filtrer les matchs par statut"><button type="button" class="match-status-filter on" data-match-status="all" aria-pressed="true">Tous</button><button type="button" class="match-status-filter" data-match-status="live" aria-pressed="false">En direct</button><button type="button" class="match-status-filter" data-match-status="finished" aria-pressed="false">Terminés</button><button type="button" class="match-status-filter" data-match-status="upcoming" aria-pressed="false">À venir</button></div><div class="match-search"><input type="search" id="matchSearch" placeholder="Rechercher un club, une compétition, une date…" aria-label="Rechercher un match"><span class="match-search-count" id="matchSearchCount" aria-live="polite"></span></div>':"")+
     '<div id="rl"><p class="mu">Chargement…</p></div>';
   $$(".pill").forEach(b=>b.onclick=()=>{sub[sec]=b.dataset.s;load()});
   const makeQuery=()=>{let q=sb.from(v.t).select("*");if(v.flt)q=v.flt(q);return q};
@@ -614,12 +618,17 @@ async function load(){
   }
   if(error){$("#fab").hidden=true;$("#rl").innerHTML=miss(error)?`<div class="note"><b>Bientôt disponible</b><p>Cette rubrique est prête dans l’admin, mais la table <code>${v.t}</code> n’existe pas encore dans la base.</p></div>`:`<p class="err">${esc(error.message)}</p>`;return}
   rows=data;
-  if(!rows.length){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(sec==="tv"?" Touchez + pour créer un direct et générer sa clé OBS.":v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
+  if(!rows.length&&!isMatchList){$("#rl").innerHTML='<p class="mu">Rien pour le moment.'+(sec==="tv"?" Touchez + pour créer un direct et générer sa clé OBS.":v.add?" Touchez le bouton d'ajout pour commencer.":"")+"</p>";return}
   const nextMatchIndex=isMatchList?rows.findIndex(match=>match.statut==="upcoming"&&Date.parse(match.date_match)>=Date.now()):-1;
+  let matchStatusFilter="all";
   const renderRows=search=>{
     const normalize=value=>String(value??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("fr-FR").trim();
     const term=normalize(search);
     const matches=rows.map((match,index)=>({match,index})).filter(({match})=>{
+      const statusMatches=matchStatusFilter==="all"
+        || (matchStatusFilter==="live"&&["live","paused"].includes(match.statut))
+        || match.statut===matchStatusFilter;
+      if(!statusMatches)return false;
       if(!term)return true;
       const status=ST.find(([key])=>key===match.statut)?.[1]||match.statut;
       return normalize([
@@ -636,6 +645,15 @@ async function load(){
     if(v.open)$$("#rl .row").forEach(button=>button.onclick=()=>v.open(rows[+button.dataset.i]));
   };
   if(isMatchList)$("#matchSearch").addEventListener("input",event=>renderRows(event.currentTarget.value));
+  if(isMatchList)$$(".match-status-filter").forEach(button=>button.addEventListener("click",()=>{
+    matchStatusFilter=button.dataset.matchStatus;
+    $$(".match-status-filter").forEach(filter=>{
+      const active=filter===button;
+      filter.classList.toggle("on",active);
+      filter.setAttribute("aria-pressed",String(active));
+    });
+    renderRows($("#matchSearch").value);
+  }));
   renderRows("");
 }
 async function dash(L){

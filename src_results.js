@@ -1786,7 +1786,7 @@ export const mountResults = (root, competitionPage = null) => {
       setTab(standingsTab, false);
       setTab(topScorersView, false);
     }
-    statusFilters.hidden = layout !== "league" && !isAllLayout;
+    statusFilters.hidden = layout !== "league";
     const visibleTabs = [...tabsBar.querySelectorAll(".results-tab")].filter((tab) => !tab.hidden);
     tabsBar.hidden = isLiveCenter || visibleTabs.length < 2;
   };
