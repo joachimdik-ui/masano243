@@ -1619,8 +1619,8 @@ body.has-player-modal { overflow: hidden; }
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    margin: 0 -16px;
-    padding: 11px 16px;
+    margin: 0 16px;
+    padding: 11px 0;
     border-bottom: 1px solid #ececf0;
     background: #fff;
     scrollbar-width: none;
@@ -3131,7 +3131,7 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
   body.pwa-standalone .hero-img-container { border-radius: 18px; overflow: hidden; }
   body.pwa-standalone .hero-img { border-radius: 0; }
   body.pwa-standalone .hero-body { padding: 12px 2px 4px; }
-  body.pwa-standalone .hero-title { font-size: 1.08rem; font-weight: 500; line-height: 1.38; letter-spacing: 0; color: #202124; }
+  body.pwa-standalone .hero-title { font-size: clamp(1.9rem, 8vw, 2.35rem); font-weight: 500; line-height: 1.08; letter-spacing: 0; color: #202124; }
   body.pwa-standalone .hero-meta { color: #5f6368; font-size: .78rem; }
 
   /* Rubriques / recherche : carte d'article façon fil Google */
