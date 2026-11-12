@@ -456,7 +456,7 @@ export const mountResults = (root, competitionPage = null) => {
       element.className = "match-rank-badge";
       return;
     }
-    element.textContent = `${position}${position === 1 ? "er" : "e"} au classement`;
+    element.textContent = `${position}${position === 1 ? "er" : "e"}`;
     const rankClass = position <= 4 ? "is-positive" : total >= 4 && position >= total - 3 ? "is-negative" : "";
     element.className = `match-rank-badge ${rankClass}`;
   };
@@ -819,7 +819,7 @@ export const mountResults = (root, competitionPage = null) => {
 
   const hasScoreValue = (value) => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
 
-  const recentTeamForm = (teamName, match) => {
+  const teamResults = (teamName, match) => {
     const key = normalizeTeamName(teamName);
     const limit = matchTime(match) ?? Infinity;
     return matches
@@ -829,7 +829,6 @@ export const mountResults = (root, competitionPage = null) => {
         && (matchTime(item) ?? Infinity) < limit
         && (normalizeTeamName(item.equipe_domicile) === key || normalizeTeamName(item.equipe_visiteur) === key))
       .sort((first, second) => -byDateAsc(first, second))
-      .slice(0, 5)
       .map((item) => {
         const isHome = normalizeTeamName(item.equipe_domicile) === key;
         const own = Number(isHome ? item.score_domicile : item.score_visiteur);
@@ -853,11 +852,17 @@ export const mountResults = (root, competitionPage = null) => {
       return Number.isNaN(parsed.getTime()) ? "" : new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(parsed);
     };
     const block = (teamName) => {
-      const form = recentTeamForm(teamName, match);
-      if (!form.length) {
-        return `<section class="match-form-team"><h4>${escapeHtml(teamName)}</h4><p class="match-detail-empty">Aucun match récent disponible pour cette équipe.</p></section>`;
+      const results = teamResults(teamName, match);
+      if (!results.length) {
+        return `<section class="match-form-team"><h4>${escapeHtml(teamName)}</h4><p class="match-detail-empty">Aucun match joué n’est enregistré pour cette équipe.</p></section>`;
       }
-      const tally = ["V", "N", "D"].map((code) => `${form.filter((item) => item.code === code).length}${code}`).join(" · ");
+      const form = results.slice(0, 5);
+      const count = (code) => results.filter((item) => item.code === code).length;
+      const wins = count("V");
+      const draws = count("N");
+      const losses = count("D");
+      const total = results.length;
+      const segment = (value, cls, label) => value ? `<span class="match-record-seg ${cls}" style="flex-grow:${value}" title="${label} : ${value}"></span>` : "";
       const dots = [...form].reverse()
         .map((item) => `<span class="match-form-dot ${dotClass[item.code]}" title="${dotLabel[item.code]}">${item.code}</span>`).join("");
       const rows = form.map((item) => `<li>
@@ -866,13 +871,22 @@ export const mountResults = (root, competitionPage = null) => {
         <span class="match-form-score">${escapeHtml(item.score)}</span>
       </li>`).join("");
       return `<section class="match-form-team">
-        <header><h4>${escapeHtml(teamName)}</h4><span class="match-form-tally">${tally}</span></header>
+        <header><h4>${escapeHtml(teamName)}</h4><span class="match-form-tally">${total} match${total > 1 ? "s" : ""} joué${total > 1 ? "s" : ""}</span></header>
+        <div class="match-record" role="img" aria-label="${wins} victoire${wins > 1 ? "s" : ""}, ${draws} nul${draws > 1 ? "s" : ""}, ${losses} défaite${losses > 1 ? "s" : ""}">
+          <div class="match-record-bar">${segment(wins, "is-win", "Victoires")}${segment(draws, "is-draw", "Nuls")}${segment(losses, "is-loss", "Défaites")}</div>
+          <dl class="match-record-legend">
+            <div class="is-win"><dd>${wins}</dd><dt>Victoires</dt></div>
+            <div class="is-draw"><dd>${draws}</dd><dt>Nuls</dt></div>
+            <div class="is-loss"><dd>${losses}</dd><dt>Défaites</dt></div>
+          </dl>
+        </div>
+        <h5 class="match-form-subtitle">5 derniers matchs</h5>
         <div class="match-form-dots" role="img" aria-label="Résultats des ${form.length} derniers matchs, du plus ancien au plus récent">${dots}</div>
         <ul class="match-form-list">${rows}</ul>
       </section>`;
     };
     return `<div class="match-form-grid">${block(match.equipe_domicile)}${block(match.equipe_visiteur)}</div>
-      <p class="match-form-note">Résultats classés du plus ancien (gauche) au plus récent (droite). @ = match à l’extérieur.</p>`;
+      <p class="match-form-note">Bilan calculé sur les matchs enregistrés dans la base Masano243. Forme : du plus ancien (gauche) au plus récent (droite). @ = match à l’extérieur.</p>`;
   };
 
   const renderMatchDetails = (match, details) => {

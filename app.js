@@ -297,7 +297,11 @@ const setLaUneIndex = (index) => {
     slide.setAttribute("aria-hidden", String(!active));
     slide.tabIndex = active ? 0 : -1;
   });
-  document.getElementById("carouselPosition").textContent = `${laUneIndex + 1} / ${laUneArticles.length}`;
+  document.querySelectorAll("#carouselPosition .carousel-dot").forEach((dot, dotIndex) => {
+    const active = dotIndex === laUneIndex;
+    dot.classList.toggle("is-active", active);
+    dot.setAttribute("aria-current", String(active));
+  });
 };
 
 const renderLaUne = (items = articles) => {
@@ -313,6 +317,10 @@ const renderLaUne = (items = articles) => {
       <div class="hero-meta article-meta">${escapeHtml(article.author)} • ${escapeHtml(formatArticleDate(article.date))}</div>
     </div>
   </a>`).join("");
+  const dotsWrap = document.getElementById("carouselPosition");
+  if (dotsWrap) {
+    dotsWrap.innerHTML = laUneArticles.map((_, dotIndex) => `<button type="button" class="carousel-dot" data-slide="${dotIndex}" aria-label="Article ${dotIndex + 1} sur ${laUneArticles.length}"></button>`).join("");
+  }
   setLaUneIndex(0);
   void track.offsetWidth;
   track.style.transition = "";
@@ -709,6 +717,12 @@ const initializeIndex = () => {
   });
   document.getElementById("carouselPrevious").addEventListener("click", (event) => { event.preventDefault(); moveLaUne(-1); });
   document.getElementById("carouselNext").addEventListener("click", (event) => { event.preventDefault(); moveLaUne(1); });
+  document.getElementById("carouselPosition").addEventListener("click", (event) => {
+    const dot = event.target.closest("[data-slide]");
+    if (!dot) return;
+    event.preventDefault();
+    setLaUneIndex(Number(dot.dataset.slide));
+  });
   const carousel = document.getElementById("heroCarousel");
   if (carousel) {
     carousel.addEventListener("mouseenter", () => { laUnePaused = true; });

@@ -162,10 +162,18 @@
               </div>
               <div class="carousel-controls" aria-label="Navigation de la une">
                 <button type="button" class="carousel-button" id="carouselPrevious" aria-label="Article précédent">&#8592;</button>
-                <span class="carousel-position" id="carouselPosition" aria-live="polite">1 / 1</span>
+                <div class="carousel-dots" id="carouselPosition" role="group" aria-label="Position dans le carrousel"></div>
                 <button type="button" class="carousel-button" id="carouselNext" aria-label="Article suivant">&#8594;</button>
               </div>
             </div>
+            <nav class="home-rubrique-rail" id="homeRubriqueRail" aria-label="Rubriques">
+              <a class="home-rubrique-item" href="#football"><span class="home-rubrique-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m12 8 3.8 2.8-1.5 4.4H9.7l-1.5-4.4z"/><path d="M12 3v5M20.5 9.5l-4.7 1.3M17.5 19l-3.2-3.8M6.5 19l3.2-3.8M3.5 9.5l4.7 1.3"/></svg></span><span class="home-rubrique-label">Football</span></a>
+              <a class="home-rubrique-item" href="#basket-ball"><span class="home-rubrique-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6c3.2 3.2 3.2 9.6 0 12.8M18.4 5.6c-3.2 3.2-3.2 9.6 0 12.8"/></svg></span><span class="home-rubrique-label">Basketball</span></a>
+              <a class="home-rubrique-item" href="#judo"><span class="home-rubrique-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><path d="M5 10.5l7 2.5 7-2.5M12 13v4.5M8.5 21l3.5-3.5 3.5 3.5"/></svg></span><span class="home-rubrique-label">Judo</span></a>
+              <a class="home-rubrique-item" href="#omnisports"><span class="home-rubrique-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1.5 5.8M9 3l1.5 5.8"/><circle cx="12" cy="14.5" r="5.5"/><path d="m12 12 1 1.8 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L9 14.1l2-.3z"/></svg></span><span class="home-rubrique-label">Omnisports</span></a>
+              <a class="home-rubrique-item" href="#rencontres"><span class="home-rubrique-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></span><span class="home-rubrique-label">Rencontres</span></a>
+              <a class="home-rubrique-item" href="#tv"><span class="home-rubrique-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="m10.5 9.5 4 2.5-4 2.5z"/></svg></span><span class="home-rubrique-label">Masano TV</span></a>
+            </nav>
           </div>
 
           <!-- Liste simple des articles (rubriques « Actualités » et recherche) -->
@@ -522,7 +530,7 @@
             </ol>
           </section>
           <section id="matchPanelStats" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabStats" data-match-panel="stats" hidden>
-            <h3>Forme récente · 5 derniers matchs</h3>
+            <h3>Statistiques · bilan et forme</h3>
             <div id="matchDetailStats" aria-live="polite"></div>
           </section>
           <section id="matchPanelStandings" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabStandings" data-match-panel="standings" hidden>

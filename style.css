@@ -3375,3 +3375,119 @@ body.pwa-standalone .match-detail-scoreboard .match-rank-badge { display: inline
   .match-form-grid { grid-template-columns: 1fr; gap: 12px; }
   .match-form-team { padding: 14px; }
 }
+
+/* =====================================================================
+   Ajustements : modal de match, liste des rencontres, accueil
+   ===================================================================== */
+
+/* ---------- Titres du carrousel : Bebas Neue en ExtraBold ---------- */
+.hero-title,
+body.pwa-standalone .hero-title {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-synthesis: weight;
+  font-size: clamp(2.1rem, 1.7rem + 2vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: .015em;
+}
+body.pwa-standalone .hero-title { font-size: clamp(2.1rem, 9.5vw, 2.8rem); }
+
+/* ---------- Modal : rang « 2e », « 10e » tout court ---------- */
+.match-rank-badge { white-space: nowrap; font-weight: 700; font-size: .8125rem; min-height: 26px; padding: 3px 12px; }
+body.pwa-standalone .match-detail-scoreboard .match-rank-badge { display: inline-flex; font-size: .8125rem; }
+
+/* ---------- Modal : menu des onglets (glisse sans déformer la page) ---------- */
+.match-detail-page { overflow-x: hidden; }
+.match-detail-page-content { min-width: 0; max-width: 100%; overflow-x: clip; }
+.match-detail-tabs,
+.pwa-match-tab-nav {
+  min-width: 0; max-width: 100%;
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.match-detail-tabs::-webkit-scrollbar,
+.pwa-match-tab-nav::-webkit-scrollbar { display: none; }
+.match-detail-panels { min-width: 0; max-width: 100%; }
+.match-detail-tab { font-size: .9375rem; font-weight: 500; white-space: nowrap; }
+body.pwa-standalone .match-detail-tab { font-size: .9375rem; }
+body.pwa-standalone .pwa-match-tab-nav { justify-content: flex-start; gap: 4px; padding: 0 10px; }
+body.pwa-standalone .pwa-match-tab-nav button { flex: 0 0 auto; padding: 14px 14px 11px; font: 500 .9375rem var(--font-text); }
+body.pwa-standalone .pwa-match-tab-nav button.is-active { font-weight: 700; }
+
+/* ---------- Onglet Stats : bilan visuel V / N / D ---------- */
+.match-form-subtitle { margin: 16px 0 0; color: #5f6368; font-size: .75rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+.match-form-subtitle + .match-form-dots { margin-top: 8px; }
+.match-record { margin-top: 14px; }
+.match-record-bar { display: flex; height: 12px; overflow: hidden; border-radius: 999px; background: #f1f3f4; gap: 2px; }
+.match-record-seg { min-width: 6px; }
+.match-record-seg.is-win { background: #188038; }
+.match-record-seg.is-draw { background: #9aa0a6; }
+.match-record-seg.is-loss { background: #d93025; }
+.match-record-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 0; padding: 0; }
+.match-record-legend > div { display: grid; justify-items: center; gap: 2px; padding: 8px 4px; border-radius: 12px; background: #f8f9fa; }
+.match-record-legend dd { margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.match-record-legend dt { color: #5f6368; font-size: .75rem; font-weight: 500; }
+.match-record-legend .is-win dd { color: #188038; }
+.match-record-legend .is-draw dd { color: #5f6368; }
+.match-record-legend .is-loss dd { color: #d93025; }
+
+/* ---------- Liste des rencontres : équipes et score ---------- */
+.match-team strong { font-size: .9375rem; font-weight: 600; line-height: 1.25; }
+.match-score { font-size: 1.45rem; font-weight: 700; }
+body.pwa-standalone .match-teams { grid-template-columns: minmax(0,1fr) 88px minmax(0,1fr); }
+body.pwa-standalone .match-team strong { font-size: .9rem; font-weight: 600; line-height: 1.25; }
+body.pwa-standalone .match-card .match-score { padding: 6px 12px; font-size: 1.45rem; font-weight: 700; }
+@media (max-width: 360px) {
+  body.pwa-standalone .match-teams { grid-template-columns: minmax(0,1fr) 76px minmax(0,1fr); }
+  body.pwa-standalone .match-team strong { font-size: .8rem; }
+  body.pwa-standalone .match-card .match-score { font-size: 1.25rem; padding: 5px 8px; }
+}
+
+/* ---------- Accueil : points du carrousel (plus de « 4 / 5 ») ---------- */
+.carousel-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.carousel-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: #cfc8dd; cursor: pointer; transition: width .25s ease, background-color .25s ease; }
+.carousel-dot.is-active { width: 22px; background: var(--accent); }
+.carousel-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+body.pwa-standalone .carousel-button { display: none; }
+body.pwa-standalone .carousel-controls { right: auto; left: 50%; bottom: 14px; padding: 8px 12px !important; transform: translateX(-50%); }
+body.pwa-standalone .carousel-dot { background: #ffffff80; }
+body.pwa-standalone .carousel-dot.is-active { background: #fff; }
+/* Carrousel de l'application : image et titre seulement */
+body.pwa-standalone .hero-excerpt,
+body.pwa-standalone .hero-meta { display: none; }
+body.pwa-standalone .hero-body { padding-bottom: 46px; }
+
+/* ---------- Accueil : rail des rubriques (icône + nom dessous) ---------- */
+.home-rubrique-rail { display: none; gap: 14px; overflow-x: auto; margin-top: 16px; padding: 4px 2px 6px; scrollbar-width: none; overscroll-behavior-x: contain; scroll-snap-type: x proximity; }
+.home-rubrique-rail::-webkit-scrollbar { display: none; }
+@media (max-width: 700px) { .home-rubrique-rail { display: flex; } }
+body.pwa-standalone .home-rubrique-rail { display: flex; margin: 16px -16px 0; padding: 4px 16px 6px; }
+.home-rubrique-item { display: grid; flex: 0 0 auto; width: 76px; justify-items: center; gap: 8px; scroll-snap-align: start; color: #202124; text-decoration: none; }
+.home-rubrique-icon { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50%; background: #efe8fb; color: #42158f; transition: background-color .2s ease, color .2s ease; }
+.home-rubrique-icon svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.home-rubrique-item:hover .home-rubrique-icon,
+.home-rubrique-item:focus-visible .home-rubrique-icon { background: #42158f; color: #fff; outline: 0; }
+.home-rubrique-label { max-width: 100%; overflow: hidden; font-size: .8125rem; font-weight: 500; line-height: 1.2; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+/* Sur l'accueil de l'application, le rail remplace les pastilles de rubriques */
+body.pwa-standalone.is-home-root .pwa-sport-nav { display: none !important; }
+
+/* ---------- Articles par rubrique : listes horizontales ---------- */
+@media (max-width: 700px) {
+  .category-posts-grid { display: flex; gap: 12px; overflow-x: auto; padding: 0 0 6px; scrollbar-width: none; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+  .category-posts-grid::-webkit-scrollbar { display: none; }
+  .category-posts-grid .post-mini { display: grid; flex: 0 0 min(72vw, 270px); align-content: start; gap: 9px; padding: 0; overflow: hidden; border: 0; border-radius: 0; background: transparent; box-shadow: none; scroll-snap-align: start; }
+  .category-posts-grid .post-mini img { width: 100%; height: auto; aspect-ratio: 16 / 10; border-radius: 9px; }
+  .category-posts-grid .post-mini-title { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+}
+
+/* ---------- Reportages photo : carrousel (texte quand il n'y a pas encore de photo) ---------- */
+.photo-reportage-grid { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+.photo-reportage-grid::-webkit-scrollbar { display: none; }
+.photo-reportage-grid .photo-reportage-item { flex: 0 0 calc((100% - 24px) / 3); scroll-snap-align: start; }
+.photo-reportage-grid .data-status { flex: 1 0 100%; margin: 0; }
+@media (max-width: 700px) {
+  .photo-reportage-grid .photo-reportage-item { flex-basis: min(82vw, 340px); }
+}
+body.pwa-standalone .photo-reportage-grid .photo-reportage-item { flex-basis: min(82vw, 340px); }
