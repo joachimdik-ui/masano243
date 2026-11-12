@@ -3287,3 +3287,91 @@ body.pwa-standalone .results-view.is-compact.is-rencontres .date-nav-label {
   background: #20192d;
   color: #e0c6ff;
 }
+/* =====================================================================
+   Typographie façon Google — mêmes polices (Bebas Neue / Montserrat),
+   graisses Regular 400 · Medium 500 · Bold 700 · ExtraBold 800
+   et tailles inspirées de l'échelle Material (Google) :
+   titre 24-32 · titre de section 22 · corps 16/14 · libellés 14/12.
+   Aucune couleur, marge ni disposition modifiée.
+   ===================================================================== */
+body { font-size: 16px; line-height: 1.5; font-weight: 400; text-rendering: optimizeLegibility; font-synthesis: none; }
+
+/* Titre « Masano243 » de l'en-tête : ExtraBold (Bebas Neue n'a qu'une graisse → Montserrat) */
+.brand,
+.pwa-app-wordmark,
+body.pwa-standalone .pwa-app-wordmark {
+  font-family: var(--font-text);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  text-transform: none;
+}
+
+/* Titres des articles du carrousel : ExtraBold */
+.hero-title,
+body.pwa-standalone .hero-title {
+  font-family: var(--font-text);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2rem);   /* 24 → 32 px */
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+.hero-excerpt { font-size: 1rem; line-height: 1.5; font-weight: 400; }
+.hero-meta { font-size: .75rem; line-height: 1.33; font-weight: 500; letter-spacing: .04em; }
+
+/* Listes d'articles */
+.post-mini-title { font-size: 1rem; line-height: 1.375; font-weight: 700; letter-spacing: -.005em; }
+.section-title { font-size: 1.375rem; }
+.home-category-more { font-size: .875rem; font-weight: 500; }
+.article-main-title { font-weight: 800; letter-spacing: -.02em; }
+
+/* Navigation, boutons, pastilles : Medium 14 px */
+.nav-left a, .nav-left a.nav-external { font-size: .875rem; font-weight: 500; letter-spacing: .01em; }
+.results-tab { font-size: .875rem; font-weight: 500; }
+.sport-chip, .competition-filter, .status-filter { font-size: .875rem; font-weight: 500; }
+.match-detail-tab { font-size: .875rem; font-weight: 500; }
+.top-search-wrap input[type="search"] { font-size: 1rem; font-weight: 400; }
+
+/* Matchs */
+.match-competition { font-size: .75rem; font-weight: 500; letter-spacing: .02em; }
+.match-team strong { font-size: .875rem; font-weight: 500; line-height: 1.3; }
+.match-score { font-weight: 700; }
+.home-live-name { font-size: .875rem; font-weight: 500; }
+.match-round-title { font-size: .75rem; font-weight: 500; }
+.match-detail-team h2 { font-weight: 500; }
+
+/* Tableaux : en-têtes 12 px Medium, cellules 14 px Regular, noms Medium, points Bold */
+.standings-table, .match-detail-standings { font-size: .875rem; font-weight: 400; }
+.standings-table thead th, .match-detail-standings thead th { font-size: .75rem; font-weight: 500; letter-spacing: .03em; }
+.standings-table tbody th, .match-detail-standings tbody th { font-size: .875rem; font-weight: 500; }
+.standings-table td strong, .match-detail-standings td strong, .scorer-goals { font-weight: 700; }
+
+/* Pied de page */
+.footer-column h2 { font-size: .875rem; font-weight: 700; }
+.site-footer p, .site-footer a { font-size: .875rem; line-height: 1.5; }
+
+/* ---------- Modal de match : rang de chaque équipe toujours visible ---------- */
+body.pwa-standalone .match-detail-scoreboard .match-rank-badge { display: inline-flex; }
+.match-rank-badge { max-width: 100%; text-align: center; white-space: normal; line-height: 1.2; font-weight: 500; }
+
+/* ---------- Onglet « Stats » : 5 derniers matchs de chaque équipe (style Google) ---------- */
+.match-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.match-form-team { min-width: 0; padding: 16px; border: 1px solid #e8eaed; border-radius: 16px; background: #fff; }
+.match-form-team header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.match-form-team h4 { margin: 0; overflow: hidden; color: #202124; font-size: 1rem; font-weight: 700; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+.match-form-tally { flex: 0 0 auto; color: #5f6368; font-size: .75rem; font-weight: 500; }
+.match-form-dots { display: flex; gap: 6px; margin: 12px 0 10px; }
+.match-form-dot { display: inline-grid; flex: 0 0 auto; width: 26px; height: 26px; place-items: center; border-radius: 50%; color: #fff; font-size: .75rem; font-weight: 700; line-height: 1; }
+.match-form-dot.is-win { background: #188038; }
+.match-form-dot.is-draw { background: #80868b; }
+.match-form-dot.is-loss { background: #d93025; }
+.match-form-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.match-form-list li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid #e8eaed; }
+.match-form-opponent { display: grid; min-width: 0; }
+.match-form-opponent strong { overflow: hidden; color: #202124; font-size: .875rem; font-weight: 500; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+.match-form-opponent small { overflow: hidden; color: #5f6368; font-size: .75rem; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+.match-form-score { color: #202124; font-size: .875rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.match-form-note { margin: 12px 0 0; color: #5f6368; font-size: .75rem; line-height: 1.4; }
+@media (max-width: 640px) {
+  .match-form-grid { grid-template-columns: 1fr; gap: 12px; }
+  .match-form-team { padding: 14px; }
+}

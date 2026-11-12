@@ -12,7 +12,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // Sécurité : si le script principal échoue, ne jamais laisser la page masquée.
@@ -487,11 +487,14 @@
           <button type="button" class="is-active" data-pwa-match-tab="chronology">Chronologie</button>
           <button type="button" data-pwa-match-tab="lineup">Composition</button>
           <button type="button" data-pwa-match-tab="history">Confrontations</button>
+          <button type="button" data-pwa-match-tab="stats">Stats</button>
+          <button type="button" data-pwa-match-tab="standings">Classement</button>
           <button type="button" data-pwa-match-tab="highlights">Vidéo</button>
         </div>
         <div class="match-detail-tabs" role="tablist" aria-label="Détails du match">
           <button type="button" class="match-detail-tab is-active" id="matchTabLineup" role="tab" aria-selected="true" aria-controls="matchPanelLineup" data-match-tab="lineup">Composition</button>
           <button type="button" class="match-detail-tab" id="matchTabHistory" role="tab" aria-selected="false" aria-controls="matchPanelHistory" data-match-tab="history">Confrontations</button>
+          <button type="button" class="match-detail-tab" id="matchTabStats" role="tab" aria-selected="false" aria-controls="matchPanelStats" data-match-tab="stats">Stats</button>
           <button type="button" class="match-detail-tab" id="matchTabStandings" role="tab" aria-selected="false" aria-controls="matchPanelStandings" data-match-tab="standings" hidden>Classement</button>
           <button type="button" class="match-detail-tab" id="matchTabHighlights" role="tab" aria-selected="false" aria-controls="matchPanelHighlights" data-match-tab="highlights">Temps forts</button>
         </div>
@@ -517,6 +520,10 @@
             <ol class="match-detail-history" id="matchDetailHistory">
               <li class="match-detail-empty">L’historique des confrontations n’est pas disponible pour ces équipes.</li>
             </ol>
+          </section>
+          <section id="matchPanelStats" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabStats" data-match-panel="stats" hidden>
+            <h3>Forme récente · 5 derniers matchs</h3>
+            <div id="matchDetailStats" aria-live="polite"></div>
           </section>
           <section id="matchPanelStandings" class="match-detail-panel" role="tabpanel" aria-labelledby="matchTabStandings" data-match-panel="standings" hidden>
             <h3 id="matchDetailStandingsTitle">Classement de la compétition</h3>

@@ -456,7 +456,7 @@ export const mountResults = (root, competitionPage = null) => {
       element.className = "match-rank-badge";
       return;
     }
-    element.textContent = `${position}${position === 1 ? "er" : "e"}`;
+    element.textContent = `${position}${position === 1 ? "er" : "e"} au classement`;
     const rankClass = position <= 4 ? "is-positive" : total >= 4 && position >= total - 3 ? "is-negative" : "";
     element.className = `match-rank-badge ${rankClass}`;
   };
@@ -817,6 +817,64 @@ export const mountResults = (root, competitionPage = null) => {
     highlightLink.hidden = false;
   };
 
+  const hasScoreValue = (value) => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
+
+  const recentTeamForm = (teamName, match) => {
+    const key = normalizeTeamName(teamName);
+    const limit = matchTime(match) ?? Infinity;
+    return matches
+      .filter((item) => String(item.id) !== String(match.id)
+        && item.statut === "finished"
+        && hasScoreValue(item.score_domicile) && hasScoreValue(item.score_visiteur)
+        && (matchTime(item) ?? Infinity) < limit
+        && (normalizeTeamName(item.equipe_domicile) === key || normalizeTeamName(item.equipe_visiteur) === key))
+      .sort((first, second) => -byDateAsc(first, second))
+      .slice(0, 5)
+      .map((item) => {
+        const isHome = normalizeTeamName(item.equipe_domicile) === key;
+        const own = Number(isHome ? item.score_domicile : item.score_visiteur);
+        const other = Number(isHome ? item.score_visiteur : item.score_domicile);
+        return {
+          code: own > other ? "V" : own < other ? "D" : "N",
+          opponent: isHome ? item.equipe_visiteur : item.equipe_domicile,
+          score: `${item.score_domicile} – ${item.score_visiteur}`,
+          home: isHome,
+          date: item.date_match,
+          competition: item.competition || ""
+        };
+      });
+  };
+
+  const renderFormStats = (match) => {
+    const dotClass = { V: "is-win", N: "is-draw", D: "is-loss" };
+    const dotLabel = { V: "Victoire", N: "Match nul", D: "Défaite" };
+    const shortDate = (date) => {
+      const parsed = new Date(date);
+      return Number.isNaN(parsed.getTime()) ? "" : new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(parsed);
+    };
+    const block = (teamName) => {
+      const form = recentTeamForm(teamName, match);
+      if (!form.length) {
+        return `<section class="match-form-team"><h4>${escapeHtml(teamName)}</h4><p class="match-detail-empty">Aucun match récent disponible pour cette équipe.</p></section>`;
+      }
+      const tally = ["V", "N", "D"].map((code) => `${form.filter((item) => item.code === code).length}${code}`).join(" · ");
+      const dots = [...form].reverse()
+        .map((item) => `<span class="match-form-dot ${dotClass[item.code]}" title="${dotLabel[item.code]}">${item.code}</span>`).join("");
+      const rows = form.map((item) => `<li>
+        <span class="match-form-dot ${dotClass[item.code]}" title="${dotLabel[item.code]}">${item.code}</span>
+        <span class="match-form-opponent"><strong>${item.home ? "" : "@ "}${escapeHtml(item.opponent)}</strong><small>${escapeHtml([shortDate(item.date), item.competition].filter(Boolean).join(" · "))}</small></span>
+        <span class="match-form-score">${escapeHtml(item.score)}</span>
+      </li>`).join("");
+      return `<section class="match-form-team">
+        <header><h4>${escapeHtml(teamName)}</h4><span class="match-form-tally">${tally}</span></header>
+        <div class="match-form-dots" role="img" aria-label="Résultats des ${form.length} derniers matchs, du plus ancien au plus récent">${dots}</div>
+        <ul class="match-form-list">${rows}</ul>
+      </section>`;
+    };
+    return `<div class="match-form-grid">${block(match.equipe_domicile)}${block(match.equipe_visiteur)}</div>
+      <p class="match-form-note">Résultats classés du plus ancien (gauche) au plus récent (droite). @ = match à l’extérieur.</p>`;
+  };
+
   const renderMatchDetails = (match, details) => {
     const venue = details.venue || match.stade;
     detailModal.querySelector("#matchDetailVenue").textContent = venue || "Lieu non renseigné";
@@ -834,6 +892,7 @@ export const mountResults = (root, competitionPage = null) => {
     const standings = Array.isArray(details.rankings) ? details.rankings : [];
     standingsPanel.innerHTML = renderCompetitionStandings(standings, match);
     detailModal.querySelector("#matchDetailStandingsTitle").textContent = `Classement · ${match.competition}`;
+    detailModal.querySelector("#matchDetailStats").innerHTML = renderFormStats(match);
     void renderMatchHighlights(match, details);
     const homeRank = detailModal.querySelector("#matchDetailHomeRank");
     const awayRank = detailModal.querySelector("#matchDetailAwayRank");
@@ -912,6 +971,7 @@ export const mountResults = (root, competitionPage = null) => {
     renderScorers(match, match.buteurs, "unknown", match.source !== "local");
     detailModal.querySelector("#matchDetailTimeline").innerHTML = `<li class="match-detail-empty">${match.statut === "upcoming" ? "Le match n’a pas encore commencé." : "Les événements chronologiques ne sont pas disponibles pour ce match."}</li>`;
     detailModal.querySelector("#matchDetailVenue").textContent = match.stade || "Chargement…";
+    detailModal.querySelector("#matchDetailStats").innerHTML = renderFormStats(match);
     detailModal.querySelector("#matchDetailHomeLineupName").textContent = match.equipe_domicile;
     detailModal.querySelector("#matchDetailAwayLineupName").textContent = match.equipe_visiteur;
     detailModal.querySelector("#matchDetailHomeLineup").innerHTML = `<p class="match-detail-empty">Chargement de la composition…</p>`;
@@ -1651,7 +1711,7 @@ export const mountResults = (root, competitionPage = null) => {
         return;
       }
       topScorersContainer.innerHTML = `<div class="standings-scroll"><table class="standings-table">
-        <thead><tr><th>#</th><th>Joueur</th><th>Équipe</th>${isEpfKin ? "<th>Série</th>" : ""}<th>MJ</th><th>Buts</th></tr></thead>
+        <thead><tr><th>#</th><th>Joueur</th><th>Équipe</th>${isEpfKin ? "<th>Série</th>" : ""}<th>Buts</th></tr></thead>
         <tbody>${scorers.map((scorer, index) => {
           const clubName = scorer.club?.nom || scorer.club?.sigle || "Club à confirmer";
           const clubLogo = renderClubLogo(clubName, scorer.club?.logo_url);
@@ -1660,7 +1720,6 @@ export const mountResults = (root, competitionPage = null) => {
             <th scope="row">${escapeHtml(scorer.nom || "Joueur à confirmer")}</th>
             <td><span class="scorer-club club-link"${clubLinkAttrs(clubName)}>${clubLogo}<span>${escapeHtml(clubName)}</span></span></td>
             ${isEpfKin ? `<td>Série ${escapeHtml(scorer.serie || "—")}</td>` : ""}
-            <td>${Number(scorer.matches_joues ?? 0)}</td>
             <td><strong class="scorer-goals">${Number(scorer.buts ?? 0)}</strong></td>
           </tr>`;
         }).join("")}</tbody>
