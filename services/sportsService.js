@@ -120,6 +120,124 @@ export const fetchMatchDetails = async (matchId) => {
   return details;
 };
 
+let footballDataConfrontationsRequest;
+
+const normalizeArchiveTeamName = (value) => {
+  const name = String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  if (/^(as )?(vita|v) club( kinshasa)?$/.test(name)) return "v club";
+  if (name.includes("mazembe")) return "tp mazembe";
+  if (name.includes("lupopo") || name.includes("saint eloi")) return "lupopo";
+  if (name.includes("maniema union")) return "maniema union";
+  if (name.includes("aigles du congo")) return "aigles du congo";
+  if (name.includes("renaissance du congo")) return "renaissance du congo";
+  const aliases = {
+    "as v club": "v club",
+    "as vita club": "v club",
+    "vita club": "v club",
+    "tout puissant mazembe": "tp mazembe",
+    "as maniema union": "maniema union",
+    "fc les aigles du congo": "aigles du congo",
+    "les aigles du congo": "aigles du congo",
+    "fc renaissance du congo": "renaissance du congo",
+    "renaissance du congo": "renaissance du congo",
+    "saint eloi lupopo": "lupopo",
+    "fc saint eloi lupopo": "lupopo",
+    "dr congo": "rd congo",
+    "congo dr": "rd congo",
+    "congo democratic republic": "rd congo",
+    "democratic republic congo": "rd congo",
+    "republique democratique du congo": "rd congo",
+    "democratic republic of the congo": "rd congo",
+    "uganda": "ouganda"
+  };
+  return aliases[name] || name.replace(/\b(fc|cf|afc|sc|ac|as)\b/g, " ").replace(/\s+/g, " ").trim();
+};
+
+const validArchiveScore = (score) => Number.isInteger(score?.home) && Number.isInteger(score?.away);
+
+export const fetchFootballDataConfrontation = async (match) => {
+  if (!footballDataConfrontationsRequest) {
+    footballDataConfrontationsRequest = fetch("/football-data/football-data/head-to-head/confrontations.json", { cache: "no-cache" })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`Archive des confrontations indisponible (HTTP ${response.status}).`);
+        }
+        const archive = await response.json();
+        if (!Array.isArray(archive?.items)) {
+          throw new Error("Format invalide pour l’archive des confrontations.");
+        }
+        return archive;
+      })
+      .catch((error) => {
+        footballDataConfrontationsRequest = null;
+        throw error;
+      });
+  }
+
+  const archive = await footballDataConfrontationsRequest;
+  const homeName = match?.equipe_domicile || match?.homeTeam?.name || match?.home?.name;
+  const awayName = match?.equipe_visiteur || match?.awayTeam?.name || match?.away?.name;
+  const homeKey = normalizeArchiveTeamName(homeName);
+  const awayKey = normalizeArchiveTeamName(awayName);
+  if (!homeKey || !awayKey) return null;
+
+  const confrontation = archive.items.find((item) => {
+    const teamA = normalizeArchiveTeamName(item.team_a?.name);
+    const teamB = normalizeArchiveTeamName(item.team_b?.name);
+    return (teamA === homeKey && teamB === awayKey) || (teamA === awayKey && teamB === homeKey);
+  });
+  if (!confrontation) return null;
+
+  const teamAIsHome = normalizeArchiveTeamName(confrontation.team_a?.name) === homeKey;
+  const sourceMatches = Array.isArray(confrontation.last_5_matches) && confrontation.last_5_matches.length
+    ? confrontation.last_5_matches
+    : Array.isArray(confrontation.matches) ? confrontation.matches : [];
+  const history = sourceMatches
+    .filter((match) => (
+      match?.status === "finished"
+      && validArchiveScore(match.score)
+      && (!Array.isArray(match.conflicts) || match.conflicts.length === 0)
+    ))
+    .sort((first, second) => String(second.date || "").localeCompare(String(first.date || "")))
+    .slice(0, 5)
+    .map((match) => ({
+      date: match.date || "",
+      competition: match.competition_id === "linafoot-ligue-1"
+        ? "Linafoot Ligue 1"
+        : String(match.competition_id || "").replace(/-/g, " "),
+      home: match.home?.name || "",
+      away: match.away?.name || "",
+      home_score: match.score.home,
+      away_score: match.score.away
+    }));
+
+  const statistics = confrontation.statistics || confrontation.summary || {};
+  const teamAWins = Number(statistics.a_wins ?? statistics.team_a_wins);
+  const teamBWins = Number(statistics.b_wins ?? statistics.team_b_wins);
+  const draws = Number(statistics.draws);
+  const played = Number(statistics.matches_counted ?? confrontation.collected_matches);
+  const hasSummary = [teamAWins, teamBWins, draws].every((value) => Number.isInteger(value) && value >= 0);
+
+  return {
+    history,
+    history_summary: hasSummary ? {
+      played: Number.isInteger(played) && played > 0 ? played : teamAWins + teamBWins + draws,
+      home_wins: teamAIsHome ? teamAWins : teamBWins,
+      draws,
+      away_wins: teamAIsHome ? teamBWins : teamAWins
+    } : null,
+    history_source: "Dossier football-data",
+    history_updated_through: archive.meta?.last_sync || confrontation.last_synced || "",
+    history_verification_status: confrontation.verification?.status || "unverified",
+    history_scope: statistics.scope || confrontation.notes || ""
+  };
+};
+
 const isUuid = (value) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ""));
 
 export const fetchLocalMatchDetails = async (match) => {

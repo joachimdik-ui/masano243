@@ -1,13 +1,11 @@
 # football-data
 
 Données football au format JSON : sélection de la RDC, clubs congolais en compétitions CAF, confrontations directes.
-Ces fichiers restent l'archive éditoriale de référence et ne sont pas publiés dans les pages du site.
-
-Lors d'une synchronisation AI Football Intelligence, les dix collections JSON sont aussi enregistrées dans les tables privées Supabase comme source `football-data-archive`. Les sources citées et le statut de vérification du fichier sont conservés dans le contenu de chaque observation ; le statut de vérification Supabase reste `pending` jusqu'à un contrôle indépendant. Les fichiers sont chargés au déploiement : redéployer après une mise à jour pour synchroniser leur nouvelle version.
+Les fichiers sont servis directement par le site comme ressources statiques, sans copie dans Supabase. Une mise à jour des fichiers est disponible après le déploiement du dépôt.
 
 ## Principe de mise à jour
 
-La collecte web et la mise à jour des fichiers restent à la demande : les scripts de ce dossier ne font **pas** de requêtes web et valident/fusionnent les données collectées. Le Cron AI Football Intelligence importe automatiquement la copie déployée des fichiers dans Supabase, mais ne collecte pas de nouvelles données pour modifier cette archive.
+La collecte web et la mise à jour des fichiers restent à la demande : les scripts de ce dossier ne font **pas** de requêtes web et valident/fusionnent les données collectées. La partie site qui utilise une collection lit directement son fichier JSON ; le Cron AI Football Intelligence est indépendant de cette archive et ne la modifie pas.
 
 1. Tu lances une commande de collecte (voir plus bas) dans la conversation.
 2. Claude te rend un fichier `inbox/<nom>.json` : `{ "target": "national-team/results.json", "items": [...] }`.
@@ -52,10 +50,11 @@ Chaque fichier : `{ "meta": {...}, "items": [...] }`. Chaque élément a un `id`
 Chaque paire contient : `last_5` (les 5 derniers matchs avec score connu et non contesté), `matches` (tous les matchs retrouvés), `statistics` (calculées **uniquement** sur ces matchs), `all_time` (totaux publiés par les sources, avec leur fiabilité) et `known_gaps`.
 Quand le score sur le terrain diffère du résultat officiel (forfait, tapis vert), `score` est le résultat officiel et `score_on_pitch` le score joué. Les matchs en conflit sont exclus des statistiques.
 `home_confirmed: false` signale un ordre domicile/extérieur non confirmé.
+Le détail des matchs lit directement `head-to-head/confrontations.json` pour afficher les confrontations archivées ; si aucune paire ne correspond ou si le fichier ne peut pas être chargé, il conserve l’historique fourni par l’API du match.
 
 ## Utilisation dans le site
 
 ```js
-const res = await fetch("/football-data/national-team/results.json").then(r => r.json());
+const res = await fetch("/football-data/football-data/national-team/results.json").then(r => r.json());
 const matchs = res.items.filter(m => m.verification.status !== "unverified");
 ```

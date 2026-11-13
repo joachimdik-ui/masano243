@@ -2,6 +2,7 @@ import {
   fetchClassement,
   fetchEpfKinStandings,
   fetchEpfKinTopScorers,
+  fetchFootballDataConfrontation,
   fetchLocalMatchDetails,
   fetchMatchDetails,
   fetchMatchsEpfKin,
@@ -539,7 +540,7 @@ export const mountResults = (root, competitionPage = null) => {
 
   const loadMatchDetails = (match) => {
     if (!matchDetailsCache.has(match.id)) {
-      const detailsRequest = match.source === "local"
+      const providerDetailsRequest = match.source === "local"
         ? fetchLocalMatchDetails(match).then((details) => addSupabaseMatchStandings(match, details))
         : match.source === "epf_kin"
           ? addSupabaseMatchStandings(match, {
@@ -556,6 +557,33 @@ export const mountResults = (root, competitionPage = null) => {
             warnings: []
           })
           : fetchMatchDetails(match.id);
+      const detailsRequest = Promise.allSettled([
+        providerDetailsRequest,
+        fetchFootballDataConfrontation(match)
+      ]).then(([providerResult, archiveResult]) => {
+        const archiveHistory = archiveResult.status === "fulfilled" ? archiveResult.value : null;
+        if (archiveResult.status === "rejected") {
+          console.warn("Impossible de lire les confrontations dans le dossier football-data.", archiveResult.reason);
+        }
+        if (providerResult.status === "rejected") {
+          if (!archiveHistory) throw providerResult.reason;
+          console.warn("Détails du fournisseur indisponibles ; affichage de l’archive football-data.", providerResult.reason);
+          return {
+            venue: match.stade || "",
+            referee: "",
+            events: [],
+            scorers: [],
+            scorers_status: "pending",
+            lineups: { home: null, away: null },
+            rankings: [],
+            highlights_url: "",
+            highlights_thumbnail_url: "",
+            warnings: ["provider-details-unavailable"],
+            ...archiveHistory
+          };
+        }
+        return archiveHistory ? { ...providerResult.value, ...archiveHistory } : providerResult.value;
+      });
       matchDetailsCache.set(match.id, detailsRequest);
     }
     return matchDetailsCache.get(match.id);
@@ -673,12 +701,21 @@ export const mountResults = (root, competitionPage = null) => {
     : `<li class="match-detail-empty match-history-empty">Aucune confrontation antérieure n’est recensée dans les archives pour ces équipes.</li>`;
 
   const renderHistorySummary = (summary, match, details) => {
+    const verificationLabels = {
+      verified: "confirmé dans l’archive",
+      single_source: "source unique dans l’archive",
+      unverified: "non vérifié dans l’archive",
+      conflict: "en conflit dans l’archive"
+    };
+    const historySourceNote = `<small>Source : ${escapeHtml(details.history_source || "Open Football")}${details.history_verification_status ? ` · ${escapeHtml(verificationLabels[details.history_verification_status] || "statut non vérifié")}` : ""} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</small>${details.history_scope ? `<small>${escapeHtml(details.history_scope)}</small>` : ""}`;
     const played = Number(summary?.played);
     if (!Number.isFinite(played) || played <= 0) {
       return `<div class="match-history-overview is-empty">
-        <div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4>
-        <p>Aucune rencontre antérieure entre ces sélections n’est recensée dans l’archive.</p></div>
-        <small>Source : ${escapeHtml(details.history_source || "Open Football")} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</small>
+        <div><span class="match-history-kicker">HISTORIQUE FACE-À-FACE</span><h4>Bilan face-à-face</h4>
+        <p>${details.history.length
+          ? `${details.history.length} confrontation${details.history.length === 1 ? "" : "s"} affichée${details.history.length === 1 ? "" : "s"} ; le bilan global n’est pas disponible.`
+          : "Aucune rencontre antérieure entre ces équipes n’est recensée dans l’archive."}</p></div>
+        ${historySourceNote}
       </div>`;
     }
     const plural = (count, singular, pluralForm) => `${count} ${count === 1 ? singular : pluralForm}`;
@@ -692,7 +729,7 @@ export const mountResults = (root, competitionPage = null) => {
       { label: `Victoires ${match.equipe_visiteur}`, count: toCount(summary.away_wins), className: "is-away" }
     ];
     return `<div class="match-history-overview">
-      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE INTERNATIONAL · MASCULIN</span><h4>Bilan face-à-face</h4></div><div class="match-history-total"><strong>${played}</strong><span>${plural(played, "match recensé", "matchs recensés")}</span></div></div>
+      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE FACE-À-FACE</span><h4>Bilan face-à-face</h4></div><div class="match-history-total"><strong>${played}</strong><span>${plural(played, "match recensé", "matchs recensés")}</span></div></div>
       <div class="match-history-chart" aria-label="Répartition des résultats sur ${played} confrontations">
         ${metrics.map(({ label, count, className }) => {
           const percentage = Math.round(Math.max(0, Math.min(played, count)) / played * 100);
@@ -702,7 +739,8 @@ export const mountResults = (root, competitionPage = null) => {
           </div>`;
         }).join("")}
       </div>
-      <p class="match-history-source">Les ${details.history.length} confrontations les plus récentes sont affichées. Source : ${escapeHtml(details.history_source || "Open Football")} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</p>
+      <p class="match-history-source">Les ${details.history.length} confrontations les plus récentes sont affichées.</p>
+      ${historySourceNote}
     </div>`;
   };
 
@@ -982,7 +1020,8 @@ export const mountResults = (root, competitionPage = null) => {
         "thesportsdb-fallback": "détails TheSportsDB",
         "lookuplineup.php": "compositions (TheSportsDB)",
         "lookuptimeline.php": "chronologie (TheSportsDB)",
-        "lookupeventstats.php": "statistiques du match (TheSportsDB)"
+        "lookupeventstats.php": "statistiques du match (TheSportsDB)",
+        "provider-details-unavailable": "détails du fournisseur (confrontations de l’archive affichées)"
       })[key] || key).join(", ")}.`
       : "";
   };
