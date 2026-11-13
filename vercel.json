@@ -1,9 +1,11 @@
 {
   "crons": [
-    { "path": "/api/sync-sports-data", "schedule": "23 4 * * *" }
+    { "path": "/api/sync-sports-data", "schedule": "23 4 * * *" },
+    { "path": "/api/football-sync", "schedule": "43 4 * * *" }
   ],
   "functions": {
-    "api/sync-sports-data.js": { "maxDuration": 60 }
+    "api/sync-sports-data.js": { "maxDuration": 60 },
+    "api/football-sync.js": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/resultats", "destination": "/index.html" },
