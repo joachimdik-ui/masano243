@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "collection": "caf/champions-league",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Ligue des Champions CAF 2026-27 - volet RDC."
+  },
+  "items": [
+    {
+      "id": "caf-champions-league-2026-27",
+      "name": "TotalEnergies CAF Ligue des Champions",
+      "season": "2026-27",
+      "format": "2 tours préliminaires, puis phase de groupes de 4 poules de 4 ; les 2 premiers de chaque groupe vont en quarts de finale.",
+      "group_stage_draw": {
+        "date": "2026-10-28",
+        "place": "Le Caire"
+      },
+      "rdc_clubs": [
+        {
+          "club_id": "tp-mazembe",
+          "path": [
+            "2026-09-06-med-mz",
+            "2026-09-12-mz-med",
+            "2026-10-17-mz-ca",
+            "2026-10-25-ca-mz"
+          ],
+          "outcome": "éliminé au 2e tour préliminaire par Club Africain"
+        },
+        {
+          "club_id": "aigles-du-congo",
+          "path": [],
+          "outcome": "éliminé par l'APR FC (Rwanda), détails non collectés"
+        }
+      ],
+      "rdc_in_group_stage": false,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610260734.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/caf-mazembe-fixe-sur-les-dates-de-sa-double-confrontation-contre-club-africain/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "La Presse de Tunisie",
+          "url": "https://www.lapresse.tn/2026/10/25/ligue-des-champions-le-club-africain-ecarte-le-tp-mazembe-et-rejoint-la-phase-de-poules/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Aucun club congolais ne figure parmi les 16 clubs de la phase de groupes d'après les éliminations confirmées de Mazembe et des Aigles."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

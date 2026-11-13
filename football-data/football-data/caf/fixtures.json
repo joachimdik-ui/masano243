@@ -1,0 +1,491 @@
+{
+  "meta": {
+    "collection": "caf/fixtures",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Tous les matchs des clubs congolais en compétitions CAF 2026-27 trouvés lors de la collecte (passés et à venir)."
+  },
+  "items": [
+    {
+      "id": "2026-09-06-med-mz",
+      "competition_id": "caf-champions-league-2026-27",
+      "season": "2026-27",
+      "stage": "1er tour préliminaire - Aller",
+      "date": "2026-09-06",
+      "kickoff": null,
+      "venue": {
+        "name": null,
+        "city": null,
+        "country": "Ghana"
+      },
+      "home": {
+        "id": "medeama-sc",
+        "name": "Medeama SC"
+      },
+      "away": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "status": "finished",
+      "score": {
+        "home": 0,
+        "away": 1,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "APA News",
+          "url": "https://fr.apanews.net/?p=318939",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/ligue-des-champions-caf-2e-tour-preliminaire-quand-le-tp-mazembe-affrontera-t-il-le-club-africain-1350875/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "But de Lise Nyembo Ntumba (86e) selon APA. Nom du stade non collecté."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-09-12-mz-med",
+      "competition_id": "caf-champions-league-2026-27",
+      "season": "2026-27",
+      "stage": "1er tour préliminaire - Retour",
+      "date": "2026-09-12",
+      "kickoff": null,
+      "venue": {
+        "name": "Stade TP Mazembe",
+        "city": "Lubumbashi",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "away": {
+        "id": "medeama-sc",
+        "name": "Medeama SC"
+      },
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 1,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/ligue-des-champions-de-la-caf-mazembe-satisfait-de-la-qualification-au-second-tour/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/ligue-des-champions-caf-2e-tour-preliminaire-quand-le-tp-mazembe-affrontera-t-il-le-club-africain-1350875/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Qualification de Mazembe (4-1 cumulé)."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-17-mz-ca",
+      "competition_id": "caf-champions-league-2026-27",
+      "season": "2026-27",
+      "stage": "2e tour préliminaire - Aller",
+      "date": "2026-10-17",
+      "kickoff": "2026-10-17T15:00:00+02:00",
+      "venue": {
+        "name": "Stade TP Mazembe",
+        "city": "Lubumbashi",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "away": {
+        "id": "club-africain",
+        "name": "Club Africain"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 1,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/caf-mazembe-fixe-sur-les-dates-de-sa-double-confrontation-contre-club-africain/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "La Presse de Tunisie",
+          "url": "https://www.lapresse.tn/2026/10/25/ligue-des-champions-2e-tour-preliminaire-manche-retour-rades-18h00-ca-tp-mazembe-aller-1-1-dicter-sa-loi/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Heure confirmée par l'ACP (13h00 GMT). Score 1-1 indiqué seulement dans le titre de La Presse de Tunisie : à recouper."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-25-ca-mz",
+      "competition_id": "caf-champions-league-2026-27",
+      "season": "2026-27",
+      "stage": "2e tour préliminaire - Retour",
+      "date": "2026-10-25",
+      "kickoff": "2026-10-25T18:00:00+01:00",
+      "venue": {
+        "name": "Stade Hamadi-Agrebi",
+        "city": "Radès",
+        "country": "Tunisie"
+      },
+      "home": {
+        "id": "club-africain",
+        "name": "Club Africain"
+      },
+      "away": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0,
+        "ht_home": 1,
+        "ht_away": 0
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "La Presse de Tunisie",
+          "url": "https://www.lapresse.tn/2026/10/25/ligue-des-champions-le-club-africain-ecarte-le-tp-mazembe-et-rejoint-la-phase-de-poules/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Réalités Magazine",
+          "url": "https://realites.com.tn/fr/ligue-des-champions-de-la-caf-le-club-africain-bat-le-tp-mazembe-et-file-en-phase-de-poules/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "APA News",
+          "url": "https://fr.apanews.net/tunisie/ldc-caf-le-club-africain-ecarte-le-tp-mazembe-et-file-en-phase-de-poules/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Club Africain qualifié (2-1 cumulé : 1-1 à l'aller, 1-0 au retour). Mazembe éliminé."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-18-kab-man",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "season": "2026-27",
+      "stage": "2e tour préliminaire - Aller",
+      "date": "2026-10-18",
+      "kickoff": null,
+      "venue": {
+        "name": null,
+        "city": null,
+        "country": "Angola"
+      },
+      "home": {
+        "id": "kabuscorp",
+        "name": "Kabuscorp SC"
+      },
+      "away": {
+        "id": "maniema-union",
+        "name": "AS Maniema Union"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 4,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/coupe-de-la-caf-maniema-union-rdc-en-feu-devant-kabuscorp-angola-par-4-1/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610190375.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Pays confirmé (déplacement en Angola) ; ville et stade non précisés dans les sources."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-25-man-kab",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "season": "2026-27",
+      "stage": "2e tour préliminaire - Retour",
+      "date": "2026-10-25",
+      "kickoff": null,
+      "venue": {
+        "name": "Stade des Martyrs",
+        "city": "Kinshasa",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "maniema-union",
+        "name": "AS Maniema Union"
+      },
+      "away": {
+        "id": "kabuscorp",
+        "name": "Kabuscorp SC"
+      },
+      "status": "finished",
+      "score": {
+        "home": 4,
+        "away": 1,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/caf-maniema-union-rdc-vainqueur-4-1-de-kabuscorp-angola-et-accede-a-la-phase-des-groupes/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610260385.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Maniema qualifié, 8-2 cumulé."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-09-xx-vir-baz",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "season": "2026-27",
+      "stage": "1er tour préliminaire",
+      "date": null,
+      "kickoff": null,
+      "venue": null,
+      "home": {
+        "id": "dc-virunga",
+        "name": "DC Virunga"
+      },
+      "away": {
+        "id": "bazar-brothers",
+        "name": "Bazar Brothers"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/coupe-de-la-caf-virunga-rdc-primeiro-de-agosto-angola-programmes-au-deuxieme-tour/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Qualification de Virunga en match unique après un succès 1-0 (ACP). Date et lieu non indiqués dans la source."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-18-vir-pda",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "season": "2026-27",
+      "stage": "2e tour préliminaire - Aller",
+      "date": "2026-10-18",
+      "kickoff": null,
+      "venue": {
+        "name": "Stade des Martyrs",
+        "city": "Kinshasa",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "dc-virunga",
+        "name": "DC Virunga"
+      },
+      "away": {
+        "id": "primeiro-de-agosto",
+        "name": "Primeiro de Agosto"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 2,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610190375.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/coupe-de-la-caf-maniema-union-rdc-en-feu-devant-kabuscorp-angola-par-4-1/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Match à huis clos, selon l'ACP."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-23-pda-vir",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "season": "2026-27",
+      "stage": "2e tour préliminaire - Retour",
+      "date": "2026-10-23",
+      "kickoff": null,
+      "venue": {
+        "name": "Stade 11-Novembre",
+        "city": "Luanda",
+        "country": "Angola"
+      },
+      "home": {
+        "id": "primeiro-de-agosto",
+        "name": "Primeiro de Agosto"
+      },
+      "away": {
+        "id": "dc-virunga",
+        "name": "DC Virunga"
+      },
+      "status": "finished",
+      "score": {
+        "home": null,
+        "away": null,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica (Radio Okapi)",
+          "url": "https://fr.allafrica.com/stories/202610280685.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "unverified",
+        "checked_at": "2026-11-13",
+        "notes": "Score non collecté. Virunga éliminé (Primeiro de Agosto est en phase de groupes)."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-11-27-cc-g-c-md1",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "season": "2026-27",
+      "stage": "Phase de groupes - Journée 1 (fenêtre)",
+      "date": null,
+      "kickoff": null,
+      "venue": null,
+      "home": {
+        "id": "maniema-union",
+        "name": "AS Maniema Union"
+      },
+      "away": {
+        "id": null,
+        "name": "À déterminer"
+      },
+      "status": "scheduled",
+      "score": null,
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica (Radio Okapi)",
+          "url": "https://fr.allafrica.com/stories/202610280685.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Fenêtre 27-29 novembre 2026 ; adversaire, lieu, date et heure non publiés dans les sources collectées."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13",
+      "window": {
+        "from": "2026-11-27",
+        "to": "2026-11-29"
+      }
+    }
+  ]
+}

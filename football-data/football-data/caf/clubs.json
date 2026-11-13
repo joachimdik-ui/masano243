@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "collection": "caf/clubs",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Clubs de la RDC engagés en compétitions CAF interclubs 2026-27. Logos non collectés (null)."
+  },
+  "items": [
+    {
+      "id": "tp-mazembe",
+      "name": "TP Mazembe",
+      "city": "Lubumbashi",
+      "country": "RD Congo",
+      "stadium": "Stade TP Mazembe",
+      "competition_id": "caf-champions-league-2026-27",
+      "status": "eliminated",
+      "eliminated_at": "2e tour préliminaire",
+      "logo": null,
+      "logo_source": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/caf-mazembe-fixe-sur-les-dates-de-sa-double-confrontation-contre-club-africain/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "La Presse de Tunisie",
+          "url": "https://www.lapresse.tn/2026/10/25/ligue-des-champions-le-club-africain-ecarte-le-tp-mazembe-et-rejoint-la-phase-de-poules/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610260734.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Éliminé par le Club Africain (1-1 puis 0-1). Logo non collecté."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "aigles-du-congo",
+      "name": "FC Les Aigles du Congo",
+      "city": "Kinshasa",
+      "country": "RD Congo",
+      "stadium": null,
+      "competition_id": "caf-champions-league-2026-27",
+      "status": "eliminated",
+      "eliminated_at": null,
+      "logo": null,
+      "logo_source": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/caf-mazembe-fixe-sur-les-dates-de-sa-double-confrontation-contre-club-africain/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Éliminé par l'APR FC (Rwanda) selon l'ACP ; tour et scores non collectés. Ville issue d'une source de 2025 (validation CAF)."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "maniema-union",
+      "name": "AS Maniema Union",
+      "city": "Kindu",
+      "country": "RD Congo",
+      "stadium": null,
+      "competition_id": "caf-confederation-cup-2026-27",
+      "status": "group_stage",
+      "group": "C",
+      "logo": null,
+      "logo_source": null,
+      "sources": [
+        {
+          "name": "allAfrica (Radio Okapi)",
+          "url": "https://fr.allafrica.com/stories/202610280685.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/caf-maniema-union-rdc-vainqueur-4-1-de-kabuscorp-angola-et-accede-a-la-phase-des-groupes/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Seul club congolais en phase de groupes de la Coupe de la Confédération 2026-27. Ville issue d'une source de 2025."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "dc-virunga",
+      "name": "DC Virunga",
+      "city": null,
+      "country": "RD Congo",
+      "stadium": null,
+      "competition_id": "caf-confederation-cup-2026-27",
+      "status": "eliminated",
+      "eliminated_at": "2e tour préliminaire",
+      "logo": null,
+      "logo_source": null,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610190375.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica (Radio Okapi)",
+          "url": "https://fr.allafrica.com/stories/202610280685.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Primeiro de Agosto figure dans le groupe A et Maniema est « seul représentant » de la RDC : élimination déduite de deux articles. Score du match retour non collecté. Ville non indiquée dans les sources."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

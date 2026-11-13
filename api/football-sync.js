@@ -10,6 +10,10 @@ const {
   providerForMatch,
   safeEqual
 } = require("../lib/football-intelligence");
+const {
+  ARCHIVE_SOURCE_KEY,
+  buildFootballDataArchiveObservations
+} = require("../lib/football-data-archive");
 
 const TAVILY_MONTHLY_SEARCH_LIMIT = 500;
 
@@ -290,6 +294,53 @@ module.exports = async function handler(request, response) {
         warnings: [...grouped.warnings.get(sourceKey), ...rejected],
         error: persistenceError
       };
+    }
+
+    const archiveSource = SOURCES.find((source) => source.source_key === ARCHIVE_SOURCE_KEY);
+    if (!enabledSources.has(ARCHIVE_SOURCE_KEY)) {
+      sourceResults.sources[ARCHIVE_SOURCE_KEY] = {
+        status: "skipped",
+        records_fetched: 0,
+        records_valid: 0,
+        records_inserted: 0,
+        warnings: [],
+        error: "Source désactivée."
+      };
+    } else {
+      try {
+        const archive = buildFootballDataArchiveObservations(
+          sourceIds.get(ARCHIVE_SOURCE_KEY),
+          syncRunId,
+          collectedAt
+        );
+        const inserted = await repository.insertObservations(archive.observations);
+        const fetched = Object.values(archive.collections)
+          .reduce((total, collection) => total + collection.records_fetched, 0);
+        itemsFetched += fetched;
+        itemsInserted += inserted;
+        const hasWarnings = archive.rejected.length > 0;
+        if (hasWarnings) hasErrors = true;
+        sourceResults.sources[ARCHIVE_SOURCE_KEY] = {
+          status: hasWarnings ? "partial" : "succeeded",
+          records_fetched: fetched,
+          records_valid: archive.observations.length,
+          records_inserted: inserted,
+          collections: archive.collections,
+          warnings: archive.rejected,
+          error: null
+        };
+      } catch (error) {
+        hasErrors = true;
+        sourceResults.sources[ARCHIVE_SOURCE_KEY] = {
+          status: "failed",
+          records_fetched: 0,
+          records_valid: 0,
+          records_inserted: 0,
+          warnings: [],
+          error: error.message
+        };
+        console.error(`Football intelligence: import de ${archiveSource?.name || ARCHIVE_SOURCE_KEY} échoué.`, error);
+      }
     }
 
     const tavily = SOURCES.find((source) => source.source_key === "tavily");

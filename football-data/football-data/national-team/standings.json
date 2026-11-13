@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "collection": "national-team/standings",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Classement du groupe E après la journée 2 uniquement. La journée 3 est jouée pour RDC-Sierra Leone (3-1, source unique) mais le résultat de Guinée équatoriale-Zimbabwe n'a pas été collecté : classement après J3 non exporté pour éviter une donnée inventée."
+  },
+  "items": [
+    {
+      "id": "caf-afcon-2027-qualifiers-group-e",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "group": "E",
+      "as_of": "après la journée 2",
+      "as_of_date": "2026-10-06",
+      "qualification_rule": "Les deux premiers du groupe se qualifient pour la CAN 2027 (Kenya, Tanzanie, Ouganda).",
+      "table": [
+        {
+          "rank": 1,
+          "team": {
+            "id": "rdc-a-m",
+            "name": "RD Congo"
+          },
+          "played": 2,
+          "won": 2,
+          "drawn": 0,
+          "lost": 0,
+          "gf": 4,
+          "ga": 1,
+          "points": 6
+        },
+        {
+          "rank": 2,
+          "team": {
+            "id": "zwe-a-m",
+            "name": "Zimbabwe"
+          },
+          "played": 2,
+          "won": null,
+          "drawn": null,
+          "lost": null,
+          "gf": null,
+          "ga": null,
+          "points": 3
+        },
+        {
+          "rank": 3,
+          "team": {
+            "id": "gnq-a-m",
+            "name": "Guinée équatoriale"
+          },
+          "played": 2,
+          "won": null,
+          "drawn": null,
+          "lost": null,
+          "gf": null,
+          "ga": null,
+          "points": 3
+        },
+        {
+          "rank": 4,
+          "team": {
+            "id": "sle-a-m",
+            "name": "Sierra Leone"
+          },
+          "played": 2,
+          "won": null,
+          "drawn": null,
+          "lost": null,
+          "gf": null,
+          "ga": null,
+          "points": 0
+        }
+      ],
+      "sources": [
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/liminatoires-can-2027-tous-les-resultats-buteurs-et-classements-apres-la-2e-journee-1378286/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202611090686.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Points confirmés par deux sources. Rang 2 et 3 : égalité à 3 points, ordre non confirmé. Buts de la RDC (4-1) calculés à partir des deux résultats vérifiés."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

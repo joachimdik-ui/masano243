@@ -1,0 +1,5358 @@
+{
+  "meta": {
+    "collection": "head-to-head/confrontations",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Confrontations à la demande. Pour chaque paire : last_5 (5 derniers matchs avec score connu et non contesté), matches (tous les matchs retrouvés), statistics (calculées sur ces seuls matchs), all_time (totaux publiés par les sources, avec leur fiabilité). Aucun total historique exact n'est garanti : voir `all_time` et `known_gaps`."
+  },
+  "items": [
+    {
+      "id": "tp-mazembe__v-club",
+      "team_a": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "team_b": {
+        "id": "v-club",
+        "name": "AS V.Club"
+      },
+      "requested_matches": 5,
+      "last_5": [
+        "2026-05-29-v-club-tp-mazembe",
+        "2026-05-01-tp-mazembe-v-club",
+        "2025-05-20-v-club-tp-mazembe",
+        "2024-05-11-tp-mazembe-v-club",
+        "2024-04-14-v-club-tp-mazembe"
+      ],
+      "last_5_matches": [
+        {
+          "id": "2026-05-29-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J8",
+          "date": "2026-05-29",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605300036.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "MediaCongo",
+              "url": "https://www.mediacongo.net/article-actualite-164149_linafoot_v_club_et_mazembe_se_quittent_dos_a_dos_les_aigles_du_congo_prennent_la_tete.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 8e journée, Tata Raphaël (Kinshasa)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-01-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J1",
+          "date": "2026-05-01",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605020059.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 1re journée, stade TP Mazembe (Lubumbashi)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-05-20-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-05-20",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-05-11-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-05-11",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-04-14-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-04-14",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches": [
+        {
+          "id": "2026-05-29-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J8",
+          "date": "2026-05-29",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605300036.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "MediaCongo",
+              "url": "https://www.mediacongo.net/article-actualite-164149_linafoot_v_club_et_mazembe_se_quittent_dos_a_dos_les_aigles_du_congo_prennent_la_tete.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 8e journée, Tata Raphaël (Kinshasa)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-01-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J1",
+          "date": "2026-05-01",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605020059.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 1re journée, stade TP Mazembe (Lubumbashi)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-07-12-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-07-12",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "unknown_result",
+          "score": {
+            "home": null,
+            "away": null
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "unverified",
+            "checked_at": "2026-11-13",
+            "notes": "Match listé sans score : reporté, non joué ou score manquant."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-05-20-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-05-20",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-05-11-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-05-11",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-04-14-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-04-14",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2022-12-11-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2022-12-11",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2022-01-16-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2022-01-16",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2021-05-16-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2021-05-16",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": {
+            "home": 3,
+            "away": 1
+          },
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "TP Mazembe News",
+              "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "conflict",
+            "checked_at": "2026-11-13",
+            "notes": "Joué 3-1 pour Mazembe mais match perdu 0-3 par forfait d'après TP Mazembe News et Soccerway ; Matchendirect affiche 3-1. Résultat officiel retenu : 0-3, match exclu des statistiques calculées."
+          },
+          "conflicts": [
+            {
+              "field": "score",
+              "values": [
+                "3-1 (terrain)",
+                "0-3 (forfait)"
+              ],
+              "resolution": "officiel 0-3 ; exclu des stats"
+            }
+          ],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2020-10-18-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2020-10-18",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2020-02-23-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2020-02-23",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "unknown_result",
+          "score": {
+            "home": null,
+            "away": null
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Annulé selon Soccerway (ANN)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-09-01-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2019-09-01",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Soccerway",
+              "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-04-21-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2019-04-21",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-11-04-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2018-11-04",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-06-17-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2018-06-17",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-05-20-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2018-05-20",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2017-07-19-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2017-07-19",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2017-05-07-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2017-05-07",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2016-05-29-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2016-05-29",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2015-03-22-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2015-03-22",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Wikipédia - Clásico congolais",
+              "url": "https://fr.wikipedia.org/wiki/Cl%C3%A1sico_congolais",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2014-05-11-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2014-05-11",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2014-04-23-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2014-04-23",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 4,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "TP Mazembe News",
+              "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2013-04-28-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2013-04-28",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "TP Mazembe News",
+              "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2012-11-18-tp-mazembe-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2012-11-18",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "TP Mazembe News",
+              "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2012-04-15-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2012-04-15",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "TP Mazembe News",
+              "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2011-09-18-v-club-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2011-09-18",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "TP Mazembe News",
+              "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches_listed": 26,
+      "statistics": {
+        "matches_counted": 23,
+        "a_wins": 10,
+        "draws": 10,
+        "b_wins": 3,
+        "goals_a": 28,
+        "goals_b": 14,
+        "a_home": {
+          "p": 11,
+          "w": 8,
+          "d": 3,
+          "l": 0
+        },
+        "a_away": {
+          "p": 12,
+          "w": 2,
+          "d": 7,
+          "l": 3
+        },
+        "clean_sheets_a": 12,
+        "clean_sheets_b": 9,
+        "biggest_win_a": {
+          "diff": 3,
+          "score": "3-0",
+          "match_id": "2024-05-11-tp-mazembe-v-club"
+        },
+        "biggest_win_b": {
+          "diff": 1,
+          "score": "1-2",
+          "match_id": "2022-12-11-v-club-tp-mazembe"
+        },
+        "scope": "Matchs listés dans `matches` avec score connu (résultat officiel), hors matchs en conflit. Ce n'est PAS le total historique."
+      },
+      "all_time": {
+        "exact_total": null,
+        "reason": "Aucune source ne couvre toutes les rencontres (1998 à aujourd'hui) avec des chiffres concordants.",
+        "reported_aggregates": [
+          {
+            "source": "Matchendirect",
+            "window": "2011-2025",
+            "matches": 30,
+            "mazembe_wins": 11,
+            "draws": 16,
+            "vclub_wins": 3,
+            "note": "Chiffres de la source, non réconciliés avec la liste ci-dessous (la source compte des matchs sans score)."
+          }
+        ],
+        "earlier_matches_available_at": [
+          "https://fr.wikipedia.org/wiki/Cl%C3%A1sico_congolais",
+          "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/"
+        ],
+        "verification": "single_source"
+      },
+      "complete": false,
+      "known_gaps": [
+        "matchs avant 2011 non intégrés",
+        "score du 12/07/2025 inconnu",
+        "2 confrontations de 2014-2016 (Linafoot) avec scores partiellement non recoupés"
+      ],
+      "notes": "Classique national, deux groupes différents en 2026-27 : pas encore de duel cette saison. Liste détaillée de 2011 à 2026 ; 1998-2010 consultable via Wikipédia et TP Mazembe News mais non intégré.",
+      "sources": [
+        {
+          "name": "Matchendirect",
+          "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-v-club.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Soccerway",
+          "url": "https://fr.soccerway.com/matches/2024/05/12/congo-dr/super-ligue/tp-mazembe-englebert/asv-club/4313047/head2head/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "TP Mazembe News",
+          "url": "https://tpmazembe.fr/football-classico-v-club-tp-mazembe-les-resultats-depuis-1998/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Wikipédia - Clásico congolais",
+          "url": "https://fr.wikipedia.org/wiki/Cl%C3%A1sico_congolais",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202605020059.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202605300036.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Classique national, deux groupes différents en 2026-27 : pas encore de duel cette saison. Liste détaillée de 2011 à 2026 ; 1998-2010 consultable via Wikipédia et TP Mazembe News mais non intégré."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "tp-mazembe__saint-eloi-lupopo",
+      "team_a": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "team_b": {
+        "id": "saint-eloi-lupopo",
+        "name": "FC Saint-Éloi Lupopo"
+      },
+      "requested_matches": 5,
+      "last_5": [
+        "2026-11-07-saint-eloi-lupopo-tp-mazembe",
+        "2026-06-14-tp-mazembe-saint-eloi-lupopo",
+        "2026-05-05-saint-eloi-lupopo-tp-mazembe",
+        "2026-03-08-tp-mazembe-saint-eloi-lupopo",
+        "2025-11-02-saint-eloi-lupopo-tp-mazembe"
+      ],
+      "last_5_matches": [
+        {
+          "id": "2026-11-07-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Phase classique 2026-27",
+          "date": "2026-11-07",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": {
+            "name": "Stade Frédéric Kibassa Maliba",
+            "city": "Lubumbashi",
+            "country": "RD Congo"
+          },
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/anglais/linafoot-lupopo-and-mazembe-play-out-goalless-draw-0-0-in-group-a/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202611090417.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Programmé le 6, reporté au 7 novembre 2026 (3e journée, groupe A), stade Kibasa-Maliba. Matchendirect le liste encore sans score."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-06-14-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-06-14",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot Africa",
+              "url": "https://foot-africa.com/actualites/linafoot-playoffs-mazembe-accroche-0-0-par-lupopo-1243096/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 12e journée."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-05-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-05-05",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/anglais/drc-linafoot-lupopo-edge-mazembe-2-1-in-play-offs/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 2e journée, à huis clos."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-03-08-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-03-08",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-11-02-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-11-02",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202511030678.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Groupe A, 3e journée."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches": [
+        {
+          "id": "2026-11-07-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Phase classique 2026-27",
+          "date": "2026-11-07",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": {
+            "name": "Stade Frédéric Kibassa Maliba",
+            "city": "Lubumbashi",
+            "country": "RD Congo"
+          },
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/anglais/linafoot-lupopo-and-mazembe-play-out-goalless-draw-0-0-in-group-a/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202611090417.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Programmé le 6, reporté au 7 novembre 2026 (3e journée, groupe A), stade Kibasa-Maliba. Matchendirect le liste encore sans score."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-06-14-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-06-14",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot Africa",
+              "url": "https://foot-africa.com/actualites/linafoot-playoffs-mazembe-accroche-0-0-par-lupopo-1243096/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 12e journée."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-05-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-05-05",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/anglais/drc-linafoot-lupopo-edge-mazembe-2-1-in-play-offs/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 2e journée, à huis clos."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-03-08-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-03-08",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-11-02-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-11-02",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202511030678.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Groupe A, 3e journée."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-06-24-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-06-24",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-05-08-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-05-08",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-02-23-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-02-23",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-10-20-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-10-20",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-05-22-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-05-22",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 0
+          },
+          "score_on_pitch": {
+            "home": 1,
+            "away": 0
+          },
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "conflict",
+            "checked_at": "2026-11-13",
+            "notes": "Mazembe vainqueur 1-0 sur le terrain (Foot RDC, LiveFoot), match attribué 3-0 sur tapis vert après incidents (Foot RDC, Matchendirect). Officiel retenu : 3-0 ; exclu des statistiques calculées."
+          },
+          "conflicts": [
+            {
+              "field": "score",
+              "values": [
+                "1-0 (terrain)",
+                "3-0 (tapis vert)"
+              ],
+              "resolution": "officiel 3-0 ; exclu des stats"
+            }
+          ],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-05-01-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-05-01",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "unknown_result",
+          "score": {
+            "home": null,
+            "away": null
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "conflict",
+            "checked_at": "2026-11-13",
+            "notes": "Matchendirect : 1-1 ; LiveFoot : 1-2 pour Mazembe. Score non exporté."
+          },
+          "conflicts": [
+            {
+              "field": "score",
+              "values": [
+                "1-1",
+                "1-2"
+              ],
+              "resolution": "null jusqu'à confirmation"
+            }
+          ],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-01-15-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-01-15",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Matchendirect liste ce match sans score."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2023-10-07-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2023-10-07",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "BeSoccer",
+              "url": "https://fr.besoccer.com/match/saint-eloi-lupopo/tp-mazembe/2024714542/avant-match",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2023-05-21-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2023-05-21",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "LiveFoot",
+              "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2021-12-11-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2021-12-11",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "BeSoccer",
+              "url": "https://fr.besoccer.com/match/saint-eloi-lupopo/tp-mazembe/2024714542/avant-match",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2021-02-28-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2021-02-28",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "BeSoccer",
+              "url": "https://fr.besoccer.com/match/saint-eloi-lupopo/tp-mazembe/2024714542/avant-match",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2020-11-22-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2020-11-22",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "BeSoccer",
+              "url": "https://fr.besoccer.com/match/saint-eloi-lupopo/tp-mazembe/2024714542/avant-match",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-11-24-saint-eloi-lupopo-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2019-11-24",
+          "home": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-03-30-tp-mazembe-saint-eloi-lupopo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2019-03-30",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "saint-eloi-lupopo",
+            "name": "FC Saint-Éloi Lupopo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches_listed": 19,
+      "statistics": {
+        "matches_counted": 17,
+        "a_wins": 1,
+        "draws": 11,
+        "b_wins": 5,
+        "goals_a": 8,
+        "goals_b": 12,
+        "a_home": {
+          "p": 8,
+          "w": 0,
+          "d": 6,
+          "l": 2
+        },
+        "a_away": {
+          "p": 9,
+          "w": 1,
+          "d": 5,
+          "l": 3
+        },
+        "clean_sheets_a": 8,
+        "clean_sheets_b": 11,
+        "biggest_win_a": {
+          "diff": 1,
+          "score": "2-1",
+          "match_id": "2021-12-11-saint-eloi-lupopo-tp-mazembe"
+        },
+        "biggest_win_b": {
+          "diff": 1,
+          "score": "1-2",
+          "match_id": "2026-05-05-saint-eloi-lupopo-tp-mazembe"
+        },
+        "scope": "Matchs listés dans `matches` avec score connu (résultat officiel), hors matchs en conflit. Ce n'est PAS le total historique."
+      },
+      "all_time": {
+        "exact_total": 185,
+        "as_of": "2025-02-24",
+        "mazembe_wins": 59,
+        "lupopo_wins": 66,
+        "draws": 60,
+        "reason": "Chiffre publié par AfricaFootUnited (« 185 derbys »), à la date de l'article (fin février 2025). Source unique : à recouper. Depuis cette date, 7 matchs supplémentaires sont listés ci-dessous (dont celui du 23/02/2025 possiblement déjà inclus).",
+        "verification": "single_source"
+      },
+      "complete": false,
+      "known_gaps": [
+        "total exact à jour non vérifiable",
+        "scores du 01/05/2024 en conflit",
+        "matchs avant 2019 non intégrés"
+      ],
+      "notes": "Derby de Lubumbashi, groupe A. Le dernier duel (7 novembre 2026, 0-0) est le seul de la saison 2026-27 jusqu'ici.",
+      "sources": [
+        {
+          "name": "Matchendirect",
+          "url": "https://www.matchendirect.fr/statistique/mazembe-englebert-contre-saint-eloi-lupopo.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot RDC",
+          "url": "https://footrdc.com/a-la-une/lupopo-mazembe-plus-de-deux-ans-de-domination-des-cheminots-en-linafoot/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "AfricaFootUnited",
+          "url": "https://africafootunited.com/rdc-ligue-1-tp-mazembe-vs-lupopo-le-derby-pour-le-leadership/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "LiveFoot",
+          "url": "https://www.livefoot.fr/direct/linafoot-rd-congo/match-tp-mazembe-vs-saint-eloi-lupopo-578376d7",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/anglais/linafoot-lupopo-and-mazembe-play-out-goalless-draw-0-0-in-group-a/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202611090417.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Derby de Lubumbashi, groupe A. Le dernier duel (7 novembre 2026, 0-0) est le seul de la saison 2026-27 jusqu'ici."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "v-club__aigles-du-congo",
+      "team_a": {
+        "id": "v-club",
+        "name": "AS V.Club"
+      },
+      "team_b": {
+        "id": "aigles-du-congo",
+        "name": "FC Les Aigles du Congo"
+      },
+      "requested_matches": 5,
+      "last_5": [
+        "2026-06-06-aigles-du-congo-v-club",
+        "2026-05-21-v-club-aigles-du-congo",
+        "2025-11-12-v-club-aigles-du-congo",
+        "2025-06-09-v-club-aigles-du-congo",
+        "2025-03-09-v-club-aigles-du-congo"
+      ],
+      "last_5_matches": [
+        {
+          "id": "2026-06-06-aigles-du-congo-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J10",
+          "date": "2026-06-06",
+          "home": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Cumulard.cd",
+              "url": "https://www.cumulard.cd/linafoot-play-offs-les-aigles-v-club-un-choc-sans-but-et-lupopo-renoue-avec-le-succes/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Panafrican Football",
+              "url": "https://panafricafootball.com/article/linafoot-les-aigles-vclub-draw",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 10e journée, à huis clos, Tata Raphaël."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-21-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J6",
+          "date": "2026-05-21",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": {
+            "home": 1,
+            "away": 1
+          },
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-v-club-perd-son-match-contre-les-aigles-par-forfait-0-3-apres-les-incidents-communique/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605230139.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Congo Quotidien",
+              "url": "https://www.congoquotidien.com/2026/05/21/vita-club-aigles-playoffs-kinshasa/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Arrêté à la 87e-89e minute sur le score de 1-1 après des incidents ; forfait 0-3 infligé à V.Club par la Linafoot (communiqué)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-11-12-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-11-12",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-les-aigles-du-congo-infligent-a-vclub-sa-premiere-defaite-de-la-saison/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "But de Kikwama Mujinga (79e). Domicile déduit du public « moscovite » cité par la source."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-06-09-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-06-09",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Info Sport RDC",
+              "url": "https://infosportrdc.net/linafoot-ligue-1-playoffsfc-les-aigles-du-congo-nouveau-leader-au-classement-apres-une-nouvelle-victoire-face-a-las-vclub/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, but de Linda Mtangé en fin de première période. Stade des Martyrs ; ordre domicile/extérieur non confirmé."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-03-09-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-03-09",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-d1-les-aigles-du-congo-prolongent-le-calvaire-de-vclub/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Commencé le 9 mars, interrompu (lumière) et terminé le 10 mars 2025 ; but d'Ibrahim Matobo (13e)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches": [
+        {
+          "id": "2026-11-11-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Groupe B 2026-27",
+          "date": "2026-11-11",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/rdc-linafoot-v-club-sincline-devant-les-aigles-du-congo-0-1-en-groupe-b/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-le-match-v-club-les-aigles-du-congo-reporte-a-une-date-ulterieure/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "conflict",
+            "checked_at": "2026-11-13",
+            "notes": "ACP du 13/11/2026 : V.Club battu 0-1 mercredi (but de Kikwama Mujinga, 83e) ; ACP du 10/11/2026 : match reporté à une date ultérieure. Contradiction non résolue : exclu des statistiques et de last_5."
+          },
+          "conflicts": [
+            {
+              "field": "status",
+              "values": [
+                "joué 0-1 (ACP 13/11)",
+                "reporté (ACP 10/11)"
+              ],
+              "resolution": "à vérifier"
+            }
+          ],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-06-06-aigles-du-congo-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J10",
+          "date": "2026-06-06",
+          "home": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Cumulard.cd",
+              "url": "https://www.cumulard.cd/linafoot-play-offs-les-aigles-v-club-un-choc-sans-but-et-lupopo-renoue-avec-le-succes/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Panafrican Football",
+              "url": "https://panafricafootball.com/article/linafoot-les-aigles-vclub-draw",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 10e journée, à huis clos, Tata Raphaël."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-21-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J6",
+          "date": "2026-05-21",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": {
+            "home": 1,
+            "away": 1
+          },
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-v-club-perd-son-match-contre-les-aigles-par-forfait-0-3-apres-les-incidents-communique/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605230139.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Congo Quotidien",
+              "url": "https://www.congoquotidien.com/2026/05/21/vita-club-aigles-playoffs-kinshasa/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Arrêté à la 87e-89e minute sur le score de 1-1 après des incidents ; forfait 0-3 infligé à V.Club par la Linafoot (communiqué)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-11-12-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-11-12",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-les-aigles-du-congo-infligent-a-vclub-sa-premiere-defaite-de-la-saison/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "But de Kikwama Mujinga (79e). Domicile déduit du public « moscovite » cité par la source."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-06-09-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-06-09",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Info Sport RDC",
+              "url": "https://infosportrdc.net/linafoot-ligue-1-playoffsfc-les-aigles-du-congo-nouveau-leader-au-classement-apres-une-nouvelle-victoire-face-a-las-vclub/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, but de Linda Mtangé en fin de première période. Stade des Martyrs ; ordre domicile/extérieur non confirmé."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-03-09-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-03-09",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-d1-les-aigles-du-congo-prolongent-le-calvaire-de-vclub/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Commencé le 9 mars, interrompu (lumière) et terminé le 10 mars 2025 ; but d'Ibrahim Matobo (13e)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-11-03-v-club-aigles-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-11-03",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "7sur7.cd",
+              "url": "https://7sur7.cd/2024/11/03/linafoot-ligue-1-v-club-et-les-aigles-du-congo-se-quittent-dos-dos-0-0",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Tata Raphaël."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2023-11-12-aigles-du-congo-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2023-11-12",
+          "home": {
+            "id": "aigles-du-congo",
+            "name": "FC Les Aigles du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-v-club-chute-devant-les-aigles-du-congo-0-1/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "V.Club battu 0-1, but de Dela Bakwayima (42e), Tata Raphaël. Domicile non confirmé."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches_listed": 8,
+      "statistics": {
+        "matches_counted": 7,
+        "a_wins": 0,
+        "draws": 2,
+        "b_wins": 5,
+        "goals_a": 0,
+        "goals_b": 7,
+        "a_home": {
+          "p": 5,
+          "w": 0,
+          "d": 1,
+          "l": 4
+        },
+        "a_away": {
+          "p": 2,
+          "w": 0,
+          "d": 1,
+          "l": 1
+        },
+        "clean_sheets_a": 2,
+        "clean_sheets_b": 7,
+        "biggest_win_a": null,
+        "biggest_win_b": {
+          "diff": 3,
+          "score": "0-3",
+          "match_id": "2026-05-21-v-club-aigles-du-congo"
+        },
+        "scope": "Matchs listés dans `matches` avec score connu (résultat officiel), hors matchs en conflit. Ce n'est PAS le total historique."
+      },
+      "all_time": {
+        "exact_total": null,
+        "reason": "Aucune liste complète. Congo Quotidien (mai 2026) annonce « dix confrontations depuis 2023 » mais détaille 6 victoires des Aigles, 4 nuls et 1 victoire de V.Club, soit 11 : chiffres incohérents.",
+        "reported_aggregates": [
+          {
+            "source": "Congo Quotidien",
+            "as_of": "2026-05-21",
+            "window": "depuis 2023",
+            "claimed_matches": 10,
+            "aigles_wins": 6,
+            "draws": 4,
+            "vclub_wins": 1,
+            "note": "somme = 11, incohérent"
+          }
+        ],
+        "verification": "unverified"
+      },
+      "complete": false,
+      "known_gaps": [
+        "match probable de la phase retour 2025-26 non retrouvé",
+        "match du 11/11/2026 en conflit (reporté ou joué)",
+        "2023-24 et 2024-25 : matchs manquants",
+        "domicile non confirmé pour plusieurs matchs"
+      ],
+      "notes": "Derby kinois du groupe B. Aucune victoire de V.Club sur ce duel dans les matchs retrouvés. Au moins un match de 2025-26 (début 2026) n'a pas été retrouvé.",
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/linafoot-v-club-chute-devant-les-aigles-du-congo-0-1/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "7sur7.cd",
+          "url": "https://7sur7.cd/2024/11/03/linafoot-ligue-1-v-club-et-les-aigles-du-congo-se-quittent-dos-dos-0-0",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot RDC",
+          "url": "https://footrdc.com/a-la-une/linafoot-d1-les-aigles-du-congo-prolongent-le-calvaire-de-vclub/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Info Sport RDC",
+          "url": "https://infosportrdc.net/linafoot-ligue-1-playoffsfc-les-aigles-du-congo-nouveau-leader-au-classement-apres-une-nouvelle-victoire-face-a-las-vclub/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot RDC",
+          "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-les-aigles-du-congo-infligent-a-vclub-sa-premiere-defaite-de-la-saison/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/linafoot-v-club-perd-son-match-contre-les-aigles-par-forfait-0-3-apres-les-incidents-communique/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Cumulard.cd",
+          "url": "https://www.cumulard.cd/linafoot-play-offs-les-aigles-v-club-un-choc-sans-but-et-lupopo-renoue-avec-le-succes/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Congo Quotidien",
+          "url": "https://www.congoquotidien.com/2026/05/21/vita-club-aigles-playoffs-kinshasa/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/rdc-linafoot-v-club-sincline-devant-les-aigles-du-congo-0-1-en-groupe-b/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/linafoot-le-match-v-club-les-aigles-du-congo-reporte-a-une-date-ulterieure/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Derby kinois du groupe B. Aucune victoire de V.Club sur ce duel dans les matchs retrouvés. Au moins un match de 2025-26 (début 2026) n'a pas été retrouvé."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "v-club__fc-renaissance-du-congo",
+      "team_a": {
+        "id": "v-club",
+        "name": "AS V.Club"
+      },
+      "team_b": {
+        "id": "fc-renaissance-du-congo",
+        "name": "FC Renaissance du Congo"
+      },
+      "requested_matches": 5,
+      "last_5": [
+        "2026-01-24-v-club-fc-renaissance-du-congo",
+        "2025-11-05-fc-renaissance-du-congo-v-club",
+        "2019-10-27-v-club-fc-renaissance-du-congo",
+        "2019-04-14-v-club-fc-renaissance-du-congo",
+        "2018-12-08-fc-renaissance-du-congo-v-club"
+      ],
+      "last_5_matches": [
+        {
+          "id": "2026-01-24-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-01-24",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Cumulard.cd",
+              "url": "https://www.cumulard.cd/linafoot-illicocash-ligue-1-le-nzombo-change-de-camp-renaissance-arrache-le-nul-face-a-v-club-en-toute-fin-de-la-partie/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-les-anges-verts-accrochent-v-club-0-0-en-groupe-b/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "19e journée groupe B, Tata Raphaël ; égalisation de Bola Lobota en fin de match. Domicile non confirmé."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-11-05-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-11-05",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 3
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "7sur7.cd",
+              "url": "https://7sur7.cd/2025/11/05/linafoot-ligue-1-las-vita-club-domine-le-fc-renaissance-3-1",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Congo Quotidien",
+              "url": "https://www.congoquotidien.com/2025/11/05/as-vita-club-victoire-fc-renaissance-linafoot/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/rdc-linafoot-letoile-du-kivu-et-celeste-se-neutralisent-0-0-en-groupe-b/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Stade des Martyrs ; buts V.Club : Bofoya, Beyuku (x2). Renaissance listé « à domicile » dans la programmation ACP."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-10-27-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2019-10-27",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Source unique (page Wikipédia). Identité du club (FC ou OC Renaissance) à confirmer."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-04-14-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2019-04-14",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-12-08-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2018-12-08",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches": [
+        {
+          "id": "2026-01-24-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2026-01-24",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": false,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Cumulard.cd",
+              "url": "https://www.cumulard.cd/linafoot-illicocash-ligue-1-le-nzombo-change-de-camp-renaissance-arrache-le-nul-face-a-v-club-en-toute-fin-de-la-partie/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-les-anges-verts-accrochent-v-club-0-0-en-groupe-b/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "19e journée groupe B, Tata Raphaël ; égalisation de Bola Lobota en fin de match. Domicile non confirmé."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-11-05-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-11-05",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 3
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "7sur7.cd",
+              "url": "https://7sur7.cd/2025/11/05/linafoot-ligue-1-las-vita-club-domine-le-fc-renaissance-3-1",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Congo Quotidien",
+              "url": "https://www.congoquotidien.com/2025/11/05/as-vita-club-victoire-fc-renaissance-linafoot/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/rdc-linafoot-letoile-du-kivu-et-celeste-se-neutralisent-0-0-en-groupe-b/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Stade des Martyrs ; buts V.Club : Bofoya, Beyuku (x2). Renaissance listé « à domicile » dans la programmation ACP."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-10-27-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2019-10-27",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Source unique (page Wikipédia). Identité du club (FC ou OC Renaissance) à confirmer."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-04-14-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2019-04-14",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-12-08-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2018-12-08",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-02-07-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2018-02-07",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2017-12-03-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2017-12-03",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2017-06-23-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2017-06-23",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 3
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2017-04-24-v-club-fc-renaissance-du-congo",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2017-04-24",
+          "home": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "away": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2016-12-04-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2016-12-04",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 2
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2016-10-16-fc-renaissance-du-congo-v-club",
+          "competition_id": "linafoot",
+          "stage": null,
+          "date": "2016-10-16",
+          "home": {
+            "id": "fc-renaissance-du-congo",
+            "name": "FC Renaissance du Congo"
+          },
+          "away": {
+            "id": "v-club",
+            "name": "AS V.Club"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Wikipédia (page Renaissance du Congo)",
+              "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches_listed": 11,
+      "statistics": {
+        "matches_counted": 11,
+        "a_wins": 7,
+        "draws": 4,
+        "b_wins": 0,
+        "goals_a": 20,
+        "goals_b": 4,
+        "a_home": {
+          "p": 5,
+          "w": 2,
+          "d": 3,
+          "l": 0
+        },
+        "a_away": {
+          "p": 6,
+          "w": 5,
+          "d": 1,
+          "l": 0
+        },
+        "clean_sheets_a": 7,
+        "clean_sheets_b": 2,
+        "biggest_win_a": {
+          "diff": 3,
+          "score": "3-0",
+          "match_id": "2018-12-08-fc-renaissance-du-congo-v-club"
+        },
+        "biggest_win_b": null,
+        "scope": "Matchs listés dans `matches` avec score connu (résultat officiel), hors matchs en conflit. Ce n'est PAS le total historique."
+      },
+      "all_time": {
+        "exact_total": null,
+        "reason": "Aucune liste complète : 2016-2019 (Wikipédia) et 2025-26 (presse) retrouvés, 2020 à 2025 non couvert.",
+        "verification": "unverified"
+      },
+      "complete": false,
+      "known_gaps": [
+        "2020 à 2024 : matchs non retrouvés",
+        "duel 2026-27 reporté, date inconnue",
+        "2016-2019 : source Wikipédia unique"
+      ],
+      "notes": "Ne pas confondre avec OC Renaissance du Congo, autre club de Kinshasa (V.Club-OC Renaissance 3-2 le 15/04/2026 : hors de cette paire). Le duel prévu à la 1re journée 2026-27 (20/10/2026) a été reporté. FC Renaissance n'a jamais battu V.Club dans les matchs retrouvés (ACP l'affirme aussi).",
+      "sources": [
+        {
+          "name": "Wikipédia (page Renaissance du Congo)",
+          "url": "https://fr.wikipedia.org/wiki/Olympique_Club_Renaissance_du_Congo",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "7sur7.cd",
+          "url": "https://7sur7.cd/2025/11/05/linafoot-ligue-1-las-vita-club-domine-le-fc-renaissance-3-1",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Congo Quotidien",
+          "url": "https://www.congoquotidien.com/2025/11/05/as-vita-club-victoire-fc-renaissance-linafoot/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Cumulard.cd",
+          "url": "https://www.cumulard.cd/linafoot-illicocash-ligue-1-le-nzombo-change-de-camp-renaissance-arrache-le-nul-face-a-v-club-en-toute-fin-de-la-partie/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/linafoot-les-anges-verts-accrochent-v-club-0-0-en-groupe-b/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/rdc-linafoot-letoile-du-kivu-et-celeste-se-neutralisent-0-0-en-groupe-b/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610200510.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Ne pas confondre avec OC Renaissance du Congo, autre club de Kinshasa (V.Club-OC Renaissance 3-2 le 15/04/2026 : hors de cette paire). Le duel prévu à la 1re journée 2026-27 (20/10/2026) a été reporté. FC Renaissance n'a jamais battu V.Club dans les matchs retrouvés (ACP l'affirme aussi)."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "tp-mazembe__maniema-union",
+      "team_a": {
+        "id": "tp-mazembe",
+        "name": "TP Mazembe"
+      },
+      "team_b": {
+        "id": "maniema-union",
+        "name": "AS Maniema Union"
+      },
+      "requested_matches": 5,
+      "last_5": [
+        "2026-06-07-maniema-union-tp-mazembe",
+        "2026-05-21-tp-mazembe-maniema-union",
+        "2025-06-21-tp-mazembe-maniema-union",
+        "2025-05-04-maniema-union-tp-mazembe",
+        "2024-05-26-maniema-union-tp-mazembe"
+      ],
+      "last_5_matches": [
+        {
+          "id": "2026-06-07-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J10",
+          "date": "2026-06-07",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202606080712.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-maniema-union-surprend-mazembe-2-1-aux-play-offs/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 10e journée, stade TP Mazembe (Lubumbashi) : Maniema Union gagne à l'extérieur."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-21-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J6",
+          "date": "2026-05-21",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605220144.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 6e journée, Lubumbashi."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-06-21-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-06-21",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-maniema-union-joue-deja-gros-face-a-un-mazembe-lance-a-pleine-vitesse/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Date 21/06/2025 selon Footlive ; Matchendirect liste le 16/06/2025 sans score. Score 1-0 recoupé par la série citée par Foot RDC (sans date)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-05-04-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-05-04",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-play-offs-mazembe-vient-a-bout-de-maniema-union/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 4e journée, stade des Martyrs (Kinshasa)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-05-26-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-05-26",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-maniema-union-joue-deja-gros-face-a-un-mazembe-lance-a-pleine-vitesse/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches": [
+        {
+          "id": "2026-06-07-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J10",
+          "date": "2026-06-07",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202606080712.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/linafoot-maniema-union-surprend-mazembe-2-1-aux-play-offs/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 10e journée, stade TP Mazembe (Lubumbashi) : Maniema Union gagne à l'extérieur."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-05-21-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": "Play-offs J6",
+          "date": "2026-05-21",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202605220144.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 6e journée, Lubumbashi."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-06-21-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-06-21",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-maniema-union-joue-deja-gros-face-a-un-mazembe-lance-a-pleine-vitesse/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": "Date 21/06/2025 selon Footlive ; Matchendirect liste le 16/06/2025 sans score. Score 1-0 recoupé par la série citée par Foot RDC (sans date)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2025-05-04-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2025-05-04",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-play-offs-mazembe-vient-a-bout-de-maniema-union/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Play-offs, 4e journée, stade des Martyrs (Kinshasa)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-05-26-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-05-26",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot RDC",
+              "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-maniema-union-joue-deja-gros-face-a-un-mazembe-lance-a-pleine-vitesse/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2024-03-13-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2024-03-13",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2023-06-11-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2023-06-11",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "unknown_result",
+          "score": {
+            "home": null,
+            "away": null
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "unverified",
+            "checked_at": "2026-11-13",
+            "notes": "Listé sans score."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2021-11-03-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2021-11-03",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "unknown_result",
+          "score": {
+            "home": null,
+            "away": null
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "unverified",
+            "checked_at": "2026-11-13",
+            "notes": "Listé sans score ; FootyStats mentionne un 0-0 le 26/12/2021 non rapproché."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2021-06-27-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2021-06-27",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2020-10-29-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2020-10-29",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 3,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Footlive",
+              "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2020-03-18-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2020-03-18",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "unknown_result",
+          "score": {
+            "home": null,
+            "away": null
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "unverified",
+            "checked_at": "2026-11-13",
+            "notes": "Listé sans score (saison 2019-20 interrompue)."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-10-27-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2019-10-27",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2019-05-15-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2019-05-15",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-11-01-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2018-11-01",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 4,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-06-10-maniema-union-tp-mazembe",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2018-06-10",
+          "home": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "away": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 0,
+            "away": 1
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2018-04-18-tp-mazembe-maniema-union",
+          "competition_id": "linafoot-ligue-1",
+          "stage": null,
+          "date": "2018-04-18",
+          "home": {
+            "id": "tp-mazembe",
+            "name": "TP Mazembe"
+          },
+          "away": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "home_confirmed": true,
+          "venue": null,
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 0
+          },
+          "score_on_pitch": null,
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "Matchendirect",
+              "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "single_source",
+            "checked_at": "2026-11-13",
+            "notes": null
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "matches_listed": 16,
+      "statistics": {
+        "matches_counted": 13,
+        "a_wins": 11,
+        "draws": 0,
+        "b_wins": 2,
+        "goals_a": 20,
+        "goals_b": 5,
+        "a_home": {
+          "p": 6,
+          "w": 6,
+          "d": 0,
+          "l": 0
+        },
+        "a_away": {
+          "p": 7,
+          "w": 5,
+          "d": 0,
+          "l": 2
+        },
+        "clean_sheets_a": 10,
+        "clean_sheets_b": 1,
+        "biggest_win_a": {
+          "diff": 4,
+          "score": "4-0",
+          "match_id": "2018-11-01-tp-mazembe-maniema-union"
+        },
+        "biggest_win_b": {
+          "diff": 2,
+          "score": "0-2",
+          "match_id": "2024-05-26-maniema-union-tp-mazembe"
+        },
+        "scope": "Matchs listés dans `matches` avec score connu (résultat officiel), hors matchs en conflit. Ce n'est PAS le total historique."
+      },
+      "all_time": {
+        "exact_total": null,
+        "reason": "Pas de liste complète : les bases consultées se contredisent sur plusieurs dates (16/06 ou 21/06/2025 ; 03/11 ou 26/12/2021) et listent des matchs sans score.",
+        "reported_aggregates": [
+          {
+            "source": "FootyStats",
+            "as_of": "2024-06",
+            "window": "non précisée",
+            "matches": 7,
+            "mazembe_wins": 5,
+            "draws": 1,
+            "maniema_wins": 1
+          }
+        ],
+        "verification": "unverified"
+      },
+      "complete": false,
+      "known_gaps": [
+        "3 matchs sans score",
+        "dates en conflit 2021 et 2025",
+        "matchs avant 2018 non intégrés"
+      ],
+      "notes": "Mazembe et Maniema sont dans deux groupes différents en 2026-27 (A et B) : pas de duel en phase classique. Maniema a battu Mazembe le 7 juin 2026 ; avant cela, Foot RDC indiquait que les Unionistes n'avaient plus battu Mazembe sur le terrain depuis le 26 mai 2024.",
+      "sources": [
+        {
+          "name": "Matchendirect",
+          "url": "https://www.matchendirect.fr/statistique/maniema-union-contre-mazembe-englebert.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Footlive",
+          "url": "https://www.footlive.fr/statistiques/maniema-union-tp-mazembe/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot RDC",
+          "url": "https://footrdc.com/a-la-une/linafoot-ligue-1-maniema-union-joue-deja-gros-face-a-un-mazembe-lance-a-pleine-vitesse/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot RDC",
+          "url": "https://footrdc.com/a-la-une/linafoot-play-offs-mazembe-vient-a-bout-de-maniema-union/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202605220144.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202606080712.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/linafoot-maniema-union-surprend-mazembe-2-1-aux-play-offs/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "FootyStats",
+          "url": "https://footystats.org/fr/congo-dr/tout-puissant-mazembe-vs-as-maniema-union-h2h-stats",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Mazembe et Maniema sont dans deux groupes différents en 2026-27 (A et B) : pas de duel en phase classique. Maniema a battu Mazembe le 7 juin 2026 ; avant cela, Foot RDC indiquait que les Unionistes n'avaient plus battu Mazembe sur le terrain depuis le 26 mai 2024."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "rdc-a-m__uga-a-m",
+      "team_a": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "team_b": {
+        "id": "uga-a-m",
+        "name": "Ouganda"
+      },
+      "requested_matches": 10,
+      "collected_matches": 2,
+      "complete": false,
+      "summary": {
+        "team_a_wins": 0,
+        "draws": 1,
+        "team_b_wins": 1,
+        "goals_a": 1,
+        "goals_b": 3
+      },
+      "match_ids": [
+        "2026-10-02-rdc-uga",
+        "2026-10-05-uga-rdc"
+      ],
+      "matches": [
+        {
+          "id": "2026-10-02-rdc-uga",
+          "competition_id": "friendly-international",
+          "season": "2026-27",
+          "stage": "Match amical (1/2)",
+          "date": "2026-10-02",
+          "kickoff": null,
+          "venue": {
+            "name": "FNB Stadium",
+            "city": "Johannesburg",
+            "country": "Afrique du Sud"
+          },
+          "home": {
+            "id": "uga-a-m",
+            "name": "Ouganda"
+          },
+          "away": {
+            "id": "rdc-a-m",
+            "name": "RD Congo"
+          },
+          "status": "finished",
+          "score": {
+            "home": 2,
+            "away": 0,
+            "ht_home": null,
+            "ht_away": null
+          },
+          "scorers": null,
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202610020301.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "MediaCongo",
+              "url": "https://www.mediacongo.net/article-actualite-167999_match_amical_la_rdc_battue_2_0_par_l_ouganda.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Afrik-Foot",
+              "url": "https://www.afrik-foot.com/rdc-sans-ses-cadres-et-avec-6-nouveaux-joueurs-lances-les-leopards-sinclinent-contre-un-pays-hote-de-la-can-2027",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Terrain neutre. Ouganda 2-0 RD Congo. L'ACP mentionne par erreur 0-1 dans un paragraphe puis 0-2 au final ; 2-0 retenu."
+          },
+          "conflicts": [],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        },
+        {
+          "id": "2026-10-05-uga-rdc",
+          "competition_id": "friendly-international",
+          "season": "2026-27",
+          "stage": "Match amical (2/2)",
+          "date": "2026-10-05",
+          "kickoff": null,
+          "venue": {
+            "name": "FNB Stadium",
+            "city": "Johannesburg",
+            "country": "Afrique du Sud"
+          },
+          "home": {
+            "id": "uga-a-m",
+            "name": "Ouganda"
+          },
+          "away": {
+            "id": "rdc-a-m",
+            "name": "RD Congo"
+          },
+          "status": "finished",
+          "score": {
+            "home": 1,
+            "away": 1,
+            "ht_home": 0,
+            "ht_away": 0
+          },
+          "scorers": {
+            "home": [
+              "égalisation à la 91e (buteur non vérifié)"
+            ],
+            "away": [
+              "N. Mbuku"
+            ]
+          },
+          "stats": null,
+          "sources": [
+            {
+              "name": "allAfrica",
+              "url": "https://fr.allafrica.com/stories/202610050689.html",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "ACP",
+              "url": "https://acp.cd/sports/football-la-rdc-et-louganda-se-neutralisent-1-1-en-amical-international-a-johannesburg/",
+              "consulted_at": "2026-11-13"
+            },
+            {
+              "name": "Foot Africa",
+              "url": "https://foot-africa.com/actualites/amical-la-rdc-et-louganda-se-neutralisent-1-1-1376756/",
+              "consulted_at": "2026-11-13"
+            }
+          ],
+          "verification": {
+            "status": "verified",
+            "checked_at": "2026-11-13",
+            "notes": "Score confirmé. Conflit mineur sur la minute du but de Mbuku (54e selon allAfrica, 64e selon un autre média) : minute non exportée."
+          },
+          "conflicts": [
+            {
+              "field": "scorers.away[0].minute",
+              "values": [
+                "54",
+                "64"
+              ],
+              "resolution": "non exportée"
+            }
+          ],
+          "first_seen": "2026-11-13",
+          "last_synced": "2026-11-13"
+        }
+      ],
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610020301.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610050689.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Seuls les deux matchs d'octobre 2026 sont collectés et vérifiés. Un article de Foot Africa évoque 3 victoires ougandaises sur les 5 dernières confrontations, avec un nul et une victoire congolaise, mais ce chiffre n'est pas vérifié et n'est pas exporté. Statistiques de match non collectées (null)."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

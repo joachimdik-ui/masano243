@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "collection": "caf/confederation-cup",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Coupe de la Confédération CAF 2026-27 - volet RDC."
+  },
+  "items": [
+    {
+      "id": "caf-confederation-cup-2026-27",
+      "name": "TotalEnergies CAF Coupe de la Confédération",
+      "season": "2026-27",
+      "format": "56 clubs, 2 tours préliminaires, puis phase de groupes (4 poules) de novembre 2026 à janvier 2027.",
+      "group_stage_draw": {
+        "date": "2026-10-28",
+        "place": "Le Caire"
+      },
+      "group_stage_window": {
+        "matchday_1": [
+          "2026-11-27",
+          "2026-11-29"
+        ],
+        "matchday_6": [
+          "2027-01-22",
+          "2027-01-24"
+        ]
+      },
+      "groups": {
+        "A": [
+          "Raja Casablanca",
+          "Al Ahly FC",
+          "ASKO de Kara",
+          "Primeiro de Agosto"
+        ],
+        "B": [
+          "AS FAR",
+          "Azam FC",
+          "Al Ahly Tripoli",
+          "Durban City FC"
+        ],
+        "C": [
+          "AS Maniema Union",
+          "Singida Black Stars",
+          "Red Arrows FC",
+          "À déterminer (vainqueur d'un tour préliminaire restant)"
+        ],
+        "D": [
+          "USM Alger",
+          "CS Sfaxien",
+          "Black Bulls",
+          "Real de Bamako"
+        ]
+      },
+      "rdc_clubs": [
+        {
+          "club_id": "maniema-union",
+          "group": "C",
+          "path": [
+            "2026-10-18-kab-man",
+            "2026-10-25-man-kab"
+          ],
+          "outcome": "qualifié pour la phase de groupes"
+        },
+        {
+          "club_id": "dc-virunga",
+          "group": null,
+          "path": [
+            "2026-09-xx-vir-baz",
+            "2026-10-18-vir-pda",
+            "2026-10-23-pda-vir"
+          ],
+          "outcome": "éliminé au 2e tour préliminaire par Primeiro de Agosto"
+        }
+      ],
+      "sources": [
+        {
+          "name": "allAfrica (Radio Okapi)",
+          "url": "https://fr.allafrica.com/stories/202610280685.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610280666.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica (CAF)",
+          "url": "https://fr.allafrica.com/stories/202607030278.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Composition des groupes issue d'un seul article (Radio Okapi via allAfrica). À recouper avec cafonline.com."
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

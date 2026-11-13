@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "collection": "national-team/news",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Informations officielles de convocation et actualité, résumées sans reprise de texte."
+  },
+  "items": [
+    {
+      "id": "2026-11-06-convocation-sle",
+      "date": "2026-11-06",
+      "category": "convocation",
+      "team_id": "rdc-a-m",
+      "title": "Liste de 26 joueurs pour la double confrontation contre la Sierra Leone",
+      "summary": "Sébastien Desabre a annoncé 26 joueurs pour les journées 3 et 4 du groupe E. Les retours de Bakambu et Fayulu sont signalés ; Paris Brunner n'est pas dans le groupe.",
+      "sources": [
+        {
+          "name": "allAfrica (Adiac)",
+          "url": "https://fr.allafrica.com/stories/202611070078.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/rdc-sebastien-desabre-devoile-sa-liste-face-a-la-sierra-leone-officiel-1411391/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Annonce du sélectionneur relayée par plusieurs médias. Liste nominative complète non exportée ici."
+      }
+    },
+    {
+      "id": "2026-11-07-convocation-u23",
+      "date": "2026-11-07",
+      "category": "convocation",
+      "team_id": "rdc-u23-m",
+      "title": "26 Léopards U23 retenus face au Nigeria",
+      "summary": "Double confrontation du 2e tour des éliminatoires de la CAN U23 : aller le 13 novembre à Lubumbashi, retour le 17 novembre à Ikenne (Nigeria).",
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/can-u23-26-leopards-selectionnes-pour-la-double-confrontation-face-au-nigeria/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": null
+      }
+    },
+    {
+      "id": "2026-11-12-huis-clos-leve",
+      "date": "2026-11-12",
+      "category": "organisation",
+      "team_id": "rdc-a-m",
+      "title": "RDC-Sierra Leone : la présence du public est finalement autorisée",
+      "summary": "La FECOFA a obtenu une dérogation : le match du 12 novembre à Kinshasa n'a plus lieu à huis clos.",
+      "sources": [
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/can-2027-q-bonne-nouvelle-pour-les-congolais-1415630/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202611120436.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": null
+      }
+    },
+    {
+      "id": "2026-xx-u17-can",
+      "date": null,
+      "category": "jeunes",
+      "team_id": "rdc-u17-m",
+      "title": "Les U17 de la RDC qualifiés pour la CAN U17",
+      "summary": "Première qualification de l'histoire du pays dans cette catégorie, d'après Camer.be. Date et détails non vérifiés.",
+      "sources": [
+        {
+          "name": "Camer.be",
+          "url": "https://www.camer.be/actualites/sport/rd-congo-foot-les-jeunes-talents-qui-montent-chez-les-leopards",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "unverified",
+        "checked_at": "2026-11-13",
+        "notes": "Source unique non officielle, date inconnue ; à confirmer auprès de la CAF/FECOFA."
+      }
+    }
+  ]
+}

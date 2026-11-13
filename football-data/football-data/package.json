@@ -1,0 +1,11 @@
+{
+  "name": "football-data",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Données football (RDC, CAF, confrontations) au format JSON, mises à jour à la demande.",
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "merge": "node scripts/merge.js",
+    "merge:dry": "node scripts/merge.js --dry"
+  }
+}

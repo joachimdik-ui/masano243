@@ -1,0 +1,133 @@
+{
+  "project": "football-data",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-11-13",
+  "last_full_sync": "2026-11-13",
+  "timezone_policy": "Dates ISO 8601 (AAAA-MM-JJ). Heures de coup d'envoi en ISO 8601 avec décalage (+01:00 Kinshasa/Tunis, +02:00 Lubumbashi) ou null si inconnues.",
+  "verification_statuses": {
+    "verified": "Confirmé par au moins 2 sources indépendantes ou une source officielle.",
+    "single_source": "Une seule source trouvée, à recouper.",
+    "unverified": "Non confirmé, la valeur est null ou à traiter avec prudence.",
+    "conflict": "Sources en désaccord : voir le champ conflicts."
+  },
+  "collections": {
+    "national-team/fixtures": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 5,
+      "gaps": [
+        "heure de Sierra Leone-RDC non confirmée",
+        "calendriers féminine, U20, U17 non collectés"
+      ]
+    },
+    "national-team/results": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 5,
+      "gaps": [
+        "Coupe du monde 2026 non collectée",
+        "résultat de RDC-Sierra Leone en source unique"
+      ]
+    },
+    "national-team/standings": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 1,
+      "gaps": [
+        "groupe E après J3 non disponible"
+      ]
+    },
+    "national-team/news": {
+      "status": "ok",
+      "last_sync": "2026-11-13",
+      "items": 4,
+      "gaps": []
+    },
+    "caf/clubs": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 4,
+      "gaps": [
+        "logos non collectés",
+        "villes/stades manquants pour certains clubs"
+      ]
+    },
+    "caf/champions-league": {
+      "status": "ok",
+      "last_sync": "2026-11-13",
+      "items": 1,
+      "gaps": [
+        "parcours des Aigles du Congo non détaillé"
+      ]
+    },
+    "caf/confederation-cup": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 1,
+      "gaps": [
+        "groupe C : 4e équipe à déterminer",
+        "groupes en source unique"
+      ]
+    },
+    "caf/fixtures": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 10,
+      "gaps": [
+        "score retour Virunga-Primeiro de Agosto",
+        "calendrier de la journée 1 du groupe C"
+      ]
+    },
+    "caf/standings": {
+      "status": "not_started",
+      "last_sync": "2026-11-13",
+      "items": 1,
+      "gaps": [
+        "phase de groupes pas encore commencée"
+      ]
+    },
+    "head-to-head/confrontations": {
+      "status": "partial",
+      "last_sync": "2026-11-13",
+      "items": 6,
+      "gaps": [
+        "totaux historiques exacts non disponibles",
+        "voir known_gaps de chaque paire"
+      ]
+    }
+  },
+  "sync_policy": {
+    "mode": "à la demande",
+    "automatic_sync_configured": false,
+    "note": "Aucune synchronisation automatique n'est configurée. Les fichiers ne changent que lorsqu'une collecte est lancée dans une conversation avec Claude, puis fusionnée avec scripts/merge.js.",
+    "recommended_schedule": {
+      "calendriers": "quotidien",
+      "résultats": "après chaque match",
+      "classements": "après chaque journée",
+      "confrontations": "à la demande"
+    }
+  },
+  "changelog": [
+    {
+      "date": "2026-11-13",
+      "type": "initial_collect",
+      "summary": "Première collecte réelle : sélection A (CAN 2027 groupe E, amicaux), U23 vs Nigeria, clubs RDC en LDC et Coupe de la Confédération 2026-27.",
+      "files": [
+        "tous"
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "type": "collect",
+      "target": "head-to-head/confrontations.json",
+      "added": [
+        "tp-mazembe__v-club",
+        "tp-mazembe__saint-eloi-lupopo",
+        "v-club__aigles-du-congo",
+        "v-club__fc-renaissance-du-congo",
+        "tp-mazembe__maniema-union"
+      ],
+      "summary": "Lot 'priorité 1' : 5 confrontations entre clubs du Linafoot, 5 derniers matchs + statistiques sur les matchs retrouvés."
+    }
+  ]
+}

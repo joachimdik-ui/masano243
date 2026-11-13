@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "collection": "caf/standings",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "notes": "Aucun classement de phase de groupes n'existe encore : première journée du 27 au 29 novembre 2026."
+  },
+  "items": [
+    {
+      "id": "caf-confederation-cup-2026-27-group-c",
+      "competition_id": "caf-confederation-cup-2026-27",
+      "group": "C",
+      "as_of": "avant la journée 1",
+      "as_of_date": "2026-11-13",
+      "table": [
+        {
+          "rank": null,
+          "team": {
+            "id": "maniema-union",
+            "name": "AS Maniema Union"
+          },
+          "played": 0,
+          "points": 0
+        },
+        {
+          "rank": null,
+          "team": {
+            "id": "singida-black-stars",
+            "name": "Singida Black Stars"
+          },
+          "played": 0,
+          "points": 0
+        },
+        {
+          "rank": null,
+          "team": {
+            "id": "red-arrows-fc",
+            "name": "Red Arrows FC"
+          },
+          "played": 0,
+          "points": 0
+        },
+        {
+          "rank": null,
+          "team": {
+            "id": null,
+            "name": "À déterminer"
+          },
+          "played": 0,
+          "points": 0
+        }
+      ],
+      "sources": [
+        {
+          "name": "allAfrica (Radio Okapi)",
+          "url": "https://fr.allafrica.com/stories/202610280685.html",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": null
+      },
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

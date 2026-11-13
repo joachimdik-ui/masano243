@@ -1,0 +1,227 @@
+{
+  "meta": {
+    "collection": "national-team/fixtures",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "team_id": "rdc-a-m",
+    "notes": "Prochains matchs connus. Les heures de coup d'envoi sont null quand elles ne sont pas confirmées."
+  },
+  "items": [
+    {
+      "id": "2026-11-17-sle-rdc",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "season": "2026-27",
+      "stage": "Groupe E - Journée 4",
+      "date": "2026-11-17",
+      "kickoff": null,
+      "venue": {
+        "name": "Stade El Abdi",
+        "city": "El Jadida",
+        "country": "Maroc"
+      },
+      "home": {
+        "id": "sle-a-m",
+        "name": "Sierra Leone"
+      },
+      "away": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "status": "scheduled",
+      "score": null,
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica (Adiac)",
+          "url": "https://fr.allafrica.com/stories/202611070078.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/rdc-sebastien-desabre-devoile-sa-liste-face-a-la-sierra-leone-officiel-1411391/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Date et lieu confirmés par deux sources. Heure en conflit : 16h00 heure locale (Foot Africa) contre 16h00 GMT (Benin Web TV, qui indique la même heure pour les deux matchs). Heure non exportée."
+      },
+      "conflicts": [
+        {
+          "field": "kickoff",
+          "values": [
+            "16:00 heure locale (Maroc)",
+            "16:00 GMT"
+          ],
+          "resolution": "kickoff = null jusqu'à confirmation CAF/FECOFA"
+        }
+      ],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2027-03-24-gnq-rdc",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "season": "2026-27",
+      "stage": "Groupe E - Journée 5",
+      "date": "2027-03-24",
+      "kickoff": null,
+      "venue": null,
+      "home": {
+        "id": "gnq-a-m",
+        "name": "Guinée équatoriale"
+      },
+      "away": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "status": "scheduled",
+      "score": null,
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202609280465.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/liminatoires-can-2027-presentation-performances-et-calendrier-des-equipes-du-groupe-e-1362866/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Date exacte (24 mars 2027) donnée par une seule source ; la fenêtre 24-30 mars 2027 est confirmée par Foot Africa. Lieu et heure inconnus."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2027-03-28-rdc-zwe",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "season": "2026-27",
+      "stage": "Groupe E - Journée 6",
+      "date": "2027-03-28",
+      "kickoff": null,
+      "venue": null,
+      "home": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "away": {
+        "id": "zwe-a-m",
+        "name": "Zimbabwe"
+      },
+      "status": "scheduled",
+      "score": null,
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202609280465.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/liminatoires-can-2027-presentation-performances-et-calendrier-des-equipes-du-groupe-e-1362866/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Date exacte (28 mars 2027) donnée par une seule source ; fenêtre 24-30 mars 2027 confirmée. Lieu et heure inconnus."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-11-13-rdc-u23-nga-u23",
+      "competition_id": "caf-u23-afcon-qualifiers",
+      "season": "2026-27",
+      "stage": "2e tour - Aller",
+      "date": "2026-11-13",
+      "kickoff": null,
+      "venue": {
+        "name": "Stade TP Mazembe",
+        "city": "Lubumbashi",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "rdc-u23-m",
+        "name": "RD Congo U23"
+      },
+      "away": {
+        "id": "nga-u23-m",
+        "name": "Nigeria U23"
+      },
+      "status": "scheduled",
+      "score": null,
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/can-u23-26-leopards-selectionnes-pour-la-double-confrontation-face-au-nigeria/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Match prévu à la date de consultation : le statut peut avoir changé. Source unique (ACP)."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-11-17-nga-u23-rdc-u23",
+      "competition_id": "caf-u23-afcon-qualifiers",
+      "season": "2026-27",
+      "stage": "2e tour - Retour",
+      "date": "2026-11-17",
+      "kickoff": null,
+      "venue": {
+        "name": "Ikenne",
+        "city": "Ikenne",
+        "country": "Nigeria"
+      },
+      "home": {
+        "id": "nga-u23-m",
+        "name": "Nigeria U23"
+      },
+      "away": {
+        "id": "rdc-u23-m",
+        "name": "RD Congo U23"
+      },
+      "status": "scheduled",
+      "score": null,
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/can-u23-26-leopards-selectionnes-pour-la-double-confrontation-face-au-nigeria/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Source unique (ACP). Nom exact du stade non indiqué : seule la ville est connue."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

@@ -1,0 +1,301 @@
+{
+  "meta": {
+    "collection": "national-team/results",
+    "schema_version": "1.0.0",
+    "last_sync": "2026-11-13",
+    "team_id": "rdc-a-m",
+    "scope": "RD Congo A masculine",
+    "notes": "Résultats récents collectés (sept.-nov. 2026). Résultats de la Coupe du monde 2026 et des catégories féminines/jeunes non collectés dans cette version."
+  },
+  "items": [
+    {
+      "id": "2026-09-24-rdc-gnq",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "season": "2026-27",
+      "stage": "Groupe E - Journée 1",
+      "date": "2026-09-24",
+      "kickoff": "2026-09-24T17:00:00+01:00",
+      "venue": {
+        "name": "Stade des Martyrs",
+        "city": "Kinshasa",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "away": {
+        "id": "gnq-a-m",
+        "name": "Guinée équatoriale"
+      },
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 0,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/qualif-can-2027-la-rdc-reussit-son-entree-face-a-la-guinee-equatoriale-2-0-1364426/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "MediaCongo",
+          "url": "https://www.mediacongo.net/article-actualite-167742_qualifications_can_2027_la_rdc_s_impose_2_0_face_a_la_guinee_equatoriale_avant_le_deplacement_au_zimbabwe.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/can-2027-la-rdc-en-toute-puissance-devant-le-zimbabwe-2-1-en-groupe-e/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Score confirmé par plusieurs médias. Heure 17h00 (Kinshasa) d'après Congo Inter ; Foot Africa affiche 12:00 (fuseau non précisé), non retenu."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-09-28-zwe-rdc",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "season": "2026-27",
+      "stage": "Groupe E - Journée 2",
+      "date": "2026-09-28",
+      "kickoff": null,
+      "venue": {
+        "name": "National Sports Stadium",
+        "city": "Harare",
+        "country": "Zimbabwe"
+      },
+      "home": {
+        "id": "zwe-a-m",
+        "name": "Zimbabwe"
+      },
+      "away": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 2,
+        "ht_home": 0,
+        "ht_away": 2
+      },
+      "scorers": {
+        "home": [
+          "M. Munetsi (90+1)"
+        ],
+        "away": [
+          "Y. Wissa",
+          "S. Moutoussamy"
+        ]
+      },
+      "stats": null,
+      "sources": [
+        {
+          "name": "MediaCongo",
+          "url": "https://www.mediacongo.net/article-actualite-167864_can_2027_la_rdc_bat_le_zimbabwe_2_1_a_harare_et_prend_la_tete_du_groupe_e.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/can-2027-la-rdc-en-toute-puissance-devant-le-zimbabwe-2-1-en-groupe-e/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/liminatoires-can-2027-tous-les-resultats-buteurs-et-classements-apres-la-2e-journee-1378286/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Score et lieu confirmés ; buteurs issus de Foot Africa et MediaCongo, minutes non recoupées sauf Munetsi 90+1."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-02-rdc-uga",
+      "competition_id": "friendly-international",
+      "season": "2026-27",
+      "stage": "Match amical (1/2)",
+      "date": "2026-10-02",
+      "kickoff": null,
+      "venue": {
+        "name": "FNB Stadium",
+        "city": "Johannesburg",
+        "country": "Afrique du Sud"
+      },
+      "home": {
+        "id": "uga-a-m",
+        "name": "Ouganda"
+      },
+      "away": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 0,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610020301.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "MediaCongo",
+          "url": "https://www.mediacongo.net/article-actualite-167999_match_amical_la_rdc_battue_2_0_par_l_ouganda.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Afrik-Foot",
+          "url": "https://www.afrik-foot.com/rdc-sans-ses-cadres-et-avec-6-nouveaux-joueurs-lances-les-leopards-sinclinent-contre-un-pays-hote-de-la-can-2027",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Terrain neutre. Ouganda 2-0 RD Congo. L'ACP mentionne par erreur 0-1 dans un paragraphe puis 0-2 au final ; 2-0 retenu."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-10-05-uga-rdc",
+      "competition_id": "friendly-international",
+      "season": "2026-27",
+      "stage": "Match amical (2/2)",
+      "date": "2026-10-05",
+      "kickoff": null,
+      "venue": {
+        "name": "FNB Stadium",
+        "city": "Johannesburg",
+        "country": "Afrique du Sud"
+      },
+      "home": {
+        "id": "uga-a-m",
+        "name": "Ouganda"
+      },
+      "away": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 1,
+        "ht_home": 0,
+        "ht_away": 0
+      },
+      "scorers": {
+        "home": [
+          "égalisation à la 91e (buteur non vérifié)"
+        ],
+        "away": [
+          "N. Mbuku"
+        ]
+      },
+      "stats": null,
+      "sources": [
+        {
+          "name": "allAfrica",
+          "url": "https://fr.allafrica.com/stories/202610050689.html",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "ACP",
+          "url": "https://acp.cd/sports/football-la-rdc-et-louganda-se-neutralisent-1-1-en-amical-international-a-johannesburg/",
+          "consulted_at": "2026-11-13"
+        },
+        {
+          "name": "Foot Africa",
+          "url": "https://foot-africa.com/actualites/amical-la-rdc-et-louganda-se-neutralisent-1-1-1376756/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "verified",
+        "checked_at": "2026-11-13",
+        "notes": "Score confirmé. Conflit mineur sur la minute du but de Mbuku (54e selon allAfrica, 64e selon un autre média) : minute non exportée."
+      },
+      "conflicts": [
+        {
+          "field": "scorers.away[0].minute",
+          "values": [
+            "54",
+            "64"
+          ],
+          "resolution": "non exportée"
+        }
+      ],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    },
+    {
+      "id": "2026-11-12-rdc-sle",
+      "competition_id": "caf-afcon-2027-qualifiers",
+      "season": "2026-27",
+      "stage": "Groupe E - Journée 3",
+      "date": "2026-11-12",
+      "kickoff": "2026-11-12T17:00:00+01:00",
+      "venue": {
+        "name": "Stade des Martyrs de la Pentecôte",
+        "city": "Kinshasa",
+        "country": "RD Congo"
+      },
+      "home": {
+        "id": "rdc-a-m",
+        "name": "RD Congo"
+      },
+      "away": {
+        "id": "sle-a-m",
+        "name": "Sierra Leone"
+      },
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 1,
+        "ht_home": null,
+        "ht_away": null
+      },
+      "scorers": null,
+      "stats": null,
+      "sources": [
+        {
+          "name": "Congo Inter",
+          "url": "https://congointer.info/2026/11/12/can-2027-rdc-sierra-leone-3-1-troisieme-victoire/",
+          "consulted_at": "2026-11-13"
+        }
+      ],
+      "verification": {
+        "status": "single_source",
+        "checked_at": "2026-11-13",
+        "notes": "Score trouvé chez un seul média (Congo Inter). À recouper avec CAF/FECOFA avant de passer en verified. Heure et lieu confirmés par plusieurs sources de pré-match."
+      },
+      "conflicts": [],
+      "first_seen": "2026-11-13",
+      "last_synced": "2026-11-13"
+    }
+  ]
+}

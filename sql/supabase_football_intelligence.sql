@@ -7,7 +7,9 @@ create table if not exists public.football_sources (
   id uuid primary key default gen_random_uuid(),
   source_key text not null unique,
   name text not null,
-  source_type text not null check (source_type in ('sports_api', 'official_site', 'media', 'web_search')),
+  source_type text not null check (
+    source_type in ('sports_api', 'official_site', 'media', 'web_search', 'data_archive')
+  ),
   base_url text not null,
   trust_tier text not null default 'unclassified'
     check (trust_tier in ('official', 'recognized_media', 'secondary', 'unclassified')),
@@ -59,7 +61,7 @@ create table if not exists public.football_observations (
   source_id uuid not null references public.football_sources(id) on delete restrict,
   sync_run_id uuid not null references public.football_sync_logs(id) on delete restrict,
   entity_type text not null check (
-    entity_type in ('match', 'standings', 'team', 'competition', 'news')
+    entity_type in ('match', 'standings', 'team', 'competition', 'news', 'head_to_head')
   ),
   entity_key text not null,
   external_id text,
