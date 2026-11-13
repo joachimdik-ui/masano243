@@ -1057,6 +1057,11 @@ body {
   background: var(--surface); color: var(--text); font: 600 0.82rem var(--font-text);
 }
 .match-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.match-category-group { grid-column: 1 / -1; min-width: 0; }
+.match-category-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 8px 0 12px; padding: 0 0 9px; border-bottom: 1px solid var(--border); }
+.match-category-heading h3 { margin: 0; color: var(--text); font: 400 1.45rem/1 var(--font-title); text-transform: uppercase; }
+.match-category-heading span { color: var(--muted); font-size: .7rem; font-weight: 700; white-space: nowrap; }
+.match-category-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .match-card { min-width: 0; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: 0 3px 14px rgba(23,16,36,.035); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
 .match-card:hover { transform: translateY(-2px); border-color: #d3c3f0; box-shadow: 0 10px 25px rgba(35,20,60,.08); }
 .match-card.is-live { border-left: 4px solid #f04452; }
@@ -3473,6 +3478,52 @@ body.pwa-standalone .home-rubrique-rail { display: flex; margin: 16px -16px 0; p
 /* Sur l'accueil de l'application, le rail remplace les pastilles de rubriques */
 body.pwa-standalone.is-home-root .pwa-sport-nav { display: none !important; }
 
+/* ---------- Accueil : couverture photo éditoriale ---------- */
+.hero-carousel { position: relative; overflow: hidden; border: 0; border-radius: 4px; background: #17141b; box-shadow: none; }
+.hero-viewport { background: #17141b; }
+.hero-slide { position: relative; height: 500px; overflow: hidden; background: #17141b; color: #fff; }
+.hero-slide::after { position: absolute; inset: 0; background: linear-gradient(90deg, #100e14d9 0%, #100e14a6 42%, #100e1430 76%), linear-gradient(0deg, #100e1480, transparent 56%); content: ""; pointer-events: none; }
+.hero-slide .hero-img-container { position: absolute; inset: 0; background: #17141b; }
+.hero-slide .hero-img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.2,.7,.2,1); }
+.hero-slide:hover .hero-img { transform: scale(1.035); }
+.hero-slide .hero-body { position: absolute; z-index: 1; bottom: 0; left: 0; width: min(760px, 82%); padding: 42px 46px 62px; color: #fff; }
+.hero-kicker { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 14px; color: #f1d0a6; font-size: .7rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.hero-kicker::before { width: 24px; height: 3px; background: #d34148; content: ""; }
+.hero-slide .hero-title { max-width: 740px; margin: 0 0 12px; color: #fff; font-size: 3.8rem; line-height: .96; }
+.hero-link:hover .hero-title { color: #fff; }
+.hero-slide .hero-excerpt { max-width: 600px; margin: 0 0 14px; color: #f0edf1; font-size: .96rem; line-height: 1.55; }
+.hero-slide .hero-meta { color: #d3ced8; font-size: .68rem; }
+#heroCarousel .carousel-controls { position: absolute; z-index: 3; right: 20px; bottom: 18px; gap: 8px; padding: 6px 9px; border: 1px solid #ffffff38; border-radius: 999px; background: #111014b8; color: #fff; backdrop-filter: blur(12px); }
+#heroCarousel .carousel-button { display: grid; width: 32px; height: 32px; place-items: center; border-color: #ffffff3b; background: transparent; color: #fff; }
+#heroCarousel .carousel-button:hover { border-color: #fff; background: #ffffff18; color: #fff; }
+#heroCarousel .carousel-dot { background: #ffffff73; }
+#heroCarousel .carousel-dot.is-active { background: #fff; }
+.home-category-header { border-bottom-color: #d8d2df; }
+.home-category-header .section-title { margin-bottom: 12px; }
+.home-category-more { color: #a52c38; }
+@media (max-width: 700px) {
+  .match-category-list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .match-category-heading { margin-top: 6px; }
+  .results-view.is-rencontres .match-teams { grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); gap: 7px; }
+  .results-view.is-rencontres .match-team { flex-direction: column; justify-content: center; gap: 5px; }
+  .results-view.is-rencontres .match-team strong { display: -webkit-box; width: 100%; min-width: 0; max-width: 100%; font-size: .75rem; line-height: 1.15; text-align: center; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+  .results-view.is-rencontres .team-mark { width: 32px; height: 32px; flex-basis: 32px; }
+  .results-view.is-rencontres .away-team { text-align: center; }
+  .results-view.is-rencontres .match-result { min-width: 60px; }
+  .hero-carousel { margin-inline: -8px; border-radius: 0; }
+  .hero-slide { height: 390px; }
+  .hero-slide::after { background: linear-gradient(0deg, #100e14ed 0%, #100e1480 48%, #100e141c 100%); }
+  .hero-slide .hero-body { width: 100%; padding: 30px 20px 70px; }
+  .hero-kicker { margin-bottom: 10px; font-size: .63rem; }
+  .hero-slide .hero-title { margin-bottom: 9px; font-size: 2.45rem; line-height: .98; }
+  .hero-slide .hero-excerpt { display: -webkit-box; overflow: hidden; margin-bottom: 10px; font-size: .82rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+  .hero-slide .hero-meta { font-size: .6rem; }
+  #heroCarousel .carousel-controls { right: 12px; bottom: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide .hero-img { transition: none; }
+}
+
 /* ---------- Articles par rubrique : listes horizontales ---------- */
 @media (max-width: 700px) {
   .category-posts-grid { display: flex; gap: 12px; overflow-x: auto; padding: 0 0 6px; scrollbar-width: none; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
@@ -3491,3 +3542,95 @@ body.pwa-standalone.is-home-root .pwa-sport-nav { display: none !important; }
   .photo-reportage-grid .photo-reportage-item { flex-basis: min(82vw, 340px); }
 }
 body.pwa-standalone .photo-reportage-grid .photo-reportage-item { flex-basis: min(82vw, 340px); }
+
+/* ---------- PWA : une sans texte secondaire et rencontres compactes ---------- */
+body.pwa-standalone .hero-kicker,
+body.pwa-standalone .hero-excerpt,
+body.pwa-standalone .hero-meta { display: none; }
+body.pwa-standalone .hero-title {
+  display: block;
+  overflow: visible;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1.08;
+  text-shadow: 0 2px 12px #000b;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: initial;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+}
+body.pwa-standalone #heroCarousel { overflow: hidden; border-radius: 18px; }
+body.pwa-standalone #heroCarousel .hero-slide { height: 390px; }
+body.pwa-standalone #heroCarousel .hero-img-container { position: absolute; inset: 0; border-radius: 0; }
+body.pwa-standalone #heroCarousel .hero-img { width: 100%; height: 100%; object-fit: cover; }
+body.pwa-standalone #heroCarousel .hero-body { position: absolute; z-index: 1; right: 0; bottom: 0; left: 0; width: 100%; padding: 30px 20px 70px; color: #fff; }
+body.pwa-standalone #heroCarousel .hero-title { font-size: 2.45rem; line-height: .98; }
+body.pwa-standalone #heroCarousel .carousel-controls { right: 12px; bottom: 12px; left: auto; gap: 8px; padding: 6px 9px !important; border: 1px solid #ffffff38; border-radius: 999px; background: #111014b8; transform: none; backdrop-filter: blur(12px); }
+body.pwa-standalone #heroCarousel .carousel-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #ffffff3b; background: transparent; color: #fff; }
+body.pwa-standalone #heroCarousel .carousel-dot { background: #ffffff73; }
+body.pwa-standalone #heroCarousel .carousel-dot.is-active { background: #fff; }
+body.pwa-standalone .results-view.is-rencontres .match-category-list { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+body.pwa-standalone .results-view.is-rencontres .match-card { padding: 12px 13px; border: 1px solid #e8e6ed; border-radius: 12px; background: #fff; box-shadow: none; }
+body.pwa-standalone .results-view.is-rencontres .match-teams { grid-template-columns: minmax(0, 1fr) 62px minmax(0, 1fr); gap: 7px; }
+body.pwa-standalone .results-view.is-rencontres .match-team { flex-direction: row; justify-content: flex-start; gap: 7px; text-align: left; }
+body.pwa-standalone .results-view.is-rencontres .team-mark { width: 32px; height: 32px; flex-basis: 32px; }
+body.pwa-standalone .results-view.is-rencontres .match-team strong { display: -webkit-box; min-width: 0; max-width: 100%; overflow: hidden; font-size: .72rem; line-height: 1.15; white-space: normal; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+body.pwa-standalone .results-view.is-rencontres .away-team { flex-direction: row-reverse; justify-content: flex-start; text-align: right; }
+body.pwa-standalone .results-view.is-rencontres .match-result { min-width: 62px; }
+body.pwa-standalone .results-view.is-rencontres .match-score { justify-content: center; padding: 5px 7px; border-radius: 8px; background: #f4f0fb; font-size: 1.12rem; }
+@media (max-width: 360px) {
+  body.pwa-standalone .results-view.is-rencontres .match-teams { grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr); gap: 4px; }
+  body.pwa-standalone .results-view.is-rencontres .match-team { gap: 5px; }
+  body.pwa-standalone .results-view.is-rencontres .team-mark { width: 28px; height: 28px; flex-basis: 28px; }
+  body.pwa-standalone .results-view.is-rencontres .match-result { min-width: 54px; }
+}
+body.pwa-standalone .home-rubrique-rail a[href="#rencontres"],
+body.pwa-standalone .home-rubrique-rail a[href="#tv"] { display: none; }
+body.pwa-standalone #homeCategorySections { gap: 26px; margin: 28px 0 0; }
+body.pwa-standalone .home-category-header { padding: 0; border-bottom: 1px solid var(--border); }
+body.pwa-standalone .home-category-header .section-title { margin: 0 0 12px; font-size: 1.375rem; }
+body.pwa-standalone .home-category-more { color: #a52c38; font-size: .7rem; }
+body.pwa-standalone .category-posts-grid { gap: 12px; margin: 16px 0 0; padding: 0 0 6px; }
+body.pwa-standalone .post-mini { gap: 9px; padding: 0; overflow: hidden; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+body.pwa-standalone .post-mini img { width: 100%; height: auto; aspect-ratio: 16 / 10; border-radius: 9px; }
+body.pwa-standalone .post-mini-title { display: -webkit-box; overflow: hidden; color: var(--text); font-size: .95rem; font-weight: 700; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+body.pwa-standalone #listViewContainer > .section-title,
+body.pwa-standalone .home-category-header .section-title,
+body.pwa-standalone .photo-reportage .section-title { font-family: var(--font-title); font-size: 1.625rem; font-weight: 400; line-height: 1; letter-spacing: 0; }
+body.pwa-standalone .results-view.is-rencontres .match-card.pwa-score-card {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e3deeb;
+  border-radius: 11px;
+  background: #fff;
+  color: #202127;
+  box-shadow: 0 3px 12px rgba(39, 20, 67, .06);
+  font-family: var(--font-text);
+}
+body.pwa-standalone .results-view.is-rencontres .match-card.pwa-score-card.is-live { border-left: 3px solid #f04452; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-topline { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 8px; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-competition { min-width: 0; overflow: hidden; color: #70677d; font: 700 .63rem/1.2 var(--font-text); text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-meta { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; font: 600 .65rem/1 var(--font-text); font-variant-numeric: tabular-nums; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-date { color: #626671; white-space: nowrap; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-state { display: inline-flex; min-height: 21px; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 5px; background: #f0edf5; color: #49346d; font-size: .62rem; font-weight: 800; white-space: nowrap; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-state.is-live { background: #fce8e6; color: #a91f2b; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-state.is-upcoming { background: #efe8fb; color: #42158f; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-live-dot { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: #c62838; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-scoreboard { display: grid; gap: 3px; min-width: 0; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team-row { display: grid; min-width: 0; grid-template-columns: minmax(0, 1fr) 2.5ch; align-items: center; gap: 8px; min-height: 34px; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team { display: flex; min-width: 0; align-items: center; gap: 8px; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team .team-mark { width: 29px; height: 29px; flex: 0 0 29px; border: 1px solid #e3deeb; background: #f4f0fb; color: #42158f; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team .club-logo { background: #fff; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team-name { display: block; min-width: 0; overflow: hidden; color: #202127; font: 600 .8rem/1.2 var(--font-text); text-overflow: ellipsis; white-space: nowrap; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score { min-width: 2.5ch; color: #42158f; font: 800 1rem/1 var(--font-text); font-variant-numeric: tabular-nums; text-align: right; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score.is-pending { color: #6c757d; }
+@media (max-width: 360px) {
+  body.pwa-standalone .results-view.is-rencontres .match-card.pwa-score-card { padding: 10px; }
+  body.pwa-standalone .results-view.is-rencontres .pwa-match-meta { gap: 5px; font-size: .6rem; }
+  body.pwa-standalone .results-view.is-rencontres .pwa-match-team-row { gap: 5px; }
+  body.pwa-standalone .results-view.is-rencontres .pwa-match-team { gap: 6px; }
+  body.pwa-standalone .results-view.is-rencontres .pwa-match-team-name { font-size: .75rem; }
+}

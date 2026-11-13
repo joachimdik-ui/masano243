@@ -312,6 +312,7 @@ const renderLaUne = (items = articles) => {
   track.innerHTML = laUneArticles.map((article, index) => `<a class="hero-slide hero-link" href="#read/${escapeHtml(article.id)}" role="group" aria-roledescription="diapositive" aria-label="${index + 1} sur ${laUneArticles.length}">
     <div class="hero-img-container"><img class="hero-img" src="${escapeHtml(article.image || PLACEHOLDER_IMAGE)}" alt="${escapeHtml(article.title)}"${index ? ' loading="lazy"' : ""}></div>
     <div class="hero-body">
+      <p class="hero-kicker">${escapeHtml(article.category || "Actualité sportive")}</p>
       <h3 class="hero-title lead-title">${escapeHtml(article.title)}</h3>
       <p class="hero-excerpt lead-summary">${escapeHtml(article.excerpt)}</p>
       <div class="hero-meta article-meta">${escapeHtml(article.author)} • ${escapeHtml(formatArticleDate(article.date))}</div>

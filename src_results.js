@@ -56,6 +56,14 @@ const formatMatchDate = (date) => {
     : new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(parsed);
 };
 
+const formatMatchDateShort = (date) => {
+  if (!date) return "Date à confirmer";
+  const parsed = new Date(date);
+  return Number.isNaN(parsed.getTime())
+    ? String(date)
+    : new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(parsed);
+};
+
 const matchStatusLabel = (match) => {
   if (match.statut === "live") return match.minute ? `${match.minute}'` : "En cours";
   if (match.statut === "finished") return "Terminé";
@@ -77,7 +85,7 @@ const renderClubLogo = (team, logo) => {
   return `<span class="club-logo-slot" aria-hidden="true"><span class="club-logo-placeholder"${logo ? " hidden" : ""}>${initials}</span>${logo ? `<img class="club-logo" src="${escapeHtml(logo)}" alt="" loading="lazy">` : ""}</span>`;
 };
 
-const renderMatch = (match, { clubFilter = false } = {}) => {
+const renderMatch = (match, { clubFilter = false, pwaLayout = false } = {}) => {
   const sourceLabel = match.source === "local"
     ? (match.competition_category === "linafoot_l2" ? "Linafoot L2" : "Linafoot L1")
     : match.source === "epf_kin"
@@ -99,9 +107,31 @@ const renderMatch = (match, { clubFilter = false } = {}) => {
         ? `<strong class="match-kickoff"><span class="ko-time">${parts.time}</span><small class="ko-date">${escapeHtml(parts.day)}</small></strong>`
         : `<strong class="match-kickoff">${formatKickoff(match.date_match)}</strong>`;
     })();
+  const pwaStatusClass = isLive ? "is-live" : match.statut === "finished" ? "is-finished" : "is-upcoming";
+  const pwaStatusLabel = isLive
+    ? (match.minute ? `${match.minute}'` : "En direct")
+    : match.statut === "finished"
+      ? "FT"
+      : formatKickoffParts(match.date_match)?.time || "À venir";
+  const pwaTeamRow = (team, logo, teamScore, side) => {
+    const visibleScore = hasScore ? escapeHtml(teamScore) : "—";
+    const scoreLabel = hasScore ? `Score : ${teamScore}` : "Score non disponible";
+    return `<div class="pwa-match-team-row is-${side}">
+      <div class="pwa-match-team">${renderTeamMark(team, logo, clubFilter)}<strong class="pwa-match-team-name" title="${escapeHtml(team)}">${escapeHtml(team)}</strong></div>
+      <strong class="pwa-match-team-score${hasScore ? "" : " is-pending"}" aria-label="${scoreLabel}">${visibleScore}</strong>
+    </div>`;
+  };
+  const pwaScoreboard = `<div class="pwa-match-topline">
+      <span class="pwa-match-competition" title="${escapeHtml(match.competition || sourceLabel)}">${escapeHtml(match.competition || sourceLabel)}</span>
+      <div class="pwa-match-meta">
+        <time class="pwa-match-date"${match.date_match ? ` datetime="${escapeHtml(match.date_match)}"` : ""}>${escapeHtml(formatMatchDateShort(match.date_match))}</time>
+        <span class="pwa-match-state ${pwaStatusClass}">${isLive ? '<span class="pwa-match-live-dot" aria-hidden="true"></span>' : ""}${escapeHtml(pwaStatusLabel)}</span>
+      </div>
+    </div>
+    <div class="pwa-match-scoreboard">${pwaTeamRow(match.equipe_domicile, match.logo_domicile, match.score_domicile, "home")}${pwaTeamRow(match.equipe_visiteur, match.logo_visiteur, match.score_visiteur, "away")}</div>`;
 
-  return `<article class="match-card${isLive ? " is-live" : ""}" data-match-id="${escapeHtml(match.id)}" data-match-detail="${escapeHtml(match.id)}" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Détails du match : ${escapeHtml(match.equipe_domicile)} contre ${escapeHtml(match.equipe_visiteur)}">
-    <div class="match-card-top">
+  const cardClass = `match-card${isLive ? " is-live" : ""}${pwaLayout ? " pwa-score-card" : ""}`;
+  const cardContent = pwaLayout ? pwaScoreboard : `<div class="match-card-top">
       <span class="source-badge ${match.source === "local" || match.source === "epf_kin" ? "source-local" : "source-international"}">${sourceLabel}</span>
       <span class="match-competition">${escapeHtml(match.competition)}</span>
       ${isLive ? `<span class="live-match-badge"><span class="live-pulse" aria-hidden="true"></span>${escapeHtml(matchStatusLabel(match))}</span>` : `<span class="match-status">${escapeHtml(matchStatusLabel(match))}</span>`}
@@ -110,8 +140,9 @@ const renderMatch = (match, { clubFilter = false } = {}) => {
       <div class="match-team home-team">${renderTeamMark(match.equipe_domicile, match.logo_domicile, clubFilter)}<strong>${escapeHtml(match.equipe_domicile)}</strong></div>
       <div class="match-result">${score}</div>
       <div class="match-team away-team">${renderTeamMark(match.equipe_visiteur, match.logo_visiteur, clubFilter)}<strong>${escapeHtml(match.equipe_visiteur)}</strong></div>
-    </div>
-  </article>`;
+    </div>`;
+
+  return `<article class="${cardClass}" data-match-id="${escapeHtml(match.id)}" data-match-detail="${escapeHtml(match.id)}" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Détails du match : ${escapeHtml(match.equipe_domicile)} contre ${escapeHtml(match.equipe_visiteur)}">${cardContent}</article>`;
 };
 
 const EMPTY_EVENTS_MESSAGE = "Aucun événement n'est disponible pour le moment.";
@@ -158,6 +189,18 @@ const renderPlayerAvatar = (player, extraClass = "") => {
 };
 
 const FOOTBALL_CATEGORIES = ["linafoot_l1", "linafoot_l2", "epf_kin", "leopards", "interclubs", "international"];
+const MATCH_CATEGORY_LABELS = {
+  linafoot_l1: "Linafoot L1",
+  linafoot_l2: "Linafoot L2",
+  epf_kin: "EPF-KIN",
+  leopards: "Léopards",
+  interclubs: "Interclubs · CAF",
+  international: "International",
+  basketball: "Basketball",
+  judo: "Judo",
+  omnisports: "Omnisports"
+};
+const MATCH_CATEGORY_ORDER = [...FOOTBALL_CATEGORIES, "basketball", "judo", "omnisports"];
 const FOOTBALL_SCOPES = [
   ["all", "Tout le football"],
   ["linafoot_l1", "Linafoot L1"],
@@ -345,6 +388,7 @@ export const mountResults = (root, competitionPage = null) => {
   const layout = competitionPage?.layout || (competitionPage ? "events" : "live");
   const isLiveCenter = layout === "live";
   const isAllLayout = layout === "rencontres";
+  const isPwaRencontres = isAllLayout && document.body.classList.contains("pwa-standalone");
   root.classList.toggle("is-rencontres", isAllLayout);
   root.classList.toggle("is-live-center", isLiveCenter);
   root.classList.toggle("is-compact", !isLiveCenter);
@@ -1154,10 +1198,12 @@ export const mountResults = (root, competitionPage = null) => {
 
   const filteredMatches = () => scopedMatches().filter((match) => matchesStatusFilter(match) && matchesDateFilter(match));
 
-  const decorateMatch = (match) => renderMatch(match, { clubFilter: true }).replace(
-    `class="match-card${match.statut === "live" ? " is-live" : ""}"`,
-    `class="match-card${match.statut === "live" ? " is-live" : ""}${recentGoalIds.has(match.id) ? " goal-flash" : ""}"`
-  );
+  const decorateMatch = (match) => {
+    const rendered = renderMatch(match, { clubFilter: true, pwaLayout: isPwaRencontres });
+    return recentGoalIds.has(match.id)
+      ? rendered.replace('class="match-card', 'class="match-card goal-flash')
+      : rendered;
+  };
 
   const renderDayView = (items) => {
     const sorted = [...items].sort((a, b) => {
@@ -1166,12 +1212,25 @@ export const mountResults = (root, competitionPage = null) => {
     });
     const groups = new Map();
     sorted.forEach((match) => {
-      const key = match.competition || "Autres matchs";
+      const key = match.competition_category || "other";
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(match);
     });
-    if (groups.size < 2) return sorted.map(decorateMatch).join("");
-    return [...groups].map(([name, items]) => `<h3 class="match-round-title">${escapeHtml(name)}</h3>${items.map(decorateMatch).join("")}`).join("");
+    return [...groups]
+      .sort(([first], [second]) => {
+        const firstOrder = MATCH_CATEGORY_ORDER.indexOf(first);
+        const secondOrder = MATCH_CATEGORY_ORDER.indexOf(second);
+        return (firstOrder < 0 ? MATCH_CATEGORY_ORDER.length : firstOrder)
+          - (secondOrder < 0 ? MATCH_CATEGORY_ORDER.length : secondOrder);
+      })
+      .map(([category, categoryMatches]) => {
+        const label = MATCH_CATEGORY_LABELS[category] || "Autres rencontres";
+        const countLabel = `${categoryMatches.length} rencontre${categoryMatches.length > 1 ? "s" : ""}`;
+        return `<section class="match-category-group" aria-label="${escapeHtml(label)}">
+          <header class="match-category-heading"><h3>${escapeHtml(label)}</h3><span>${countLabel}</span></header>
+          <div class="match-category-list">${categoryMatches.map(decorateMatch).join("")}</div>
+        </section>`;
+      }).join("");
   };
 
   const nearestMatchDay = () => {
