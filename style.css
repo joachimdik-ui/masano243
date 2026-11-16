@@ -48,21 +48,30 @@ body {
   justify-content: center;
   width: 100%;
   padding: 12px 18px;
-  background: var(--accent);
+  background: transparent;
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7.5px;
   text-decoration: none;
-  color: var(--text);
-  font-family: var(--font-title);
-  font-size: 56px;
-  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-family: var(--font-text);
+  font-size: 4.625rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .brand-strong { font-weight: 400; }
 .brand-accent { color: var(--accent); transition: color var(--transition); }
-.brand-logo { display: block; width: auto; max-width: min(100%, 560px); max-height: 160px; object-fit: contain; }
+.brand-logo { display: block; width: 145px; height: 145px; flex: 0 0 145px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
+@media (max-width: 600px) {
+  .brand { gap: 3px; font-size: clamp(1rem, 5.5vw, 2rem); }
+  .brand-logo { width: clamp(36px, 12.5vw, 55px); height: clamp(36px, 12.5vw, 55px); flex-basis: clamp(36px, 12.5vw, 55px); }
+}
 
 .social-search-row {
   display: flex;
@@ -1570,8 +1579,8 @@ body.has-player-modal { overflow: hidden; }
     background: var(--pwa-purple);
     color: #fff;
   }
-  .pwa-app-brand { display: inline-flex; min-width: 0; align-items: center; gap: 9px; color: inherit; text-decoration: none; }
-  .pwa-app-logo { display: block; width: 44px; height: 44px; flex: 0 0 44px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
+  .pwa-app-brand { display: inline-flex; min-width: 0; align-items: center; gap: 3px; color: inherit; text-decoration: none; }
+  .pwa-app-logo { display: block; width: 58px; height: 58px; flex: 0 0 58px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
   .pwa-app-wordmark { color: #fff; font: 700 1.3rem/1 var(--font-text); letter-spacing: -.035em; text-decoration: none; }
   .pwa-app-header-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; }
   .pwa-app-account-toggle { display: grid; width: 40px; height: 40px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer; }
@@ -3303,12 +3312,12 @@ body.pwa-standalone .results-view.is-compact.is-rencontres .date-nav-label {
    ===================================================================== */
 body { font-size: 16px; line-height: 1.5; font-weight: 400; text-rendering: optimizeLegibility; font-synthesis: none; }
 
-/* Titre « Masano243 » de l'en-tête : ExtraBold (Bebas Neue n'a qu'une graisse → Montserrat) */
+/* Titre « Masano243 » de l'en-tête : Bold */
 .brand,
 .pwa-app-wordmark,
 body.pwa-standalone .pwa-app-wordmark {
   font-family: var(--font-text);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -.03em;
   text-transform: none;
 }
@@ -3489,12 +3498,12 @@ body.pwa-standalone.is-home-root .pwa-sport-nav { display: none !important; }
 .hero-slide .hero-img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.2,.7,.2,1); }
 .hero-slide:hover .hero-img { transform: scale(1.035); }
 .hero-slide .hero-body { position: absolute; z-index: 1; bottom: 0; left: 0; width: min(760px, 82%); padding: 42px 46px 62px; color: #fff; }
-.hero-kicker { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 14px; color: #f1d0a6; font-size: .7rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.hero-kicker { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 14px; color: #f1d0a6; font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .hero-kicker::before { width: 24px; height: 3px; background: #d34148; content: ""; }
 .hero-slide .hero-title { max-width: 740px; margin: 0 0 12px; color: #fff; font-size: 3.8rem; line-height: .96; }
 .hero-link:hover .hero-title { color: #fff; }
 .hero-slide .hero-excerpt { max-width: 600px; margin: 0 0 14px; color: #f0edf1; font-size: .96rem; line-height: 1.55; }
-.hero-slide .hero-meta { color: #d3ced8; font-size: .68rem; }
+.hero-slide .hero-meta { color: #d3ced8; font-size: .75rem; }
 #heroCarousel .carousel-controls { position: absolute; z-index: 3; right: 20px; bottom: 18px; gap: 8px; padding: 6px 9px; border: 1px solid #ffffff38; border-radius: 999px; background: #111014b8; color: #fff; backdrop-filter: blur(12px); }
 #heroCarousel .carousel-button { display: grid; width: 32px; height: 32px; place-items: center; border-color: #ffffff3b; background: transparent; color: #fff; }
 #heroCarousel .carousel-button:hover { border-color: #fff; background: #ffffff18; color: #fff; }
@@ -3516,10 +3525,10 @@ body.pwa-standalone.is-home-root .pwa-sport-nav { display: none !important; }
   .hero-slide { height: 390px; }
   .hero-slide::after { background: linear-gradient(0deg, #100e14ed 0%, #100e1480 48%, #100e141c 100%); }
   .hero-slide .hero-body { width: 100%; padding: 30px 20px 70px; }
-  .hero-kicker { margin-bottom: 10px; font-size: .63rem; }
+  .hero-kicker { margin-bottom: 10px; font-size: .75rem; }
   .hero-slide .hero-title { margin-bottom: 9px; font-size: 2.45rem; line-height: .98; }
-  .hero-slide .hero-excerpt { display: -webkit-box; overflow: hidden; margin-bottom: 10px; font-size: .82rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
-  .hero-slide .hero-meta { font-size: .6rem; }
+  .hero-slide .hero-excerpt { display: -webkit-box; overflow: hidden; margin-bottom: 10px; font-size: .875rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+  .hero-slide .hero-meta { font-size: .75rem; }
   #heroCarousel .carousel-controls { right: 12px; bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3600,6 +3609,8 @@ body.pwa-standalone .post-mini-title { display: -webkit-box; overflow: hidden; c
 body.pwa-standalone #listViewContainer > .section-title,
 body.pwa-standalone .home-category-header .section-title,
 body.pwa-standalone .photo-reportage .section-title { font-family: var(--font-text); font-size: 1.625rem; font-weight: 700; line-height: 1.2; letter-spacing: 0; text-transform: none; }
+body.pwa-standalone .home-category-header .section-title,
+body.pwa-standalone .photo-reportage .section-title { font-size: 1.25rem; }
 body.pwa-standalone .match-history-total { color: var(--pwa-text); }
 body.pwa-standalone .results-view.is-rencontres .match-card.pwa-score-card {
   display: grid;
@@ -3802,7 +3813,7 @@ body.pwa-standalone.is-home-root #pageSectionTitle { display: none; }
 body.pwa-standalone.is-home-root .home-rubrique-rail {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
+  gap: 0;
   margin: 16px 0 0;
   padding: 4px 0 6px;
   overflow: hidden;
@@ -3812,9 +3823,10 @@ body.pwa-standalone.is-home-root .home-rubrique-item { width: 100%; min-width: 0
 body.pwa-standalone.is-home-root .home-rubrique-icon { width: 44px; height: 44px; }
 body.pwa-standalone.is-home-root .home-rubrique-icon svg { width: 20px; height: 20px; }
 body.pwa-standalone.is-home-root .home-rubrique-label {
-  font-size: 1.1rem;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  font-size: clamp(.625rem, 3.2vw, .8125rem);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 /* TV : direct épinglé, carrousel récent et rails de programmes */

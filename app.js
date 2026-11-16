@@ -579,7 +579,7 @@ const renderHome = (query = "", showAllArticles = false) => {
   laUneArticles = [];
 
   if (!articles.length) {
-    pageTitle.textContent = showAllArticles ? "Articles" : categoryLabels[category] || "A la une";
+    pageTitle.textContent = showAllArticles ? "Articles" : categoryLabels[category] || "À la une";
     articleList.innerHTML = `<p class="data-status empty-state">${supabase ? EMPTY_NEWS_MESSAGE : "Configurez la connexion Supabase pour publier et afficher les articles."}</p>`;
     articleList.hidden = false;
     return;
@@ -594,7 +594,7 @@ const renderHome = (query = "", showAllArticles = false) => {
 
   // Accueil : carrousel « À la une », puis directement les articles regroupés par catégorie.
   if (!category && !normalizedQuery) {
-    pageTitle.textContent = "A la une";
+    pageTitle.textContent = "À la une";
     heroContainer.style.display = "block";
     renderLaUne(articles);
     homeSections.innerHTML = renderHomeCategorySections(articles);
