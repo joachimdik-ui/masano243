@@ -99,6 +99,7 @@ const sportsDbDetails = async (eventId) => {
       name: item.strPlayer || item.strPlayer1 || "",
       number: sportsDbNumber(item.intLineupNumber ?? item.intNumber),
       position: item.strPosition || "",
+      photo_url: item.strThumb || item.strCutout || "",
       grid: item.strFormation || "",
       substitute: /sub/i.test(String(item.strSubstitute || item.strType || ""))
     });
@@ -346,6 +347,7 @@ const apiFootballDetails = async (fixtureId, apiKey) => {
         name: player?.name || "",
         number: player?.number ?? null,
         position: player?.pos || "",
+        photo_url: player?.photo || "",
         grid: player?.grid || "",
         substitute: (lineup.substitutes || []).some((item) => item.player?.id === player?.id)
       }))

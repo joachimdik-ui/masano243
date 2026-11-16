@@ -389,6 +389,69 @@ export const fetchLocalMatchDetails = async (match) => {
   };
 };
 
+export const fetchEpfKinMatchDetails = async (match) => {
+  if (!supabase) throw new Error("Client Supabase non configuré.");
+  if (!isUuid(match.id)) throw new Error("Identifiant Supabase du match EPF-KIN invalide.");
+
+  const { data, error } = await supabase
+    .from("epf_kin_match_events")
+    .select("id, club_id, type, minute, minute_additionnelle, joueur, ordre, club:epf_kin_clubs!epf_kin_match_events_club_id_fkey(nom)")
+    .eq("match_id", match.id)
+    .order("minute", { ascending: true, nullsFirst: false })
+    .order("minute_additionnelle", { ascending: true, nullsFirst: false })
+    .order("ordre", { ascending: true });
+  if (error) throw error;
+
+  const eventRows = data || [];
+  const eventTeamName = (clubId, fallback = "") => {
+    if (clubId && clubId === match.club_domicile_id) return match.equipe_domicile;
+    if (clubId && clubId === match.club_visiteur_id) return match.equipe_visiteur;
+    return fallback;
+  };
+  const scorers = eventRows
+    .filter((event) => ["goal", "penalty", "own_goal"].includes(event.type))
+    .map((event) => ({
+      elapsed: event.minute,
+      extra: event.minute_additionnelle,
+      type: "goal",
+      team: eventTeamName(event.club_id, event.club?.nom || ""),
+      player: event.joueur || "",
+      assist: "",
+      detail: event.type === "penalty" ? "Penalty" : event.type === "own_goal" ? "But contre son camp" : ""
+    }));
+  const hasFinalScore = match.statut === "finished"
+    && Number.isInteger(match.score_domicile)
+    && Number.isInteger(match.score_visiteur);
+
+  return {
+    venue: match.stade || "",
+    referee: "",
+    events: eventRows.map((event) => ({
+      elapsed: event.minute,
+      extra: event.minute_additionnelle,
+      type: "goal",
+      team: eventTeamName(event.club_id, event.club?.nom || ""),
+      player: event.joueur || "",
+      assist: "",
+      detail: event.type === "penalty" ? "Penalty" : event.type === "own_goal" ? "But contre son camp" : ""
+    })),
+    scorers,
+    scorers_status: scorers.length
+      ? "available"
+      : hasFinalScore && match.score_domicile + match.score_visiteur === 0
+        ? "none"
+        : hasFinalScore
+          ? "unavailable"
+          : "pending",
+    lineups: { home: null, away: null },
+    history: [],
+    rankings: [],
+    highlights_url: match.resume_video_url || "",
+    highlights_thumbnail_url: match.resume_video_thumbnail || "",
+    warnings: []
+  };
+};
+
 export const fetchMatchsLocaux = async () => {
   if (!supabase) throw new Error("Client Supabase non configuré.");
   const { data, error } = await supabase
@@ -408,6 +471,7 @@ export const fetchMatchsEpfKin = async () => {
     .from("epf_kin_matches")
     .select(`
       id, date_match, saison, journee, serie, stade, statut, resume_video_url,
+      club_domicile_id, club_visiteur_id,
       score_domicile, score_visiteur,
       club_domicile:epf_kin_clubs!epf_kin_matches_club_domicile_id_fkey(nom, logo_url),
       club_visiteur:epf_kin_clubs!epf_kin_matches_club_visiteur_id_fkey(nom, logo_url)

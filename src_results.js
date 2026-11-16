@@ -1,5 +1,6 @@
 import {
   fetchClassement,
+  fetchEpfKinMatchDetails,
   fetchEpfKinStandings,
   fetchEpfKinTopScorers,
   fetchFootballDataConfrontation,
@@ -543,19 +544,7 @@ export const mountResults = (root, competitionPage = null) => {
       const providerDetailsRequest = match.source === "local"
         ? fetchLocalMatchDetails(match).then((details) => addSupabaseMatchStandings(match, details))
         : match.source === "epf_kin"
-          ? addSupabaseMatchStandings(match, {
-            venue: match.stade || "",
-            referee: "",
-            events: [],
-            scorers: [],
-            scorers_status: "pending",
-            lineups: { home: null, away: null },
-            history: [],
-            rankings: [],
-            highlights_url: "",
-            highlights_thumbnail_url: "",
-            warnings: []
-          })
+          ? fetchEpfKinMatchDetails(match).then((details) => addSupabaseMatchStandings(match, details))
           : fetchMatchDetails(match.id);
       const detailsRequest = Promise.allSettled([
         providerDetailsRequest,
@@ -655,12 +644,57 @@ export const mountResults = (root, competitionPage = null) => {
     return `<li>${minute ? `<strong>${escapeHtml(minute)}</strong> ` : ""}${escapeHtml(description)}${event.team ? ` <span>— ${escapeHtml(event.team)}</span>` : ""}</li>`;
   };
 
-  const renderLineup = (lineup) => {
-    if (!lineup) return `<p class="match-detail-empty">Composition non fourni</p>`;
+  const lineupPositionLabel = (position) => ({
+    G: "Gardien",
+    GK: "Gardien",
+    D: "Défenseur",
+    DF: "Défenseur",
+    M: "Milieu de terrain",
+    MF: "Milieu de terrain",
+    F: "Attaquant",
+    FW: "Attaquant"
+  }[String(position || "").toUpperCase()] || position || "Poste non renseigné");
+
+  const renderLineup = (lineup, events = [], teamName = "") => {
+    if (!lineup) return `<p class="match-detail-empty">La composition n’a pas été communiquée.</p>`;
     const players = Array.isArray(lineup.players) ? lineup.players : [];
-    return `${lineup.formation ? `<p class="match-detail-formation">Formation : <strong>${escapeHtml(lineup.formation)}</strong></p>` : ""}
-      ${lineup.coach ? `<p class="match-detail-coach">Entraîneur : ${escapeHtml(lineup.coach)}</p>` : ""}
-      ${players.length ? `<ul class="match-detail-player-list">${players.map((player) => `<li>${player.number === null || player.number === undefined ? "" : `<span>${escapeHtml(player.number)}</span>`}${escapeHtml(player.name || "Joueur")}${player.position ? ` <small>${escapeHtml(player.position)}</small>` : ""}${player.substitute ? ` <small>Remplaçant</small>` : ""}</li>`).join("")}</ul>` : `<p class="match-detail-empty">Aucun joueur communiqué par le fournisseur.</p>`}`;
+    const teamKey = normalizeTeamName(teamName);
+    const statusIcons = (player) => {
+      const playerKey = normalizeTeamName(player.name);
+      const related = events.filter((event) => normalizeTeamName(event.player) === playerKey
+        && (!event.team || !teamKey || normalizeTeamName(event.team) === teamKey));
+      const statuses = new Map();
+      related.forEach((event) => {
+        const type = String(event.type || "").toLowerCase();
+        const detail = String(event.detail || "").toLowerCase();
+        const status = type.includes("goal") ? ["⚽", "But"]
+          : type.includes("card") || type.includes("booking")
+            ? /red|rouge/.test(`${type} ${detail}`) ? ["🟥", "Carton rouge"] : ["🟨", "Carton jaune"]
+            : type.includes("sub") ? ["↕", "Remplacement"]
+              : type.includes("injur") || detail.includes("injur") ? ["✚", "Blessure"] : null;
+        if (status) statuses.set(status[1], status[0]);
+      });
+      return [...statuses].map(([label, icon]) => `<span class="match-player-status" role="img" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${icon}</span>`).join("");
+    };
+    const playerList = (items) => items.length
+      ? `<ul class="match-detail-player-list">${items.map((player) => {
+        const name = player.name || "Joueur";
+        const photo = safeHttpUrl(player.photo_url || player.photo || player.image);
+        const position = lineupPositionLabel(player.position);
+        const number = player.number === null || player.number === undefined || player.number === "" ? "" : ` n°${player.number}`;
+        return `<li class="match-player-row">
+          <span class="match-player-avatar">${photo ? `<img src="${escapeHtml(photo)}" alt="" loading="lazy">` : `<span aria-hidden="true">${escapeHtml(name.slice(0, 1).toUpperCase())}</span>`}</span>
+          <span class="match-player-copy"><strong>${escapeHtml(name)}</strong><small>${escapeHtml(`${position}${number}`)}</small></span>
+          <span class="match-player-statuses">${statusIcons(player)}</span>
+        </li>`;
+      }).join("")}</ul>`
+      : `<p class="match-detail-empty">Aucun joueur communiqué.</p>`;
+    const starters = players.filter((player) => !player.substitute);
+    const substitutes = players.filter((player) => player.substitute);
+    return `${lineup.formation ? `<p class="match-detail-formation">Formation <strong>${escapeHtml(lineup.formation)}</strong></p>` : ""}
+      <section class="match-lineup-group"><h5>Titulaires</h5>${playerList(starters)}</section>
+      <section class="match-lineup-group"><h5>Banc</h5>${playerList(substitutes)}</section>
+      <section class="match-lineup-coach"><h5>Entraîneur</h5><p>${escapeHtml(lineup.coach || "Non renseigné")}</p></section>`;
   };
 
   const normalizeHistoryTeam = (team) => {
@@ -675,8 +709,27 @@ export const mountResults = (root, competitionPage = null) => {
       : normalized;
   };
 
+  const historyFlagCodes = new Map(Object.entries({
+    "argentina": "AR", "australia": "AU", "belgium": "BE", "brazil": "BR", "bresil": "BR",
+    "cameroon": "CM", "cameroun": "CM", "canada": "CA", "chile": "CL", "china": "CN",
+    "colombia": "CO", "congo": "CG", "dr congo": "CD", "cote d ivoire": "CI", "ivory coast": "CI",
+    "croatia": "HR", "democratic republic of congo": "CD", "egypt": "EG", "england": "GB",
+    "france": "FR", "germany": "DE", "ghana": "GH", "italy": "IT", "japan": "JP",
+    "kenya": "KE", "mali": "ML", "mexico": "MX", "morocco": "MA", "maroc": "MA",
+    "netherlands": "NL", "nigeria": "NG", "portugal": "PT", "senegal": "SN", "south africa": "ZA",
+    "south korea": "KR", "spain": "ES", "tunisia": "TN", "united states": "US", "usa": "US",
+    "uruguay": "UY", "zambia": "ZM", "zimbabwe": "ZW"
+  }));
+  const historyTeamMark = (team) => {
+    const normalized = normalizeHistoryTeam(team);
+    const code = historyFlagCodes.get(normalized);
+    if (!code) return `<span class="match-history-team-mark" aria-hidden="true">${escapeHtml(String(team || "?").slice(0, 1).toUpperCase())}</span>`;
+    const flag = [...code].map((letter) => String.fromCodePoint(letter.charCodeAt(0) + 127397)).join("");
+    return `<span class="match-history-team-mark is-flag" role="img" aria-label="Drapeau ${escapeHtml(team)}">${flag}</span>`;
+  };
+
   const renderHistory = (history, match) => history.length
-    ? history.map((item) => {
+    ? [...history].sort((first, second) => String(second.date || "").localeCompare(String(first.date || ""))).map((item) => {
       const date = item.date ? formatMatchDate(item.date) : "Date non renseignée";
       const hasScore = item.home_score !== null && item.home_score !== undefined
         && item.away_score !== null && item.away_score !== undefined;
@@ -692,9 +745,11 @@ export const mountResults = (root, competitionPage = null) => {
       const resultLabel = !hasScore ? "Score indisponible" : isDraw ? "Match nul" : selectedHomeWon
         ? `Victoire ${match.equipe_domicile}`
         : `Victoire ${match.equipe_visiteur}`;
+      const home = item.home || "Équipe à confirmer";
+      const away = item.away || "Équipe à confirmer";
       return `<li class="match-history-card ${resultClass}">
         <div class="match-history-meta"><time>${escapeHtml(date)}</time>${item.competition ? `<span>${escapeHtml(item.competition)}</span>` : ""}</div>
-        <div class="match-history-scoreline"><strong>${escapeHtml(item.home || "Équipe à confirmer")}</strong><span class="match-history-score">${hasScore ? `${escapeHtml(item.home_score)} <i>–</i> ${escapeHtml(item.away_score)}` : "– : –"}</span><strong>${escapeHtml(item.away || "Équipe à confirmer")}</strong></div>
+        <div class="match-history-scoreline"><strong>${historyTeamMark(home)}<span>${escapeHtml(home)}</span></strong><span class="match-history-score">${hasScore ? `${escapeHtml(item.home_score)} <i>–</i> ${escapeHtml(item.away_score)}` : "– : –"}</span><strong><span>${escapeHtml(away)}</span>${historyTeamMark(away)}</strong></div>
         <span class="match-history-outcome">${escapeHtml(resultLabel)}</span>
       </li>`;
     }).join("")
@@ -728,16 +783,18 @@ export const mountResults = (root, competitionPage = null) => {
       { label: "Matchs nuls", count: toCount(summary.draws), className: "is-draw" },
       { label: `Victoires ${match.equipe_visiteur}`, count: toCount(summary.away_wins), className: "is-away" }
     ];
+    const homeWins = metrics[0].count;
+    const draws = metrics[1].count;
+    const awayWins = metrics[2].count;
     return `<div class="match-history-overview">
-      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE FACE-À-FACE</span><h4>Bilan face-à-face</h4></div><div class="match-history-total"><strong>${played}</strong><span>${plural(played, "match recensé", "matchs recensés")}</span></div></div>
-      <div class="match-history-chart" aria-label="Répartition des résultats sur ${played} confrontations">
-        ${metrics.map(({ label, count, className }) => {
-          const percentage = Math.round(Math.max(0, Math.min(played, count)) / played * 100);
-          return `<div class="match-history-meter ${className}">
-            <div class="match-history-meter-label"><span>${escapeHtml(label)}</span><strong>${count} <small>${percentage}%</small></strong></div>
-            <div class="match-history-meter-track" aria-hidden="true"><span style="width:${percentage}%"></span></div>
-          </div>`;
-        }).join("")}
+      <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE FACE-À-FACE</span><h4>Historique des matchs</h4><span class="match-history-total">${plural(played, "match", "matchs")}</span></div></div>
+      <div class="match-history-score-summary">
+        <div><strong>${escapeHtml(match.equipe_domicile)}</strong><span>${homeWins} victoire${homeWins > 1 ? "s" : ""}</span></div>
+        <div class="match-history-draw-count"><strong>${draws}</strong><span>Matchs nuls</span></div>
+        <div><strong>${escapeHtml(match.equipe_visiteur)}</strong><span>${awayWins} victoire${awayWins > 1 ? "s" : ""}</span></div>
+      </div>
+      <div class="match-history-comparison" role="img" aria-label="${homeWins} victoire(s) ${match.equipe_domicile}, ${draws} match(s) nul(s), ${awayWins} victoire(s) ${match.equipe_visiteur}">
+        <span class="is-home" style="flex-grow:${homeWins}"></span><span class="is-draw" style="flex-grow:${draws}"></span><span class="is-away" style="flex-grow:${awayWins}"></span>
       </div>
       <p class="match-history-source">Les ${details.history.length} confrontations les plus récentes sont affichées.</p>
       ${historySourceNote}
@@ -980,8 +1037,8 @@ export const mountResults = (root, competitionPage = null) => {
       : `<li class="match-detail-empty">${match.statut === "upcoming" ? "Le match n’a pas encore commencé." : "Les événements chronologiques ne sont pas disponibles pour ce match."}</li>`;
     const scorers = details.scorers.length ? details.scorers : match.buteurs;
     renderScorers(match, scorers, details.scorers_status);
-    detailModal.querySelector("#matchDetailHomeLineup").innerHTML = renderLineup(details.lineups?.home);
-    detailModal.querySelector("#matchDetailAwayLineup").innerHTML = renderLineup(details.lineups?.away);
+    detailModal.querySelector("#matchDetailHomeLineup").innerHTML = renderLineup(details.lineups?.home, events, match.equipe_domicile);
+    detailModal.querySelector("#matchDetailAwayLineup").innerHTML = renderLineup(details.lineups?.away, events, match.equipe_visiteur);
     detailModal.querySelector("#matchDetailHistorySummary").innerHTML = renderHistorySummary(details.history_summary, match, details);
     detailModal.querySelector("#matchDetailHistory").innerHTML = renderHistory(details.history, match);
     const standingsPanel = detailModal.querySelector("#matchDetailStandings");
@@ -1007,9 +1064,10 @@ export const mountResults = (root, competitionPage = null) => {
       setDetailRank(awayRank, null, 0);
     }
     const warning = detailModal.querySelector("#matchDetailApiNotice");
-    warning.hidden = !details.warnings?.length;
-    warning.textContent = details.warnings?.length
-      ? `Informations indisponibles auprès du fournisseur : ${details.warnings.map((key) => ({
+    const visibleWarnings = (details.warnings || []).filter((key) => key !== "api-football-fallback");
+    warning.hidden = !visibleWarnings.length;
+    warning.textContent = visibleWarnings.length
+      ? `Informations indisponibles auprès du fournisseur : ${visibleWarnings.map((key) => ({
         events: "événements",
         lineups: "compositions",
         "head-to-head": "confrontations",

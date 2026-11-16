@@ -127,7 +127,9 @@ const tvThumbnail = (item) => {
   const hls = safeImageUrl(item.hls_url);
   return hls && /\/manifest\/video\.m3u8$/i.test(hls)
     ? hls.replace(/\/manifest\/video\.m3u8$/i, "/thumbnails/thumbnail.jpg?height=360")
-    : youtubeThumbnail(item.video_url);
+    : youtubeThumbnail(item.type === "direct" && item.statut === "termine"
+      ? item.replay_url || item.video_url
+      : item.video_url);
 };
 
 const PENDING_TV_KEY = "masano-tv-pending-content-id";
@@ -339,24 +341,53 @@ const loadHls = () => {
 export const mountTv = (root) => {
   let contents = [];
   let selectedId = "";
-  let activeContentType = "direct";
+  let pinnedLiveId = "";
   let activeSport = "Toutes";
-  let player = null;
-  let hls = null;
-  let retryTimer = null;
+  let activeLibraryPage = "";
+  const players = new Map();
+  const retryTimers = new Map();
   let active = true;
+  let carouselTimer = null;
+  const replaySources = [fetchMatchsLocaux, fetchMatchsEpfKin, fetchMatchsInternationaux, fetchMatchsLeopards];
 
-  const stopPlayer = () => {
-    clearTimeout(retryTimer);
-    retryTimer = null;
-    hls?.destroy();
-    hls = null;
-    if (player) {
-      player.pause?.();
-      player.removeAttribute("src");
-      player.load?.();
-      player = null;
-    }
+  const stopCarousel = () => {
+    clearInterval(carouselTimer);
+    carouselTimer = null;
+  };
+
+  const startCarousel = () => {
+    stopCarousel();
+    const track = root.querySelector("#tvRecentTrack");
+    if (!active || document.hidden || !track || track.children.length < 2
+      || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    carouselTimer = window.setInterval(() => {
+      if (document.hidden || root.querySelector(".tv-playback-dialog[open]")) return;
+      const slides = [...track.children];
+      const firstOffset = slides[0].offsetLeft;
+      const offsets = slides.map((slide) => slide.offsetLeft - firstOffset);
+      const currentIndex = offsets.reduce((nearest, offset, index) =>
+        Math.abs(offset - track.scrollLeft) < Math.abs(offsets[nearest] - track.scrollLeft) ? index : nearest, 0);
+      const nextIndex = (currentIndex + 1) % slides.length;
+      track.scrollTo({ left: offsets[nextIndex], behavior: "smooth" });
+    }, 5000);
+  };
+
+  const handleCarouselVisibility = () => {
+    if (document.hidden) stopCarousel();
+    else startCarousel();
+  };
+  document.addEventListener("visibilitychange", handleCarouselVisibility);
+
+  const stopPlayers = (container = root) => {
+    container.querySelectorAll(".tv-player-video").forEach((video) => {
+      clearTimeout(retryTimers.get(video));
+      retryTimers.delete(video);
+      players.get(video)?.destroy();
+      players.delete(video);
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    });
   };
 
   const playerMarkup = (content) => {
@@ -379,152 +410,310 @@ export const mountTv = (root) => {
     return `<div class="tv-player-empty"><span aria-hidden="true">▶</span><p>Cette vidéo ne peut pas être lue dans le lecteur TV. Utilisez un lien Google Drive ouvert à tous, YouTube, HLS ou un fichier MP4.</p></div>`;
   };
 
-  const cardMarkup = (content) => `<button type="button" class="tv-content-card${content.id === selectedId ? " is-selected" : ""}" data-tv-id="${escapeHtml(content.id)}">
+  const cardMarkup = (content, featured = false, libraryIndex = -1, showAll = false) => {
+    const libraryAttributes = libraryIndex < 0 ? "" : ` data-tv-library-card data-tv-search="${escapeHtml([
+      content.titre, content.description, content.emission_nom, content.sport, content.competition,
+      content.statut, content.debut, content.created_at
+    ].filter(Boolean).join(" "))}"`;
+    return `<button type="button" class="tv-content-card${featured ? " is-featured-card" : ""}" data-tv-id="${escapeHtml(content.id)}"${libraryAttributes}${libraryIndex >= 5 && !showAll ? " hidden" : ""}>
     ${tvThumbnail(content)
       ? `<img src="${escapeHtml(tvThumbnail(content))}" alt="" loading="lazy">`
       : `<span class="tv-card-placeholder" aria-hidden="true">▶</span>`}
     <span class="tv-card-copy">
-      <small>${content.type === "direct" && content.statut === "en_direct" ? `<span class="tv-live-label">● EN DIRECT</span>` : escapeHtml(statusLabel(content.statut))}${content.debut ? ` · ${escapeHtml(formatDate(content.debut))}` : ""}</small>
+      <small>${escapeHtml(content.emission_nom || (content.type === "resume" || content.type === "recap" ? "Résumé du match" : statusLabel(content.statut)))}${content.debut ? ` · ${escapeHtml(formatDate(content.debut))}` : ""}</small>
       <strong>${escapeHtml(content.titre)}</strong>
-      ${content.emission_nom ? `<span>${escapeHtml(content.emission_nom)}</span>` : ""}
+      ${content.match_id ? `<span>${escapeHtml(content.competition || "Rencontre liée")}</span>` : content.emission_nom ? `<span>${escapeHtml(content.emission_nom)}</span>` : ""}
     </span>
   </button>`;
+  };
 
-  const sectionMarkup = (title, items) => items.length
-    ? `<section class="tv-library-section"><h2>${escapeHtml(title)}</h2><div class="tv-content-grid">${items.map(cardMarkup).join("")}</div></section>`
+  const sectionMarkup = (title, items, dedicated = false) => items.length
+    ? `<section class="tv-library-section">
+        <header class="tv-library-heading"><h2>${escapeHtml(title)}</h2>${items.length > 5 ? dedicated
+          ? '<button type="button" class="tv-library-more" data-tv-open-library="recaps" aria-label="Afficher tous les résumés">Plus…</button>'
+          : '<button type="button" class="tv-library-more" data-tv-expand aria-expanded="false">Plus…</button>' : ""}</header>
+        ${items.length > 5 && !dedicated ? `<label class="tv-library-search" hidden><span class="visually-hidden">Rechercher dans ${escapeHtml(title)}</span><input type="search" data-tv-library-search placeholder="Rechercher…" aria-label="Rechercher dans ${escapeHtml(title)}"></label>` : ""}
+        <div class="tv-content-grid">${items.map((item, index) => cardMarkup(item, false, index)).join("")}<p class="tv-library-empty" role="status" hidden>Aucun contenu ne correspond à cette recherche.</p></div>
+      </section>`
     : "";
 
-  const initializePlayer = async () => {
-    const video = root.querySelector("[data-tv-hls]");
-    if (!video) return;
-    player = video;
-    const source = video.dataset.tvHls;
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = source;
-      return;
-    }
-    try {
-      const Hls = await loadHls();
-      if (!active || player !== video) return;
-      if (!Hls?.isSupported()) throw new Error("Ce navigateur ne prend pas en charge la lecture HLS.");
-      hls = new Hls();
-      hls.loadSource(source);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        const message = root.querySelector("#tvPlayerMessage");
-        if (message) message.textContent = "";
+  const libraryPageMarkup = (title, items) => `<section class="tv-library-page" aria-labelledby="tvLibraryPageTitle">
+    <button type="button" class="tv-library-page-back" data-tv-library-back><span aria-hidden="true">←</span> Retour à Masano TV</button>
+    <header class="tv-library-page-heading">
+      <p class="tv-eyebrow">MASANO TV · VIDÉOTHÈQUE</p>
+      <h1 id="tvLibraryPageTitle">${escapeHtml(title)}</h1>
+      <p>${items.length} résumé${items.length === 1 ? "" : "s"} disponible${items.length === 1 ? "" : "s"}</p>
+    </header>
+    <label class="tv-library-search tv-library-page-search"><span class="visually-hidden">Rechercher dans les résumés</span><input type="search" data-tv-page-search placeholder="Rechercher un match…" aria-label="Rechercher dans les résumés"></label>
+    <div class="tv-content-grid">${items.map((item, index) => cardMarkup(item, false, index, true)).join("")}<p class="tv-library-empty" data-tv-page-empty role="status" hidden>Aucun résumé ne correspond à cette recherche.</p></div>
+  </section>`;
+
+  const bindLibraryControls = () => {
+    root.querySelectorAll(".tv-library-section").forEach((section) => {
+      const button = section.querySelector("[data-tv-expand]");
+      const search = section.querySelector("[data-tv-library-search]");
+      const cards = [...section.querySelectorAll("[data-tv-library-card]")];
+      const empty = section.querySelector(".tv-library-empty");
+      if (!button || !search) return;
+      const filterCards = () => {
+        const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr-FR").trim();
+        const query = normalize(search.value);
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        let visibleCount = 0;
+        cards.forEach((card, index) => {
+          const matches = !query || normalize(card.dataset.tvSearch).includes(query);
+          card.hidden = !matches || (!expanded && index >= 5);
+          if (!card.hidden) visibleCount += 1;
+        });
+        empty.hidden = visibleCount > 0;
+      };
+      button.addEventListener("click", () => {
+        const expanded = button.getAttribute("aria-expanded") !== "true";
+        button.setAttribute("aria-expanded", String(expanded));
+        button.textContent = expanded ? "Moins" : "Plus…";
+        search.closest(".tv-library-search").hidden = !expanded;
+        if (!expanded) search.value = "";
+        filterCards();
+        if (expanded) search.focus();
       });
-      hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (!data.fatal) return;
-        const message = root.querySelector("#tvPlayerMessage");
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-          // Le signal OBS n'est pas encore arrivé : on réessaie toutes les 5 s sans recharger la page.
-          if (message) message.textContent = "En attente du signal du direct… la lecture démarrera automatiquement.";
-          clearTimeout(retryTimer);
-          const current = hls;
-          retryTimer = setTimeout(() => { if (active && hls === current) current.loadSource(source); }, 5000);
-          return;
-        }
-        if (message) message.textContent = "Le flux vidéo est momentanément indisponible.";
-      });
-    } catch (error) {
-      console.error("Impossible de démarrer le lecteur HLS.", error);
-      const message = root.querySelector("#tvPlayerMessage");
-      if (message) message.textContent = error.message;
-    }
+      search.addEventListener("input", filterCards);
+    });
+  };
+
+  const initializePlayers = async (container = root) => {
+    const videos = [...container.querySelectorAll("[data-tv-hls]")].filter((video) => !players.has(video));
+    await Promise.all(videos.map(async (video) => {
+      players.set(video, null);
+      const source = video.dataset.tvHls;
+      if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = source;
+        return;
+      }
+      try {
+        const Hls = await loadHls();
+        if (!active || !players.has(video) || !video.isConnected) return;
+        if (!Hls?.isSupported()) throw new Error("Ce navigateur ne prend pas en charge la lecture HLS.");
+        const hls = new Hls();
+        players.set(video, hls);
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.ERROR, (_event, data) => {
+          if (!data.fatal) return;
+          const message = video.closest(".tv-live-feature, .tv-playback-dialog")?.querySelector(".tv-player-message");
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            if (message) message.textContent = "En attente du signal vidéo… la lecture démarrera automatiquement.";
+            clearTimeout(retryTimers.get(video));
+            retryTimers.set(video, setTimeout(() => {
+              if (active && players.get(video) === hls) hls.loadSource(source);
+            }, 5000));
+            return;
+          }
+          if (message) message.textContent = "Le flux vidéo est momentanément indisponible.";
+        });
+      } catch (error) {
+        console.error("Impossible de démarrer le lecteur HLS.", error);
+        const message = video.closest(".tv-live-feature, .tv-playback-dialog")?.querySelector(".tv-player-message");
+        if (message) message.textContent = error.message;
+      }
+    }));
   };
 
   const render = () => {
-    const typeContents = contents.filter((item) => activeContentType === "matchs"
-      ? ["resume", "recap"].includes(item.type)
-      : item.type === activeContentType);
-    const visibleContents = activeSport === "Toutes"
-      ? typeContents
-      : typeContents.filter((item) => item.sport?.toLowerCase().includes(activeSport.toLowerCase()));
-    const live = visibleContents.filter((item) => item.type === "direct" && item.statut === "en_direct");
-    const selected = visibleContents.find((item) => item.id === selectedId) || live[0] || visibleContents[0] || null;
-    selectedId = selected?.id || "";
-    const source = selected ? mediaSource(selected) : { type: "none" };
-    const title = selected?.titre || (live.length ? "En direct" : "Masano TV");
-    root.innerHTML = `<nav class="pwa-tv-type-nav" aria-label="Catégories TV">
-      ${[["direct","Direct"],["recap","Récaps"],["matchs","Matchs"],["emission","Émissions"]].map(([value,label]) => `<button type="button" class="${activeContentType === value ? "is-active" : ""}" data-tv-type="${value}" aria-pressed="${activeContentType === value}">${label}</button>`).join("")}
-    </nav>
-    <nav class="pwa-tv-sport-nav" aria-label="Filtrer par sport">
-      ${["Toutes","Football","Basketball","Judo"].map((sport) => `<button type="button" class="${activeSport === sport ? "is-active" : ""}" data-tv-sport="${sport}" aria-pressed="${activeSport === sport}">${sport}</button>`).join("")}
-    </nav>
-    <header class="tv-page-header">
-      <p class="tv-eyebrow">Masano243 · Chaîne sportive</p>
-      <h1>MASANO <span>TV</span></h1>
-      <p>Les directs, émissions et temps forts du sport congolais.</p>
+    stopCarousel();
+    stopPlayers();
+    const matchesSport = (item) => activeSport === "Toutes"
+      || item.sport?.toLowerCase().includes(activeSport.toLowerCase());
+    const liveItems = contents.filter((item) => item.type === "direct" && item.statut === "en_direct").sort((first, second) =>
+      new Date(second.debut || second.created_at || 0) - new Date(first.debut || first.created_at || 0)
+    );
+    const live = liveItems.find((item) => String(item.id) === String(pinnedLiveId)) || liveItems[0] || null;
+    const visible = contents.filter(matchesSport);
+    const recent = visible.filter((item) => !(item.type === "direct" && item.statut !== "termine")
+      && mediaSource(item).type !== "none")
+      .sort((first, second) => new Date(second.debut || second.created_at || 0) - new Date(first.debut || first.created_at || 0))
+      .slice(0, 3);
+    const recaps = visible.filter((item) => ["resume", "recap"].includes(item.type)
+      || (item.type === "direct" && item.statut === "termine" && (item.match_id || item.replay_url)));
+    const emissions = visible.filter((item) => item.type === "emission");
+    const upcoming = visible.filter((item) => item.type === "direct" && item.statut === "programme");
+    const otherVideos = visible.filter((item) => !["direct", "resume", "recap", "emission"].includes(item.type)
+      || (item.type === "direct" && item.statut === "termine" && !recaps.includes(item)));
+    const allRecaps = contents.filter((item) => ["resume", "recap"].includes(item.type)
+      || (item.type === "direct" && item.statut === "termine" && (item.match_id || item.replay_url)));
+    const liveSource = live ? mediaSource(live) : { type: "none" };
+    const recentMarkup = recent.length
+      ? `<section class="tv-featured-section" aria-labelledby="tvRecentTitle">
+          <div class="tv-section-heading"><h2 id="tvRecentTitle">À la une</h2><span>Les 3 dernières vidéos</span></div>
+          <div class="tv-carousel">
+            <button type="button" class="tv-carousel-arrow" data-carousel-move="-1" aria-label="Faire défiler vers la gauche">‹</button>
+            <div class="tv-carousel-track" id="tvRecentTrack" role="list">${recent.map((item) => `<div role="listitem">${cardMarkup(item, true)}</div>`).join("")}</div>
+            <button type="button" class="tv-carousel-arrow" data-carousel-move="1" aria-label="Faire défiler vers la droite">›</button>
+          </div>
+          <div class="tv-carousel-dots" aria-label="3 dernières vidéos">${recent.map((item, index) => `<button type="button" data-carousel-dot="${index}" aria-label="Afficher ${escapeHtml(item.titre)}"${index === 0 ? ' aria-current="true"' : ""}></button>`).join("")}</div>
+        </section>`
+      : `<p class="tv-empty">Aucune vidéo récente n’est disponible pour le moment.</p>`;
+    const selectedContent = contents.find((item) => String(item.id) === String(selectedId));
+    const mainMarkup = activeLibraryPage === "recaps"
+      ? libraryPageMarkup("Résumés des matchs", allRecaps)
+      : `<header class="tv-page-header">
+      <p class="tv-eyebrow">MASANO243 · SPORT EN DIRECT</p>
+      <h1>Masano <span>TV</span></h1>
+      <p>Matchs, résumés et émissions à regarder.</p>
     </header>
-    <section class="tv-feature" aria-label="Lecteur Masano TV">
-      <div class="tv-player">
-        ${playerMarkup(selected)}
-        ${selected ? `<div class="pwa-tv-player-overlay">
-          ${selected.type === "direct" && selected.statut === "en_direct" ? `<span class="pwa-tv-player-live">● EN DIRECT</span>` : ""}
-          <span>${escapeHtml(selected.emission_nom || selected.competition || "Masano TV")}</span>
-          <button type="button" data-tv-fullscreen>⛶ Plein écran</button>
-        </div>` : ""}
+    ${live ? `<section class="tv-live-feature" aria-label="Direct en cours">
+      <div class="tv-live-feature-heading"><span class="tv-live-label"><i></i> EN DIRECT</span><span>${escapeHtml([live.sport, live.competition].filter(Boolean).join(" · ") || "Masano TV")}</span></div>
+      <div class="tv-player tv-live-player" data-tv-player-shell>
+        ${playerMarkup(live)}
+        <div class="pwa-tv-player-overlay"><span class="pwa-tv-player-live">● EN DIRECT</span><button type="button" data-tv-fullscreen>⛶ Plein écran</button></div>
       </div>
-      <div class="tv-feature-info">
-        <div>${selected?.type === "direct" && selected.statut === "en_direct" ? `<span class="tv-live-label">● EN DIRECT</span>` : `<span class="tv-content-type">${escapeHtml(selected?.emission_nom || (selected ? statusLabel(selected.statut) : "CHAÎNE TV"))}</span>`}</div>
-        <h2>${escapeHtml(title)}</h2>
-        ${selected?.description ? `<p>${escapeHtml(selected.description)}</p>` : ""}
-        ${selected?.sport || selected?.competition ? `<small>${escapeHtml([selected.sport, selected.competition].filter(Boolean).join(" · "))}</small>` : ""}
+      <div class="tv-feature-info"><h2>${escapeHtml(live.titre)}</h2>${live.description ? `<p>${escapeHtml(live.description)}</p>` : ""}</div>
+      ${liveSource.type === "hls" ? `<p class="tv-player-message" role="status"></p>` : ""}
+    </section>` : ""}
+    <nav class="pwa-tv-sport-nav" aria-label="Filtrer par sport">
+      ${["Toutes", "Football", "Basketball", "Judo"].map((sport) => `<button type="button" class="${activeSport === sport ? "is-active" : ""}" data-tv-sport="${sport}" aria-pressed="${activeSport === sport}">${sport}</button>`).join("")}
+    </nav>
+    ${recentMarkup}
+    ${sectionMarkup("Résumés des matchs", recaps, true)}
+    ${sectionMarkup("Émissions", emissions)}
+    ${sectionMarkup("Prochains directs", upcoming)}
+    ${sectionMarkup("Autres vidéos", otherVideos)}`;
+    root.innerHTML = `${mainMarkup}
+    <dialog class="tv-playback-dialog" aria-labelledby="tvPlaybackTitle"${selectedContent ? " open" : ""}>
+      <div class="tv-playback-dialog-inner">
+        <button type="button" class="tv-playback-close" data-tv-close aria-label="Fermer la vidéo">×</button>
+        <div class="tv-player" data-tv-player-shell>${selectedContent ? playerMarkup(selectedContent) : ""}</div>
+        <div class="tv-feature-info">
+          <small>${escapeHtml(selectedContent?.competition || selectedContent?.emission_nom || "Masano TV")}</small>
+          <h2 id="tvPlaybackTitle">${escapeHtml(selectedContent?.titre || "Lecture vidéo")}</h2>
+          ${selectedContent?.description ? `<p>${escapeHtml(selectedContent.description)}</p>` : ""}
+          <button type="button" class="tv-playback-fullscreen" data-tv-fullscreen>⛶ Plein écran</button>
+          <p class="tv-player-message" role="status"></p>
+        </div>
       </div>
-    </section>
-    ${sectionMarkup(activeContentType === "matchs" ? "Résumés et récapitulatifs" : activeContentType === "direct" ? "Directs et programmes" : activeContentType === "emission" ? "Émissions" : "Récaps", visibleContents)}
-    ${visibleContents.length ? "" : `<p class="tv-empty">Aucun contenu disponible dans cette rubrique pour le moment.</p>`}
-    ${source.type === "hls" ? `<p class="tv-player-message" id="tvPlayerMessage" role="status"></p>` : ""}`;
-    root.querySelectorAll("[data-tv-type]").forEach((button) => {
-      button.addEventListener("click", () => {
-        activeContentType = button.dataset.tvType;
-        selectedId = "";
-        stopPlayer();
-        render();
+    </dialog>`;
+    bindLibraryControls();
+    root.querySelector("[data-tv-library-back]")?.addEventListener("click", () => {
+      activeLibraryPage = "";
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    root.querySelector("[data-tv-open-library='recaps']")?.addEventListener("click", () => {
+      activeLibraryPage = "recaps";
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    const pageSearch = root.querySelector("[data-tv-page-search]");
+    pageSearch?.addEventListener("input", () => {
+      const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr-FR").trim();
+      const query = normalize(pageSearch.value);
+      const cards = [...root.querySelectorAll("[data-tv-library-card]")];
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        card.hidden = !normalize(card.dataset.tvSearch).includes(query);
+        if (!card.hidden) visibleCount += 1;
       });
+      const empty = root.querySelector("[data-tv-page-empty]");
+      if (empty) empty.hidden = visibleCount > 0;
     });
     root.querySelectorAll("[data-tv-sport]").forEach((button) => {
       button.addEventListener("click", () => {
         activeSport = button.dataset.tvSport;
         selectedId = "";
-        stopPlayer();
         render();
       });
     });
-    root.querySelector("[data-tv-fullscreen]")?.addEventListener("click", async () => {
-      const media = root.querySelector(".tv-player iframe, .tv-player video") || root.querySelector(".tv-player");
+    root.querySelectorAll("[data-tv-fullscreen]").forEach((button) => button.addEventListener("click", async () => {
+      const shell = button.closest("[data-tv-player-shell]");
+      const media = shell?.querySelector("iframe, video") || shell;
       try {
         if (document.fullscreenElement) await document.exitFullscreen();
-        else await media.requestFullscreen();
+        else await media?.requestFullscreen();
       } catch (error) {
         console.error("Impossible d’ouvrir Masano TV en plein écran.", error);
       }
-    });
-    root.querySelectorAll("[data-tv-id]").forEach((button) => {
-      button.addEventListener("click", () => {
-        selectedId = button.dataset.tvId;
-        stopPlayer();
-        render();
-        root.querySelector(".tv-feature")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
+    root.querySelectorAll("[data-tv-id]").forEach((button) => button.addEventListener("click", () => {
+      const content = contents.find((item) => String(item.id) === button.dataset.tvId);
+      if (!content) return;
+      selectedId = String(content.id);
+      const dialog = root.querySelector(".tv-playback-dialog");
+      const body = dialog.querySelector(".tv-playback-dialog-inner");
+      body.innerHTML = `<button type="button" class="tv-playback-close" data-tv-close aria-label="Fermer la vidéo">×</button>
+        <div class="tv-player" data-tv-player-shell>${playerMarkup(content)}</div>
+        <div class="tv-feature-info"><small>${escapeHtml(content.competition || content.emission_nom || "Masano TV")}</small><h2 id="tvPlaybackTitle">${escapeHtml(content.titre)}</h2>
+          ${content.description ? `<p>${escapeHtml(content.description)}</p>` : ""}<button type="button" class="tv-playback-fullscreen" data-tv-fullscreen>⛶ Plein écran</button><p class="tv-player-message" role="status"></p></div>`;
+      dialog.showModal();
+      body.querySelector("[data-tv-close]").addEventListener("click", () => dialog.close());
+      body.querySelector("[data-tv-fullscreen]").addEventListener("click", async (event) => {
+        const shell = event.currentTarget.closest("[data-tv-player-shell]");
+        const media = shell?.querySelector("iframe, video") || shell;
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else await media?.requestFullscreen();
+        } catch (error) {
+          console.error("Impossible d’ouvrir la vidéo Masano TV en plein écran.", error);
+        }
       });
+      void initializePlayers(body);
+    }));
+    const dialog = root.querySelector(".tv-playback-dialog");
+    dialog.querySelector("[data-tv-close]")?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("close", () => {
+      stopPlayers(dialog);
+      dialog.querySelectorAll("iframe").forEach((frame) => frame.setAttribute("src", "about:blank"));
+      selectedId = "";
     });
-    void initializePlayer();
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    root.querySelectorAll("[data-carousel-move]").forEach((button) => button.addEventListener("click", () => {
+      const track = root.querySelector("#tvRecentTrack");
+      const firstCard = track?.firstElementChild;
+      const step = firstCard ? firstCard.getBoundingClientRect().width + 14 : 240;
+      track?.scrollBy({ left: Number(button.dataset.carouselMove) * step, behavior: "smooth" });
+    }));
+    root.querySelectorAll("[data-carousel-dot]").forEach((button) => button.addEventListener("click", () => {
+      const card = root.querySelectorAll("#tvRecentTrack > div")[Number(button.dataset.carouselDot)];
+      card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }));
+    const track = root.querySelector("#tvRecentTrack");
+    track?.addEventListener("scroll", () => {
+      const cards = [...track.children];
+      const index = cards.reduce((nearest, card, candidate) =>
+        Math.abs(card.offsetLeft - track.scrollLeft) < Math.abs(cards[nearest].offsetLeft - track.scrollLeft) ? candidate : nearest, 0);
+      root.querySelectorAll("[data-carousel-dot]").forEach((dot, dotIndex) => {
+        if (dotIndex === index) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      });
+    }, { passive: true });
+    const carouselSection = root.querySelector(".tv-featured-section");
+    carouselSection?.addEventListener("mouseenter", stopCarousel);
+    carouselSection?.addEventListener("mouseleave", startCarousel);
+    carouselSection?.addEventListener("focusin", stopCarousel);
+    carouselSection?.addEventListener("focusout", (event) => {
+      if (!carouselSection.contains(event.relatedTarget)) startCarousel();
+    });
+    startCarousel();
+    void initializePlayers();
   };
 
   const loadContents = async () => {
-    stopPlayer();
+    stopPlayers();
     if (!supabase) {
       root.innerHTML = `<p class="tv-empty">La connexion à la télévision n’est pas configurée.</p>`;
       return;
     }
     root.innerHTML = `<p class="tv-empty">Chargement des programmes TV…</p>`;
-    const { data, error } = await supabase
-      .from("tv_contenus")
-      .select("id,type,titre,description,emission_nom,sport,competition,statut,debut,fin,video_url,miniature_url,hls_url,replay_url,publie,created_at")
-      .eq("publie", true)
-      .order("debut", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false });
+    const [contentResult, replayResults] = await Promise.all([
+      supabase
+        .from("tv_contenus")
+        .select("id,type,titre,description,emission_nom,sport,competition,statut,debut,fin,video_url,miniature_url,hls_url,replay_url,match_id,publie,created_at")
+        .eq("publie", true)
+        .order("debut", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false }),
+      Promise.allSettled(replaySources.map((fetchMatches) => fetchMatches()))
+    ]);
+    const { data, error } = contentResult;
     if (!active) return;
     if (error) {
       console.error("Impossible de charger Masano TV.", error);
@@ -534,7 +723,25 @@ export const mountTv = (root) => {
       root.innerHTML = `<p class="tv-empty">${escapeHtml(message)}</p>`;
       return;
     }
-    contents = data || [];
+    const tvContents = data || [];
+    const linkedMatchIds = new Set(tvContents.map((item) => String(item.match_id || "")).filter(Boolean));
+    const matchReplays = replayResults.flatMap((result) => result.status === "fulfilled" ? result.value : [])
+      .filter((match) => match.resume_video_url && !linkedMatchIds.has(String(match.id)))
+      .map((match) => ({
+        id: `match-replay-${match.source || "match"}-${match.id}`,
+        type: "resume",
+        titre: `${match.equipe_domicile} – ${match.equipe_visiteur}`,
+        description: "Résumé vidéo de la rencontre",
+        sport: match.sport || "Football",
+        competition: match.competition || "Football",
+        statut: "termine",
+        debut: match.date_match || null,
+        video_url: match.resume_video_url,
+        miniature_url: match.resume_video_thumbnail || null,
+        match_id: String(match.id),
+        publie: true
+      }));
+    contents = [...tvContents, ...matchReplays];
     let pendingContentId = "";
     try {
       pendingContentId = sessionStorage.getItem("masano-tv-pending-content-id") || "";
@@ -544,9 +751,8 @@ export const mountTv = (root) => {
     if (pendingContentId) {
       const pendingContent = contents.find((item) => item.id === pendingContentId && item.type === "direct");
       if (pendingContent) {
-        activeContentType = "direct";
         activeSport = "Toutes";
-        selectedId = pendingContent.id;
+        pinnedLiveId = String(pendingContent.id);
       } else {
         console.error("Le direct Masano TV demandé n’est plus disponible.", pendingContentId);
       }
@@ -568,7 +774,9 @@ export const mountTv = (root) => {
 
   return () => {
     active = false;
-    stopPlayer();
+    stopCarousel();
+    document.removeEventListener("visibilitychange", handleCarouselVisibility);
+    stopPlayers();
     if (channel) void supabase.removeChannel(channel);
   };
 };
