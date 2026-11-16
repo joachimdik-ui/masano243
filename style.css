@@ -1571,7 +1571,7 @@ body.has-player-modal { overflow: hidden; }
     color: #fff;
   }
   .pwa-app-brand { display: inline-flex; min-width: 0; align-items: center; gap: 9px; color: inherit; text-decoration: none; }
-  .pwa-app-logo { display: block; width: 36px; height: 36px; flex: 0 0 36px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
+  .pwa-app-logo { display: block; width: 44px; height: 44px; flex: 0 0 44px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
   .pwa-app-wordmark { color: #fff; font: 700 1.3rem/1 var(--font-text); letter-spacing: -.035em; text-decoration: none; }
   .pwa-app-header-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; }
   .pwa-app-account-toggle { display: grid; width: 40px; height: 40px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer; }
@@ -3799,8 +3799,23 @@ body.pwa-standalone .pwa-bottom-nav > a,
 body.pwa-standalone .pwa-bottom-nav > button { font-weight: 800; }
 
 body.pwa-standalone.is-home-root #pageSectionTitle { display: none; }
-body.pwa-standalone.is-home-root .home-rubrique-item { width: max-content; min-width: 76px; }
-body.pwa-standalone.is-home-root .home-rubrique-label { font-size: 1.5rem; }
+body.pwa-standalone.is-home-root .home-rubrique-rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 4px 0 6px;
+  overflow: hidden;
+  scroll-snap-type: none;
+}
+body.pwa-standalone.is-home-root .home-rubrique-item { width: 100%; min-width: 0; }
+body.pwa-standalone.is-home-root .home-rubrique-icon { width: 44px; height: 44px; }
+body.pwa-standalone.is-home-root .home-rubrique-icon svg { width: 20px; height: 20px; }
+body.pwa-standalone.is-home-root .home-rubrique-label {
+  font-size: 1.1rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 
 /* TV : direct épinglé, carrousel récent et rails de programmes */
 .container.has-tv-view .tv-view { padding-top: 20px; }
