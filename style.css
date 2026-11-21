@@ -71,22 +71,20 @@ body {
   height: 145px;
   flex: 0 0 145px;
   place-items: center;
+  overflow: hidden;
   border-radius: 50%;
   background: linear-gradient(135deg, #6824d7, #a45cf5);
-  color: #fff;
-  font-size: 7rem;
-  font-weight: 800;
-  letter-spacing: -.09em;
-  line-height: 1;
+  isolation: isolate;
 }
+.brand-mark img { display: block; width: 100%; height: 100%; filter: grayscale(1) invert(1) contrast(8); mix-blend-mode: screen; object-fit: contain; }
 .brand-wordmark { color: #6824d7; }
-.pwa-app-brand .brand-mark { width: 58px; height: 58px; flex-basis: 58px; font-size: 2.6rem; }
+.pwa-app-brand .brand-mark { width: 58px; height: 58px; flex-basis: 58px; }
 
 .brand-strong { font-weight: 400; }
 .brand-accent { color: var(--accent); transition: color var(--transition); }
 @media (max-width: 600px) {
   .brand { gap: 3px; font-size: clamp(1rem, 5.5vw, 2rem); }
-  .brand-mark { width: clamp(36px, 12.5vw, 55px); height: clamp(36px, 12.5vw, 55px); flex-basis: clamp(36px, 12.5vw, 55px); font-size: clamp(1.75rem, 8vw, 2.4rem); }
+  .brand-mark { width: clamp(36px, 12.5vw, 55px); height: clamp(36px, 12.5vw, 55px); flex-basis: clamp(36px, 12.5vw, 55px); }
 }
 
 .social-search-row {
