@@ -4,7 +4,7 @@
   --text: #1a1a1a;        
   --muted: #6c757d;       
   --border: #e9ecef;      
-  --accent: #42158f;
+  --accent: #6824d7;
   --font-title: 'Bebas Neue', sans-serif;
   --font-text: 'Montserrat', sans-serif;
   --transition: cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
@@ -73,10 +73,10 @@ body {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6824d7, #a45cf5);
+  background: #6824d7;
   isolation: isolate;
 }
-.brand-mark img { display: block; width: 100%; height: 100%; filter: grayscale(1) invert(1) contrast(8); mix-blend-mode: screen; object-fit: contain; }
+.brand-mark img { display: block; width: 90%; height: 90%; object-fit: contain; }
 .brand-wordmark { color: #6824d7; }
 .pwa-app-brand .brand-mark { width: 58px; height: 58px; flex-basis: 58px; }
 
@@ -150,7 +150,7 @@ body {
 .top-search-wrap input[type="search"]:focus { 
   outline: none; 
   border-color: var(--accent); 
-  box-shadow: 0 4px 25px rgba(66, 21, 143, 0.16);
+  box-shadow: 0 4px 25px rgba(104, 36, 215, 0.16);
 }
 
 /* --- BARRE DE NAVIGATION (DÉDIÉE AUX RUBRIQUES) --- */
@@ -854,7 +854,7 @@ body {
   border-radius: 18px;
   background: linear-gradient(115deg, #211044 0%, var(--accent) 65%, #6534b8 100%);
   color: #fff;
-  box-shadow: 0 16px 38px rgba(66, 21, 143, 0.18);
+  box-shadow: 0 16px 38px rgba(104, 36, 215, 0.18);
 }
 .live-center-eyebrow { margin: 0 0 5px; color: #d7c8f4; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; }
 .live-center-header h1 { margin: 0; font-family: var(--font-title); font-size: clamp(2.7rem, 6vw, 4.1rem); line-height: 0.95; letter-spacing: 0.03em; }
@@ -1569,7 +1569,7 @@ body.has-player-modal { overflow: hidden; }
 @media (max-width: 700px) {
   html:has(body.pwa-standalone) { overflow-x: clip; }
   body.pwa-standalone {
-    --pwa-purple: #42158f;
+    --pwa-purple: #6824d7;
     --pwa-deep-purple: #28104f;
     min-height: 100dvh;
     overflow-x: clip;
@@ -1692,7 +1692,7 @@ body.has-player-modal { overflow: hidden; }
   .pwa-home-live-score { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 8px; }
   .pwa-home-live-score strong { overflow: hidden; font-size: .76rem; text-overflow: ellipsis; white-space: nowrap; }
   .pwa-home-live-score strong:last-child { text-align: right; }
-  .pwa-home-live-score b { color: #42158f; font-size: .84rem; white-space: nowrap; }
+  .pwa-home-live-score b { color: #6824d7; font-size: .84rem; white-space: nowrap; }
   .pwa-home-live-details { color: #757985; font-size: .66rem; line-height: 1.4; }
   .pwa-home-live-more { justify-self: end; color: #7425d2; font-size: .72rem; font-weight: 700; text-decoration: none; }
   .pwa-tv-live-card { display: grid; gap: 5px; padding: 16px; border-radius: 16px; background: linear-gradient(115deg, #26104c, #642cc4); color: #fff; text-decoration: none; }
@@ -2405,7 +2405,7 @@ body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
   position: absolute; inset: 0 0 auto; height: 3px; content: "";
   background: linear-gradient(90deg, #e5223c, #ff6a3d);
 }
-.home-live-card.is-match:hover { border-color: #c9b8ea; box-shadow: 0 8px 20px rgba(66, 21, 143, .14); }
+.home-live-card.is-match:hover { border-color: #c9b8ea; box-shadow: 0 8px 20px rgba(104, 36, 215, .14); }
 .home-live-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .home-live-comp {
   overflow: hidden; color: var(--muted); font-size: .66rem; font-weight: 600;
@@ -2451,7 +2451,7 @@ body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
 }
 .home-live-play::before {
   width: 0; height: 0; margin-left: 3px; content: "";
-  border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid #42158f;
+  border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid #6824d7;
 }
 .home-live-card.is-tv strong {
   display: -webkit-box; overflow: hidden; font-size: .88rem; line-height: 1.3;
@@ -2589,7 +2589,7 @@ body:not(.pwa-standalone) .pwa-tv-preview-list { display: none; }
   --shadow-soft: 0 3px 12px rgba(42, 12, 99, 0.07);
   --shadow-lift: 0 16px 38px rgba(42, 12, 99, 0.14);
   --accent-soft: #efe8fb;
-  --accent-grad: linear-gradient(135deg, #6a2fd0 0%, #42158f 100%);
+  --accent-grad: linear-gradient(135deg, #6a2fd0 0%, #6824d7 100%);
   --space-1: 8px;
   --space-2: 14px;
   --space-3: 22px;
@@ -2628,7 +2628,7 @@ body { background: var(--bg); letter-spacing: 0.005em; }
   transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 .nav-left a:hover { background: var(--accent-soft); color: var(--accent); }
-.nav-left a.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 6px 16px rgba(66, 21, 143, 0.28); }
+.nav-left a.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 6px 16px rgba(104, 36, 215, 0.28); }
 .nav-row > .pwa-install-button { width: 44px; height: 44px; border-radius: 50%; box-shadow: var(--shadow-soft); }
 
 .section-nav-row {
@@ -2675,7 +2675,7 @@ body { background: var(--bg); letter-spacing: 0.005em; }
 .sport-chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sport-chip-count { min-width: 22px; padding: 2px 7px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); font-size: 0.7rem; text-align: center; }
 .sport-chip-count[hidden] { display: none; }
-.sport-chip.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 10px 24px rgba(66, 21, 143, 0.32); }
+.sport-chip.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 10px 24px rgba(104, 36, 215, 0.32); }
 .sport-chip.is-active .sport-chip-icon { background: rgba(255, 255, 255, 0.2); }
 .sport-chip.is-active .sport-chip-count { background: rgba(255, 255, 255, 0.24); color: #fff; }
 
@@ -2693,7 +2693,7 @@ body { background: var(--bg); letter-spacing: 0.005em; }
   font-size: 0.82rem; font-weight: 700;
 }
 .competition-filter:hover, .status-filter:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
-.competition-filter.is-active, .status-filter.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, 0.3); }
+.competition-filter.is-active, .status-filter.is-active { background: var(--accent-grad); color: #fff; box-shadow: 0 8px 20px rgba(104, 36, 215, 0.3); }
 .pill-count { min-width: 20px; padding: 1px 7px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); font-size: 0.68rem; line-height: 1.6; text-align: center; }
 .competition-filter.is-active .pill-count { background: rgba(255, 255, 255, 0.25); color: #fff; }
 .match-status-filters { margin-bottom: var(--space-2); }
@@ -2755,23 +2755,23 @@ body.pwa-standalone .match-list { gap: 14px; }
 
 /* =====================================================================
    APPLICATION — style « app de scores » clair (inspiration LiveScore)
-   Charte Masano243 : violet #42158f · Bebas Neue (titres) · Montserrat (texte)
+   Charte Masano243 : violet #6824d7 · Bebas Neue (titres) · Montserrat (texte)
    ===================================================================== */
 @media (max-width: 700px) {
   body.pwa-standalone {
-    --pwa-purple: #42158f;
+    --pwa-purple: #6824d7;
     --pwa-deep-purple: #1f0a45;
     --bg: #f4f2fa;
     --surface: #ffffff;
     --text: #1b1630;
     --muted: #7b7893;
-    --accent: #42158f;
+    --accent: #6824d7;
     background: linear-gradient(180deg, #ebe5f8 0, #f4f2fa 220px);
     color: var(--text);
   }
 
   /* En-tête violet arrondi en bas */
-  body.pwa-standalone .pwa-app-header { border-radius: 0 0 26px 26px; background: linear-gradient(135deg, #5b24b8 0%, #42158f 60%, #2a0c63 100%); box-shadow: 0 10px 26px rgba(42, 12, 99, .25); }
+  body.pwa-standalone .pwa-app-header { border-radius: 0 0 26px 26px; background: linear-gradient(135deg, #5b24b8 0%, #6824d7 60%, #2a0c63 100%); box-shadow: 0 10px 26px rgba(42, 12, 99, .25); }
   body.pwa-standalone .pwa-app-wordmark { font-family: var(--font-title); font-size: 1.7rem; font-weight: 400; letter-spacing: .06em; }
   body.pwa-standalone .pwa-app-header-actions button { border-radius: 50%; background: rgba(255, 255, 255, .16); color: #fff; }
 
@@ -2785,15 +2785,15 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .pwa-sport-nav a[aria-current="page"],
   body.pwa-standalone .competition-filter.is-active,
   body.pwa-standalone .status-filter.is-active {
-    background: linear-gradient(135deg, #6a2fd0, #42158f); color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, .32);
+    background: linear-gradient(135deg, #6a2fd0, #6824d7); color: #fff; box-shadow: 0 8px 20px rgba(104, 36, 215, .32);
   }
-  body.pwa-standalone .pill-count { background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .pill-count { background: #efe8fb; color: #6824d7; }
   body.pwa-standalone .competition-filter.is-active .pill-count { background: rgba(255,255,255,.25); color: #fff; }
 
   /* Sports (page Rencontres) */
   body.pwa-standalone .sport-chip { background: #fff; color: #1b1630; box-shadow: 0 3px 12px rgba(42, 12, 99, .08); }
-  body.pwa-standalone .sport-chip-icon, body.pwa-standalone .sport-chip-count { background: #efe8fb; color: #42158f; }
-  body.pwa-standalone .sport-chip.is-active { background: linear-gradient(135deg, #6a2fd0, #42158f); color: #fff; box-shadow: 0 8px 20px rgba(66, 21, 143, .32); }
+  body.pwa-standalone .sport-chip-icon, body.pwa-standalone .sport-chip-count { background: #efe8fb; color: #6824d7; }
+  body.pwa-standalone .sport-chip.is-active { background: linear-gradient(135deg, #6a2fd0, #6824d7); color: #fff; box-shadow: 0 8px 20px rgba(104, 36, 215, .32); }
   body.pwa-standalone .sport-chip.is-active .sport-chip-icon,
   body.pwa-standalone .sport-chip.is-active .sport-chip-count { background: rgba(255,255,255,.22); color: #fff; }
 
@@ -2803,7 +2803,7 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .results-tab,
   body.pwa-standalone .match-detail-tab { border: 0; border-radius: 999px; color: #7b7893; font-weight: 700; }
   body.pwa-standalone .results-tab.is-active,
-  body.pwa-standalone .match-detail-tab.is-active { background: linear-gradient(135deg, #6a2fd0, #42158f); color: #fff; border: 0; box-shadow: 0 6px 14px rgba(66, 21, 143, .3); }
+  body.pwa-standalone .match-detail-tab.is-active { background: linear-gradient(135deg, #6a2fd0, #6824d7); color: #fff; border: 0; box-shadow: 0 6px 14px rgba(104, 36, 215, .3); }
 
   /* Titres de section : « Matchs » + « Voir tout » */
   body.pwa-standalone .section-title,
@@ -2834,12 +2834,12 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .match-teams { grid-template-columns: minmax(0,1fr) 70px minmax(0,1fr); gap: 10px; }
   body.pwa-standalone .home-team { flex-direction: row-reverse; justify-content: flex-end; text-align: right; }
   body.pwa-standalone .away-team { justify-content: flex-start; text-align: left; }
-  body.pwa-standalone .team-mark { width: 34px; height: 34px; flex-basis: 34px; background: #f4f0fb; color: #42158f; }
+  body.pwa-standalone .team-mark { width: 34px; height: 34px; flex-basis: 34px; background: #f4f0fb; color: #6824d7; }
   body.pwa-standalone .match-team strong { color: #1b1630; font-size: .8rem; font-weight: 700; }
   body.pwa-standalone .match-kickoff { display: grid; gap: 1px; justify-items: center; color: #f08a24; line-height: 1.15; }
   body.pwa-standalone .match-kickoff .ko-time { font-size: .95rem; font-weight: 800; }
   body.pwa-standalone .match-kickoff .ko-date { color: #a5a1b8; font-size: .6rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
-  body.pwa-standalone .match-card .match-score { padding: 5px 12px; background: #efe8fb; color: #42158f; font-size: 1.1rem; font-weight: 800; }
+  body.pwa-standalone .match-card .match-score { padding: 5px 12px; background: #efe8fb; color: #6824d7; font-size: 1.1rem; font-weight: 800; }
   body.pwa-standalone .match-card.is-live { box-shadow: inset 4px 0 0 #f04452, 0 6px 20px rgba(42, 12, 99, .08); }
 
   /* Détail du match : bandeau violet + carte blanche flottante */
@@ -2856,19 +2856,19 @@ body.pwa-standalone .match-list { gap: 14px; }
   /* Barre du bas : pastille violette sur l'onglet actif */
   body.pwa-standalone .pwa-bottom-nav { border-radius: 24px 24px 0 0; background: #fff; box-shadow: 0 -8px 26px rgba(42, 12, 99, .1); border: 0; }
   body.pwa-standalone .pwa-bottom-nav > a, body.pwa-standalone .pwa-bottom-nav > button { color: #8a86a0; }
-  body.pwa-standalone .pwa-bottom-nav > .is-active { color: #42158f; }
+  body.pwa-standalone .pwa-bottom-nav > .is-active { color: #6824d7; }
   body.pwa-standalone .pwa-bottom-nav > .is-active .pwa-nav-icon { background: #efe8fb; }
 }
 
 
 /* En-tête clair de l'application, logo en Montserrat */
 @media (max-width: 700px) {
-  body.pwa-standalone .pwa-app-header { background: rgba(255, 255, 255, .96); color: #42158f; border-radius: 0 0 26px 26px; box-shadow: 0 8px 24px rgba(42, 12, 99, .1); backdrop-filter: blur(12px); }
-  body.pwa-standalone .pwa-app-wordmark { color: #42158f; font-family: var(--font-text); font-size: 1.15rem; font-weight: 800; letter-spacing: .02em; text-transform: none; }
+  body.pwa-standalone .pwa-app-header { background: rgba(255, 255, 255, .96); color: #6824d7; border-radius: 0 0 26px 26px; box-shadow: 0 8px 24px rgba(42, 12, 99, .1); backdrop-filter: blur(12px); }
+  body.pwa-standalone .pwa-app-wordmark { color: #6824d7; font-family: var(--font-text); font-size: 1.15rem; font-weight: 800; letter-spacing: .02em; text-transform: none; }
   body.pwa-standalone .pwa-app-header-actions button,
-  body.pwa-standalone .pwa-app-header-actions a { border-radius: 50%; background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .pwa-app-header-actions a { border-radius: 50%; background: #efe8fb; color: #6824d7; }
   body.pwa-standalone .pwa-app-header svg { stroke: currentColor; }
-  body.pwa-standalone .pwa-install-button { background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .pwa-install-button { background: #efe8fb; color: #6824d7; }
 }
 
 
@@ -2883,7 +2883,7 @@ body.pwa-standalone .match-list { gap: 14px; }
   body.pwa-standalone .pwa-app-wordmark { font-size: 1.55rem; font-weight: 800; letter-spacing: .01em; }
   body.pwa-standalone .pwa-app-header-actions { gap: 10px; }
   body.pwa-standalone .pwa-app-account-toggle,
-  body.pwa-standalone .pwa-app-header-actions button { width: 46px; height: 46px; border-radius: 50%; background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .pwa-app-header-actions button { width: 46px; height: 46px; border-radius: 50%; background: #efe8fb; color: #6824d7; }
   body.pwa-standalone .pwa-app-account-toggle svg,
   body.pwa-standalone .pwa-app-header-actions svg { width: 26px; height: 26px; stroke-width: 2; }
 
@@ -2956,7 +2956,7 @@ body.pwa-standalone .match-list { gap: 14px; }
 }
 .nav-left a.is-active,
 .nav-left a.is-active:hover {
-  background: var(--accent-grad, linear-gradient(135deg, #5b21b6, #42158f));
+  background: var(--accent-grad, linear-gradient(135deg, #5b21b6, #6824d7));
   color: #fff;
 }
 .nav-left a.nav-live.is-live,
@@ -3010,7 +3010,7 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
 /* =====================================================================
    PWA · Design sobre façon Google (couleurs Masano243 conservées)
    Fond blanc, filets fins 1 px, peu d'ombres, pastilles discrètes,
-   texte sombre lisible, violet #42158f en accent unique.
+   texte sombre lisible, violet #6824d7 en accent unique.
    Les hauteurs de l'entête / recherche / barres sticky sont inchangées :
    seul l'habillage est simplifié, la structure existante n'est pas touchée.
    ===================================================================== */
@@ -3026,16 +3026,16 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
 
   /* Entête : « Masano243 » en casse normale, fond blanc, simple filet */
   body.pwa-standalone .pwa-app-header { background: #fff; box-shadow: none; border-bottom: 0; }
-  body.pwa-standalone .pwa-app-wordmark { font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em; text-transform: none; color: #42158f; }
+  body.pwa-standalone .pwa-app-wordmark { font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em; text-transform: none; color: #6824d7; }
   body.pwa-standalone .pwa-app-account-toggle,
-  body.pwa-standalone .pwa-app-header-actions button { width: 40px; height: 40px; background: #42158f; color: #fff; }
+  body.pwa-standalone .pwa-app-header-actions button { width: 40px; height: 40px; background: #6824d7; color: #fff; }
   body.pwa-standalone .pwa-app-account-toggle svg,
   body.pwa-standalone .pwa-app-header-actions svg { width: 22px; height: 22px; stroke-width: 1.8; }
 
   /* Recherche : pastille grise arrondie, sans ombre */
   body.pwa-standalone .pwa-app-search { background: #fff; box-shadow: none; border-radius: 0; border-bottom: 1px solid var(--g-line); }
   body.pwa-standalone .pwa-app-search input { height: 46px; background-color: var(--g-chip); color: var(--g-text); font-size: .95rem; }
-  body.pwa-standalone .pwa-app-search input:focus { outline: 2px solid #42158f33; background-color: #fff; box-shadow: 0 1px 6px #20212433; }
+  body.pwa-standalone .pwa-app-search input:focus { outline: 2px solid #6824d733; background-color: #fff; box-shadow: 0 1px 6px #20212433; }
 
   /* Rubriques / filtres : pastilles à contour fin, actif = teinte violette */
   body.pwa-standalone .pwa-sport-nav { background: #fff; border-bottom: 1px solid var(--g-line); margin-top: 0; }
@@ -3046,21 +3046,21 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
   body.pwa-standalone .pwa-sport-nav a[aria-current="page"],
   body.pwa-standalone .competition-filter.is-active,
   body.pwa-standalone .status-filter.is-active,
-  body.pwa-standalone .sport-chip.is-active { border-color: #42158f; background: #efe8fb; color: #42158f; box-shadow: none; }
+  body.pwa-standalone .sport-chip.is-active { border-color: #6824d7; background: #efe8fb; color: #6824d7; box-shadow: none; }
   body.pwa-standalone .pill-count,
-  body.pwa-standalone .sport-chip-count { background: #efe8fb; color: #42158f; }
+  body.pwa-standalone .sport-chip-count { background: #efe8fb; color: #6824d7; }
   body.pwa-standalone .competition-filter.is-active .pill-count,
-  body.pwa-standalone .sport-chip.is-active .sport-chip-count { background: #fff; color: #42158f; }
+  body.pwa-standalone .sport-chip.is-active .sport-chip-count { background: #fff; color: #6824d7; }
 
   /* Onglets : texte + soulignement (plus de capsule dégradée) */
   body.pwa-standalone .results-view-tabs { gap: 0; padding: 0; border-bottom: 1px solid var(--g-line); border-radius: 0; background: transparent; }
   body.pwa-standalone .results-tab { padding: 12px 14px; border-radius: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--g-muted); box-shadow: none; }
-  body.pwa-standalone .results-tab.is-active { border-bottom-color: #42158f; background: transparent; color: #42158f; box-shadow: none; }
+  body.pwa-standalone .results-tab.is-active { border-bottom-color: #6824d7; background: transparent; color: #6824d7; box-shadow: none; }
 
   /* Titres de section et liens */
   body.pwa-standalone .section-title,
   body.pwa-standalone .home-live-head h2 { color: var(--g-text); font-size: 1.1rem; font-weight: 700; }
-  body.pwa-standalone .home-live-head a { color: #42158f; }
+  body.pwa-standalone .home-live-head a { color: #6824d7; }
 
   /* Articles : cartes plates, image arrondie, titre en gras comme un fil d'actualité */
   body.pwa-standalone .hero-img { border-radius: 14px; }
@@ -3086,7 +3086,7 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
   body.pwa-standalone .pwa-home-live-row { border-radius: 14px; box-shadow: none; }
 
   /* Détail du match */
-  body.pwa-standalone .match-detail-header { border-radius: 0; background: #42158f; }
+  body.pwa-standalone .match-detail-header { border-radius: 0; background: #6824d7; }
   body.pwa-standalone .match-detail-overview { border: 1px solid var(--g-line); border-radius: 16px; box-shadow: none; }
   body.pwa-standalone .match-detail-facts p { background: var(--g-chip); }
   body.pwa-standalone .match-detail-page,
@@ -3096,7 +3096,7 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
   body.pwa-standalone .pwa-bottom-nav { border: 0; border-top: 1px solid var(--g-line); border-radius: 0; background: #fff; box-shadow: none; }
   body.pwa-standalone .pwa-bottom-nav > a,
   body.pwa-standalone .pwa-bottom-nav > button { color: var(--g-muted); }
-  body.pwa-standalone .pwa-bottom-nav > .is-active { color: #42158f; }
+  body.pwa-standalone .pwa-bottom-nav > .is-active { color: #6824d7; }
   body.pwa-standalone .pwa-bottom-nav > .is-active .pwa-nav-icon { background: #efe8fb; }
   body.pwa-standalone .pwa-menu-dialog { border-radius: 16px 16px 0 0; box-shadow: 0 -2px 16px #20212426; }
 
@@ -3110,15 +3110,15 @@ body.pwa-standalone .match-card .match-score { gap: 4px; padding: 6px 12px; font
 .match-round-title:first-child { margin-top: 0; }
 .match-list .team-mark[data-club-filter] { cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
 .match-list .team-mark[data-club-filter]:hover,
-.match-list .team-mark[data-club-filter]:focus-visible { box-shadow: 0 0 0 2px #42158f; transform: scale(1.06); outline: 0; }
+.match-list .team-mark[data-club-filter]:focus-visible { box-shadow: 0 0 0 2px #6824d7; transform: scale(1.06); outline: 0; }
 .club-filter-bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e0d4f5; border-radius: 14px; background: #f6f1fd; }
 .club-filter-bar .team-mark { flex: 0 0 40px; width: 40px; height: 40px; background: #fff; }
 .club-filter-text { display: grid; min-width: 0; flex: 1; gap: 1px; }
 .club-filter-text strong { overflow: hidden; color: #202124; font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; }
 .club-filter-text span { color: #5f6368; font-size: .72rem; }
-.club-filter-clear { flex: 0 0 auto; padding: 8px 14px; border: 1px solid #42158f; border-radius: 999px; background: #fff; color: #42158f; font: 700 .74rem var(--font-text); cursor: pointer; }
+.club-filter-clear { flex: 0 0 auto; padding: 8px 14px; border: 1px solid #6824d7; border-radius: 999px; background: #fff; color: #6824d7; font: 700 .74rem var(--font-text); cursor: pointer; }
 .club-filter-clear:hover,
-.club-filter-clear:focus-visible { background: #42158f; color: #fff; }
+.club-filter-clear:focus-visible { background: #6824d7; color: #fff; }
 /* Libellés « Masano243 » en casse normale (PWA) + titres de journée sobres */
 body.pwa-standalone .pwa-account-eyebrow,
 body.pwa-standalone .pwa-install-eyebrow,
@@ -3135,9 +3135,9 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
 @media (max-width: 700px) {
   /* Entête façon Google */
   body.pwa-standalone .pwa-app-header { padding: env(safe-area-inset-top) 18px 0 20px; }
-  body.pwa-standalone .pwa-app-wordmark { font-size: 1.85rem; font-weight: 800; letter-spacing: -.045em; color: #42158f; }
+  body.pwa-standalone .pwa-app-wordmark { font-size: 1.85rem; font-weight: 800; letter-spacing: -.045em; color: #6824d7; }
   body.pwa-standalone .pwa-app-account-toggle,
-  body.pwa-standalone .pwa-app-header-actions button { width: 44px; height: 44px; background: #42158f; color: #fff; }
+  body.pwa-standalone .pwa-app-header-actions button { width: 44px; height: 44px; background: #6824d7; color: #fff; }
 
   /* Bande de matchs : cartes blanches, bord fin, coins très arrondis */
   body.pwa-standalone .home-live-track { gap: 10px; }
@@ -3150,10 +3150,10 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
   body.pwa-standalone .home-live-card.is-match strong,
   body.pwa-standalone .home-live-card.is-match .home-live-name { color: #202124; }
   body.pwa-standalone .home-live-card.is-match span { color: #5f6368; }
-  body.pwa-standalone .home-live-card.is-match .home-live-row b { color: #42158f; font: 700 1.1rem/1 var(--font-text); }
+  body.pwa-standalone .home-live-card.is-match .home-live-row b { color: #6824d7; font: 700 1.1rem/1 var(--font-text); }
   body.pwa-standalone .home-live-card.is-match .home-live-status { background: #fce8e6; color: #c5221f; }
   body.pwa-standalone .home-live-card.is-match .home-live-logo { border-color: #e8eaed; background: #fff; }
-  body.pwa-standalone .home-live-card.is-match .home-live-logo i { color: #42158f; }
+  body.pwa-standalone .home-live-card.is-match .home-live-logo i { color: #6824d7; }
 
   /* À la une : grande image arrondie, titre sobre, méta discrète */
   body.pwa-standalone .hero-img-container { border-radius: 18px; overflow: hidden; }
@@ -3176,7 +3176,7 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
   }
   body.pwa-standalone .article-list-meta::before {
     content: "M"; display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center;
-    border-radius: 50%; background: #efe8fb; color: #42158f; font-size: .78rem; font-weight: 800;
+    border-radius: 50%; background: #efe8fb; color: #6824d7; font-size: .78rem; font-weight: 800;
   }
   body.pwa-standalone .article-list-item img {
     order: 2; width: calc(100% + 32px); height: auto; aspect-ratio: 4 / 3; margin: 0 -16px;
@@ -3197,23 +3197,23 @@ body.pwa-standalone .match-round-title:first-child { margin-top: 2px; }
 /* Clubs cliquables dans les classements et les buteurs */
 .club-link { cursor: pointer; border-radius: 10px; transition: color .15s ease; }
 .club-link:hover > span:last-child,
-.club-link:focus-visible > span:last-child { color: #42158f; text-decoration: underline; text-underline-offset: 3px; }
-.club-link:focus-visible { outline: 2px solid #42158f; outline-offset: 3px; }
-.club-link:hover .club-logo-slot { box-shadow: 0 0 0 2px #42158f; }
+.club-link:focus-visible > span:last-child { color: #6824d7; text-decoration: underline; text-underline-offset: 3px; }
+.club-link:focus-visible { outline: 2px solid #6824d7; outline-offset: 3px; }
+.club-link:hover .club-logo-slot { box-shadow: 0 0 0 2px #6824d7; }
 
 /* Fenêtre d'un club : matchs suivants et précédents */
 .club-modal { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; padding: 16px; }
 .club-modal[hidden] { display: none; }
 .club-modal-backdrop { position: absolute; inset: 0; background: rgba(15, 8, 32, .6); }
 .club-modal-dialog { position: relative; width: min(640px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; padding: 22px 18px 20px; border-radius: 22px; background: #fff; color: #202124; box-shadow: 0 24px 60px rgba(0, 0, 0, .3); outline: none; overscroll-behavior: contain; }
-.club-modal-close { position: absolute; top: 10px; right: 12px; display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: #f4f0fb; color: #42158f; font-size: 1.5rem; line-height: 1; cursor: pointer; }
-.club-modal-close:hover, .club-modal-close:focus-visible { background: #42158f; color: #fff; outline: 0; }
+.club-modal-close { position: absolute; top: 10px; right: 12px; display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: #f4f0fb; color: #6824d7; font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.club-modal-close:hover, .club-modal-close:focus-visible { background: #6824d7; color: #fff; outline: 0; }
 .club-modal-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding-right: 40px; }
 .club-modal-header .team-mark { flex: 0 0 52px; width: 52px; height: 52px; background: #f4f0fb; }
 .club-modal-heading { min-width: 0; }
 .club-modal-heading h3 { margin: 0; overflow: hidden; font-size: 1.15rem; line-height: 1.2; text-overflow: ellipsis; }
 .club-modal-heading p { margin: 3px 0 0; color: #5f6368; font-size: .78rem; }
-.club-modal-title { margin: 16px 0 8px; color: #42158f; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.club-modal-title { margin: 16px 0 8px; color: #6824d7; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .club-modal-list { display: grid; gap: 8px; }
 body.has-club-modal { overflow: hidden; }
 @media (max-width: 640px) {
@@ -3223,7 +3223,7 @@ body.has-club-modal { overflow: hidden; }
 
 /* Logos du détail du match cliquables */
 .match-detail-logo.club-link-logo { cursor: pointer; transition: box-shadow .15s ease, transform .15s ease; }
-.match-detail-logo.club-link-logo:hover, .match-detail-logo.club-link-logo:focus-visible { box-shadow: 0 0 0 3px #42158f; transform: scale(1.04); outline: 0; }
+.match-detail-logo.club-link-logo:hover, .match-detail-logo.club-link-logo:focus-visible { box-shadow: 0 0 0 3px #6824d7; transform: scale(1.04); outline: 0; }
 
 /* Fenêtre d'un club : en-tête figé, seule la liste des matchs défile */
 .club-modal-dialog { display: flex; flex-direction: column; overflow: hidden; height: min(640px, calc(100vh - 32px)); max-height: calc(100vh - 32px); padding-bottom: 0; }
@@ -3247,10 +3247,10 @@ body.pwa-standalone .date-nav-arrow { background: #15151b; color: #f3f1f7; }
 
 /* Ajustements demandés pour la page Rencontres */
 .results-view.is-compact.is-rencontres .live-count {
-  border-color: #42158f;
-  background: #42158f;
+  border-color: #6824d7;
+  background: #6824d7;
   color: #fff;
-  box-shadow: 0 8px 18px rgba(66, 21, 143, 0.22);
+  box-shadow: 0 8px 18px rgba(104, 36, 215, 0.22);
 }
 .results-view.is-compact.is-rencontres .live-count strong { color: #fff; }
 .results-view.is-compact.is-rencontres .live-count .live-pulse {
@@ -3272,19 +3272,19 @@ body.pwa-standalone .date-nav-arrow { background: #15151b; color: #f3f1f7; }
   text-align: center;
   min-height: 42px;
   padding: 9px 22px;
-  border: 1px solid rgba(66, 21, 143, 0.28);
+  border: 1px solid rgba(104, 36, 215, 0.28);
   border-radius: var(--radius-pill, 999px);
   background: var(--surface, #fff);
-  color: #42158f;
+  color: #6824d7;
   font: 700 0.86rem var(--font-text);
   cursor: pointer;
   transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 .results-view.is-compact.is-rencontres .date-nav-label:hover,
 .results-view.is-compact.is-rencontres .date-nav-label:focus-visible {
-  border-color: #42158f;
+  border-color: #6824d7;
   background: #f5f0ff;
-  box-shadow: 0 0 0 3px rgba(66, 21, 143, 0.1);
+  box-shadow: 0 0 0 3px rgba(104, 36, 215, 0.1);
   outline: 0;
 }
 .results-view.is-compact.is-rencontres #matchDatepicker {
@@ -3305,8 +3305,8 @@ body.pwa-standalone .date-nav-arrow { background: #15151b; color: #f3f1f7; }
   height: 38px;
 }
 body.pwa-standalone .results-view.is-compact.is-rencontres .live-count {
-  border-color: #42158f;
-  background: #42158f;
+  border-color: #6824d7;
+  background: #6824d7;
   color: #fff;
 }
 body.pwa-standalone .results-view.is-compact.is-rencontres .live-count strong { color: #fff; }
@@ -3493,10 +3493,10 @@ body.pwa-standalone .hero-body { padding-bottom: 46px; }
 @media (max-width: 700px) { .home-rubrique-rail { display: flex; } }
 body.pwa-standalone .home-rubrique-rail { display: flex; margin: 16px -16px 0; padding: 4px 16px 6px; }
 .home-rubrique-item { display: grid; flex: 0 0 auto; width: 76px; justify-items: center; gap: 8px; scroll-snap-align: start; color: #202124; text-decoration: none; }
-.home-rubrique-icon { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50%; background: #efe8fb; color: #42158f; transition: background-color .2s ease, color .2s ease; }
+.home-rubrique-icon { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50%; background: #efe8fb; color: #6824d7; transition: background-color .2s ease, color .2s ease; }
 .home-rubrique-icon svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .home-rubrique-item:hover .home-rubrique-icon,
-.home-rubrique-item:focus-visible .home-rubrique-icon { background: #42158f; color: #fff; outline: 0; }
+.home-rubrique-item:focus-visible .home-rubrique-icon { background: #6824d7; color: #fff; outline: 0; }
 .home-rubrique-label { max-width: 100%; overflow: hidden; font-size: .8125rem; font-weight: 500; line-height: 1.2; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 /* Sur l'accueil de l'application, le rail remplace les pastilles de rubriques */
 body.pwa-standalone.is-home-root .pwa-sport-nav { display: none !important; }
@@ -3643,15 +3643,15 @@ body.pwa-standalone .results-view.is-rencontres .pwa-match-meta { display: flex;
 body.pwa-standalone .results-view.is-rencontres .pwa-match-date { color: #626671; white-space: nowrap; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-state { display: inline-flex; min-height: 21px; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 5px; background: #f0edf5; color: #49346d; font-size: .62rem; font-weight: 800; white-space: nowrap; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-state.is-live { background: #fce8e6; color: #a91f2b; }
-body.pwa-standalone .results-view.is-rencontres .pwa-match-state.is-upcoming { background: #efe8fb; color: #42158f; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-state.is-upcoming { background: #efe8fb; color: #6824d7; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-live-dot { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: #c62838; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-scoreboard { display: grid; gap: 3px; min-width: 0; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-team-row { display: grid; min-width: 0; grid-template-columns: minmax(0, 1fr) 2.5ch; align-items: center; gap: 8px; min-height: 34px; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-team { display: flex; min-width: 0; align-items: center; gap: 8px; }
-body.pwa-standalone .results-view.is-rencontres .pwa-match-team .team-mark { width: 29px; height: 29px; flex: 0 0 29px; border: 1px solid #e3deeb; background: #f4f0fb; color: #42158f; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team .team-mark { width: 29px; height: 29px; flex: 0 0 29px; border: 1px solid #e3deeb; background: #f4f0fb; color: #6824d7; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-team .club-logo { background: #fff; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-team-name { display: block; min-width: 0; overflow: hidden; color: #202127; font: 600 .8rem/1.2 var(--font-text); text-overflow: ellipsis; white-space: nowrap; }
-body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score { min-width: 2.5ch; color: #42158f; font: 800 1rem/1 var(--font-text); font-variant-numeric: tabular-nums; text-align: right; }
+body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score { min-width: 2.5ch; color: #6824d7; font: 800 1rem/1 var(--font-text); font-variant-numeric: tabular-nums; text-align: right; }
 body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score.is-pending { color: #6c757d; }
 @media (max-width: 360px) {
   body.pwa-standalone .results-view.is-rencontres .match-card.pwa-score-card { padding: 10px; }
@@ -3792,23 +3792,23 @@ body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > .is-active .pw
 .container.has-tv-view .tv-view { background: #fff; color: #202124; }
 .container.has-tv-view .pwa-tv-type-nav { border-bottom-color: #e8eaed; background: #fff; }
 .container.has-tv-view .pwa-tv-type-nav button { color: #5f6368; }
-.container.has-tv-view .pwa-tv-type-nav button.is-active { border-bottom-color: #42158f; color: #42158f; }
+.container.has-tv-view .pwa-tv-type-nav button.is-active { border-bottom-color: #6824d7; color: #6824d7; }
 .container.has-tv-view .pwa-tv-sport-nav { background: #fff; }
 .container.has-tv-view .pwa-tv-sport-nav button { border-color: #dadce0; background: #fff; color: #3c4043; }
-.container.has-tv-view .pwa-tv-sport-nav button.is-active { border-color: #42158f; background: #42158f; color: #fff; }
+.container.has-tv-view .pwa-tv-sport-nav button.is-active { border-color: #6824d7; background: #6824d7; color: #fff; }
 .container.has-tv-view .tv-page-header .tv-eyebrow { color: #5f6368; }
 .container.has-tv-view .tv-page-header h1 { color: #202124; }
-.container.has-tv-view .tv-page-header h1 span { color: #42158f; }
+.container.has-tv-view .tv-page-header h1 span { color: #6824d7; }
 .container.has-tv-view .tv-page-header > p:last-child { color: #5f6368; }
 .container.has-tv-view .tv-feature { background: #f1f3f4; }
 .container.has-tv-view .tv-feature-info h2 { color: #202124; }
 .container.has-tv-view .tv-feature-info p,
 .container.has-tv-view .tv-feature-info > small { color: #5f6368; }
-.container.has-tv-view .tv-content-type { color: #42158f; }
+.container.has-tv-view .tv-content-type { color: #6824d7; }
 .container.has-tv-view .tv-library-section h2 { color: #202124; }
 .container.has-tv-view .tv-content-card { border-color: #e8eaed; background: #fff; color: #202124; }
 .container.has-tv-view .tv-content-card:hover,
-.container.has-tv-view .tv-content-card.is-selected { border-color: #42158f; }
+.container.has-tv-view .tv-content-card.is-selected { border-color: #6824d7; }
 .container.has-tv-view .tv-content-card > img,
 .container.has-tv-view .tv-card-placeholder { background: #e8eaed; }
 .container.has-tv-view .tv-card-copy small,
@@ -3819,14 +3819,14 @@ body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > .is-active .pw
 body:has(.container.has-tv-view) { background: #fff; }
 body.pwa-standalone:has(.container.has-tv-view) .pwa-app-header,
 body.pwa-standalone:has(.container.has-tv-view) .pwa-app-search { border-color: #e8eaed; background: #fff; color: #202124; }
-body.pwa-standalone:has(.container.has-tv-view) .pwa-app-wordmark { color: #42158f; }
+body.pwa-standalone:has(.container.has-tv-view) .pwa-app-wordmark { color: #6824d7; }
 body.pwa-standalone:has(.container.has-tv-view) .pwa-app-account-toggle,
-body.pwa-standalone:has(.container.has-tv-view) .pwa-app-header-actions button { background: #efe8fb; color: #42158f; }
+body.pwa-standalone:has(.container.has-tv-view) .pwa-app-header-actions button { background: #efe8fb; color: #6824d7; }
 body.pwa-standalone:has(.container.has-tv-view) .pwa-app-search input { border: 0; background-color: #f1f3f4; color: #202124; }
 body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav { border-color: #e8eaed; background: #fff; }
 body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > a,
 body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > button { color: #5f6368; }
-body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > .is-active { color: #42158f; }
+body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > .is-active { color: #6824d7; }
 body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > .is-active .pwa-nav-icon { background: #efe8fb; }
 body.pwa-standalone .pwa-bottom-nav > a,
 body.pwa-standalone .pwa-bottom-nav > button { font-weight: 800; }
@@ -3876,10 +3876,10 @@ body.pwa-standalone.is-home-root .home-rubrique-label {
 .tv-carousel-track::-webkit-scrollbar { display: none; }
 .tv-carousel-track > div { flex: 0 0 calc((100% - 28px) / 3); min-width: 0; scroll-snap-align: start; }
 .tv-carousel-arrow { display: grid; width: 36px; height: 36px; place-items: center; padding: 0; border: 1px solid #dadce0; border-radius: 50%; background: #fff; color: #30343a; font-size: 1.5rem; line-height: 1; cursor: pointer; }
-.tv-carousel-arrow:hover { border-color: #42158f; color: #42158f; }
+.tv-carousel-arrow:hover { border-color: #6824d7; color: #6824d7; }
 .tv-carousel-dots { display: flex; justify-content: center; gap: 7px; margin-top: 5px; }
 .tv-carousel-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: #c9cbd0; cursor: pointer; }
-.tv-carousel-dots button[aria-current="true"] { width: 20px; border-radius: 99px; background: #42158f; }
+.tv-carousel-dots button[aria-current="true"] { width: 20px; border-radius: 99px; background: #6824d7; }
 .container.has-tv-view .tv-content-card { gap: 0; overflow: hidden; border: 0; background: transparent; text-align: left; }
 .container.has-tv-view .tv-content-card:hover,
 .container.has-tv-view .tv-content-card.is-selected { border-color: transparent; }
@@ -3907,7 +3907,7 @@ body.pwa-standalone.is-home-root .home-rubrique-label {
 .container.has-tv-view .tv-library-page { min-height: 70vh; padding: 8px 0 40px; }
 .container.has-tv-view .tv-library-page-back { display: inline-flex; align-items: center; gap: 8px; padding: 7px 0; border: 0; background: transparent; color: #5f6368; font: 600 .82rem var(--font-text); cursor: pointer; }
 .container.has-tv-view .tv-library-page-back:hover,
-.container.has-tv-view .tv-library-page-back:focus-visible { color: #42158f; }
+.container.has-tv-view .tv-library-page-back:focus-visible { color: #6824d7; }
 .container.has-tv-view .tv-library-page-heading { margin: 22px 0 18px; }
 .container.has-tv-view .tv-library-page-heading .tv-eyebrow { margin: 0 0 5px; color: #777b83; font-size: .68rem; font-weight: 800; }
 .container.has-tv-view .tv-library-page-heading h1 { margin: 0; color: #202124; font-size: 1.8rem; font-weight: 800; line-height: 1.15; }

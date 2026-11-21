@@ -6,8 +6,8 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#42158f",
-  "theme_color": "#42158f",
+  "background_color": "#6824d7",
+  "theme_color": "#6824d7",
   "icons": [
     {
       "src": "/icons/logo-masano243-180.png",
