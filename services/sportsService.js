@@ -120,9 +120,9 @@ export const fetchMatchDetails = async (matchId) => {
   return details;
 };
 
-let footballDataConfrontationsRequest;
+let historicalMatchesRequest;
 
-const normalizeArchiveTeamName = (value) => {
+const normalizeHistoryTeamName = (value) => {
   const name = String(value || "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -134,8 +134,13 @@ const normalizeArchiveTeamName = (value) => {
   if (name.includes("lupopo") || name.includes("saint eloi")) return "lupopo";
   if (name.includes("maniema union")) return "maniema union";
   if (name.includes("aigles du congo")) return "aigles du congo";
+  if (/^(oc|olympique club) renaissance( du congo)?$/.test(name)) return "oc renaissance";
   if (name.includes("renaissance du congo")) return "renaissance du congo";
   const aliases = {
+    dcmp: "dcmp",
+    "daring club motema pembe": "dcmp",
+    "daring club motema pembe de kinshasa": "dcmp",
+    "dc motema pembe": "dcmp",
     "as v club": "v club",
     "as vita club": "v club",
     "vita club": "v club",
@@ -158,83 +163,81 @@ const normalizeArchiveTeamName = (value) => {
   return aliases[name] || name.replace(/\b(fc|cf|afc|sc|ac|as)\b/g, " ").replace(/\s+/g, " ").trim();
 };
 
-const validArchiveScore = (score) => Number.isInteger(score?.home) && Number.isInteger(score?.away);
-
-export const fetchFootballDataConfrontation = async (match) => {
-  if (!footballDataConfrontationsRequest) {
-    footballDataConfrontationsRequest = fetch("/football-data/football-data/head-to-head/confrontations.json", { cache: "no-cache" })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(`Archive des confrontations indisponible (HTTP ${response.status}).`);
+export const fetchHistoricalMatchConfrontation = async (match) => {
+  if (!supabase) throw new Error("Client Supabase non configuré.");
+  if (!historicalMatchesRequest) {
+    historicalMatchesRequest = (async () => {
+      const pageSize = 1000;
+      const rows = [];
+      for (let offset = 0; ; offset += pageSize) {
+        const { data, error } = await supabase
+          .from("historical_matches")
+          .select("id,date,home_score,away_score,competition,home_club_id,away_club_id,home_club:clubs!historical_matches_home_club_id_fkey(nom),away_club:clubs!historical_matches_away_club_id_fkey(nom)")
+          .range(offset, offset + pageSize - 1);
+        if (error) throw error;
+        if (!Array.isArray(data)) {
+          throw new Error("Format invalide pour la table Historical Matches.");
         }
-        const archive = await response.json();
-        if (!Array.isArray(archive?.items)) {
-          throw new Error("Format invalide pour l’archive des confrontations.");
-        }
-        return archive;
-      })
+        rows.push(...data);
+        if (data.length < pageSize) return rows;
+      }
+    })()
       .catch((error) => {
-        footballDataConfrontationsRequest = null;
+        historicalMatchesRequest = null;
         throw error;
       });
   }
 
-  const archive = await footballDataConfrontationsRequest;
+  const rows = await historicalMatchesRequest;
   const homeName = match?.equipe_domicile || match?.homeTeam?.name || match?.home?.name;
   const awayName = match?.equipe_visiteur || match?.awayTeam?.name || match?.away?.name;
-  const homeKey = normalizeArchiveTeamName(homeName);
-  const awayKey = normalizeArchiveTeamName(awayName);
-  if (!homeKey || !awayKey) return null;
+  const homeKey = normalizeHistoryTeamName(homeName);
+  const awayKey = normalizeHistoryTeamName(awayName);
+  const selectedDate = String(match?.date_match || match?.utcDate || "").slice(0, 10);
+  const history = rows.map((row) => {
+    const homeTeam = row.home_club?.nom || "";
+    const awayTeam = row.away_club?.nom || "";
+    const homeScore = row.home_score === null ? null : Number(row.home_score);
+    const awayScore = row.away_score === null ? null : Number(row.away_score);
+    return {
+      date: String(row.date || ""),
+      competition: row.competition || "",
+      home: homeTeam,
+      away: awayTeam,
+      home_score: homeScore,
+      away_score: awayScore
+    };
+  }).filter((item) => {
+    const matchHome = normalizeHistoryTeamName(item.home);
+    const matchAway = normalizeHistoryTeamName(item.away);
+    const samePair = (matchHome === homeKey && matchAway === awayKey)
+      || (matchHome === awayKey && matchAway === homeKey);
+    const hasScore = Number.isInteger(item.home_score) && Number.isInteger(item.away_score);
+    const date = item.date.slice(0, 10);
+    return homeKey && awayKey && samePair && hasScore && (!selectedDate || !date || date < selectedDate);
+  }).sort((first, second) => second.date.localeCompare(first.date));
 
-  const confrontation = archive.items.find((item) => {
-    const teamA = normalizeArchiveTeamName(item.team_a?.name);
-    const teamB = normalizeArchiveTeamName(item.team_b?.name);
-    return (teamA === homeKey && teamB === awayKey) || (teamA === awayKey && teamB === homeKey);
-  });
-  if (!confrontation) return null;
-
-  const teamAIsHome = normalizeArchiveTeamName(confrontation.team_a?.name) === homeKey;
-  const sourceMatches = Array.isArray(confrontation.last_5_matches) && confrontation.last_5_matches.length
-    ? confrontation.last_5_matches
-    : Array.isArray(confrontation.matches) ? confrontation.matches : [];
-  const history = sourceMatches
-    .filter((match) => (
-      match?.status === "finished"
-      && validArchiveScore(match.score)
-      && (!Array.isArray(match.conflicts) || match.conflicts.length === 0)
-    ))
-    .sort((first, second) => String(second.date || "").localeCompare(String(first.date || "")))
-    .slice(0, 5)
-    .map((match) => ({
-      date: match.date || "",
-      competition: match.competition_id === "linafoot-ligue-1"
-        ? "Linafoot Ligue 1"
-        : String(match.competition_id || "").replace(/-/g, " "),
-      home: match.home?.name || "",
-      away: match.away?.name || "",
-      home_score: match.score.home,
-      away_score: match.score.away
-    }));
-
-  const statistics = confrontation.statistics || confrontation.summary || {};
-  const teamAWins = Number(statistics.a_wins ?? statistics.team_a_wins);
-  const teamBWins = Number(statistics.b_wins ?? statistics.team_b_wins);
-  const draws = Number(statistics.draws);
-  const played = Number(statistics.matches_counted ?? confrontation.collected_matches);
-  const hasSummary = [teamAWins, teamBWins, draws].every((value) => Number.isInteger(value) && value >= 0);
+  const summary = history.reduce((result, item) => {
+    if (item.home_score === item.away_score) {
+      result.draws += 1;
+    } else if (
+      (normalizeHistoryTeamName(item.home) === homeKey && item.home_score > item.away_score)
+      || (normalizeHistoryTeamName(item.away) === homeKey && item.away_score > item.home_score)
+    ) {
+      result.home_wins += 1;
+    } else {
+      result.away_wins += 1;
+    }
+    return result;
+  }, { played: history.length, home_wins: 0, draws: 0, away_wins: 0 });
+  const latestDate = history[0]?.date || "";
 
   return {
-    history,
-    history_summary: hasSummary ? {
-      played: Number.isInteger(played) && played > 0 ? played : teamAWins + teamBWins + draws,
-      home_wins: teamAIsHome ? teamAWins : teamBWins,
-      draws,
-      away_wins: teamAIsHome ? teamBWins : teamAWins
-    } : null,
-    history_source: "Dossier football-data",
-    history_updated_through: archive.meta?.last_sync || confrontation.last_synced || "",
-    history_verification_status: confrontation.verification?.status || "unverified",
-    history_scope: statistics.scope || confrontation.notes || ""
+    history: history.slice(0, 5),
+    history_summary: summary.played ? summary : null,
+    history_source: "Base de données Historical Matches",
+    history_updated_through: latestDate,
+    history_verification_status: "unverified"
   };
 };
 

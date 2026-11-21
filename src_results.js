@@ -3,7 +3,7 @@ import {
   fetchEpfKinMatchDetails,
   fetchEpfKinStandings,
   fetchEpfKinTopScorers,
-  fetchFootballDataConfrontation,
+  fetchHistoricalMatchConfrontation,
   fetchLocalMatchDetails,
   fetchMatchDetails,
   fetchMatchsEpfKin,
@@ -548,15 +548,22 @@ export const mountResults = (root, competitionPage = null) => {
           : fetchMatchDetails(match.id);
       const detailsRequest = Promise.allSettled([
         providerDetailsRequest,
-        fetchFootballDataConfrontation(match)
-      ]).then(([providerResult, archiveResult]) => {
-        const archiveHistory = archiveResult.status === "fulfilled" ? archiveResult.value : null;
-        if (archiveResult.status === "rejected") {
-          console.warn("Impossible de lire les confrontations dans le dossier football-data.", archiveResult.reason);
+        fetchHistoricalMatchConfrontation(match)
+      ]).then(([providerResult, historyResult]) => {
+        const history = historyResult.status === "fulfilled" ? historyResult.value : {
+          history: [],
+          history_summary: null,
+          history_source: "Base de données Historical Matches",
+          history_updated_through: "",
+          history_verification_status: "unverified",
+          history_scope: ""
+        };
+        if (historyResult.status === "rejected") {
+          console.warn("Impossible de charger les confrontations depuis Historical Matches.", historyResult.reason);
         }
         if (providerResult.status === "rejected") {
-          if (!archiveHistory) throw providerResult.reason;
-          console.warn("Détails du fournisseur indisponibles ; affichage de l’archive football-data.", providerResult.reason);
+          if (historyResult.status === "rejected") throw providerResult.reason;
+          console.warn("Détails du fournisseur indisponibles ; affichage des confrontations de Historical Matches.", providerResult.reason);
           return {
             venue: match.stade || "",
             referee: "",
@@ -568,10 +575,17 @@ export const mountResults = (root, competitionPage = null) => {
             highlights_url: "",
             highlights_thumbnail_url: "",
             warnings: ["provider-details-unavailable"],
-            ...archiveHistory
+            ...history
           };
         }
-        return archiveHistory ? { ...providerResult.value, ...archiveHistory } : providerResult.value;
+        return {
+          ...providerResult.value,
+          ...history,
+          warnings: [
+            ...(providerResult.value.warnings || []),
+            ...(historyResult.status === "rejected" ? ["historical-matches-unavailable"] : [])
+          ]
+        };
       });
       matchDetailsCache.set(match.id, detailsRequest);
     }
@@ -1071,6 +1085,7 @@ export const mountResults = (root, competitionPage = null) => {
         events: "événements",
         lineups: "compositions",
         "head-to-head": "confrontations",
+        "historical-matches-unavailable": "confrontations (base de données Historical Matches)",
         standings: "classement",
         "api-football-key-required": "buteurs (clé API-Football à configurer dans Vercel)",
         "api-football-fallback": "buteurs (correspondance API-Football impossible)",
@@ -1079,7 +1094,7 @@ export const mountResults = (root, competitionPage = null) => {
         "lookuplineup.php": "compositions (TheSportsDB)",
         "lookuptimeline.php": "chronologie (TheSportsDB)",
         "lookupeventstats.php": "statistiques du match (TheSportsDB)",
-        "provider-details-unavailable": "détails du fournisseur (confrontations de l’archive affichées)"
+        "provider-details-unavailable": "détails du fournisseur (confrontations de Historical Matches affichées)"
       })[key] || key).join(", ")}.`
       : "";
   };
