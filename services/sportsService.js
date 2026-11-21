@@ -172,7 +172,7 @@ export const fetchHistoricalMatchConfrontation = async (match) => {
       for (let offset = 0; ; offset += pageSize) {
         const { data, error } = await supabase
           .from("historical_matches")
-          .select("id,date,home_score,away_score,competition,home_club_id,away_club_id,home_club:clubs!historical_matches_home_club_id_fkey(nom),away_club:clubs!historical_matches_away_club_id_fkey(nom)")
+          .select("id,date,home_score,away_score,competition,home_club_id,away_club_id,home_club:clubs!historical_matches_home_club_id_fkey(nom,logo_url),away_club:clubs!historical_matches_away_club_id_fkey(nom,logo_url)")
           .range(offset, offset + pageSize - 1);
         if (error) throw error;
         if (!Array.isArray(data)) {
@@ -204,6 +204,8 @@ export const fetchHistoricalMatchConfrontation = async (match) => {
       competition: row.competition || "",
       home: homeTeam,
       away: awayTeam,
+      home_logo: row.home_club?.logo_url || "",
+      away_logo: row.away_club?.logo_url || "",
       home_score: homeScore,
       away_score: awayScore
     };

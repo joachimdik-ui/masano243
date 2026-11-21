@@ -3669,7 +3669,7 @@ body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score.is-pending
 .match-lineup-coach { padding-top: 10px; border-top: 1px solid #e8eaed; }
 .match-lineup-coach p { margin: 0; color: #202124; font-size: .84rem; font-weight: 600; }
 
-/* Confrontations : bilan comparatif et scoreline avec drapeaux */
+/* Confrontations : bilan comparatif et clubs */
 .match-history-overview { gap: 12px; border: 0; border-radius: 12px; background: #f7f8fa; }
 .match-history-overview-heading h4 { color: #202124; }
 .match-history-kicker { color: #5f6368; letter-spacing: .04em; }
@@ -3677,6 +3677,9 @@ body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score.is-pending
 .match-history-score-summary > div { display: grid; min-width: 0; gap: 3px; }
 .match-history-score-summary > div:last-child { text-align: right; }
 .match-history-score-summary strong { overflow-wrap: anywhere; color: #202124; font-size: .83rem; line-height: 1.25; }
+.match-history-score-summary .match-history-summary-team { display: flex; align-items: center; gap: 7px; }
+.match-history-score-summary > div:last-child .match-history-summary-team { justify-content: flex-end; }
+.match-history-summary-team > span:last-child { min-width: 0; overflow-wrap: anywhere; }
 .match-history-score-summary span { color: #5f6368; font-size: .76rem; }
 .match-history-score-summary .match-history-draw-count { justify-items: center; text-align: center; }
 .match-history-score-summary .match-history-draw-count strong { font-size: 1.25rem; }
@@ -3685,13 +3688,18 @@ body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score.is-pending
 .match-history-comparison .is-home { background: #173a8a; }
 .match-history-comparison .is-draw { background: #a7adb4; }
 .match-history-comparison .is-away { background: #168038; }
-.match-history-card { grid-template-columns: minmax(100px,.75fr) minmax(0,2fr); gap: 8px 12px; border: 0; border-bottom: 1px solid #e8eaed; border-radius: 0; background: transparent; }
+.match-history-card { grid-template-columns: minmax(0,1fr); gap: 8px; border: 0; border-bottom: 1px solid #e8eaed; border-radius: 0; background: transparent; }
 .match-history-card:hover { transform: none; background: #f8f9fa; }
+.match-history-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .match-history-meta time { font-size: .76rem; }
-.match-history-scoreline { gap: 8px; }
-.match-history-scoreline > strong { display: flex; min-width: 0; align-items: center; gap: 6px; }
-.match-history-scoreline > strong span:not(.match-history-team-mark) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.match-history-team-mark { display: inline-grid; width: 22px; height: 22px; flex: 0 0 22px; place-items: center; border: 1px solid #e8eaed; border-radius: 50%; background: #fff; color: #5f6368; font-size: .68rem; font-weight: 800; }
+.match-history-scoreline { grid-template-columns: minmax(0,1fr) 64px minmax(0,1fr); gap: 12px; }
+.match-history-scoreline > strong { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.match-history-scoreline > strong:first-child { justify-content: flex-end; }
+.match-history-scoreline > strong:last-child { justify-content: flex-start; }
+.match-history-team-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.match-history-team-mark { position: relative; display: inline-grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; overflow: hidden; border: 1px solid #e8eaed; border-radius: 50%; background: #fff; color: #5f6368; font-size: .72rem; font-weight: 800; }
+.match-history-team-fallback { display: grid; width: 100%; height: 100%; place-items: center; }
+.match-history-team-fallback[hidden] { display: none; }
 .match-history-team-mark.is-flag { border: 0; background: transparent; font-size: 1.05rem; }
 .match-history-outcome { display: none; }
 
@@ -3763,6 +3771,8 @@ body.pwa-standalone:has(.container.has-tv-view) .pwa-bottom-nav > .is-active .pw
   .match-history-card { grid-template-columns: minmax(0,1fr); }
   .match-history-meta { grid-column: auto; }
   .match-history-scoreline { grid-column: auto; grid-row: auto; }
+  .match-history-scoreline { grid-template-columns: minmax(0,1fr) 52px minmax(0,1fr); gap: 6px; }
+  .match-history-team-mark { width: 26px; height: 26px; flex-basis: 26px; }
 }
 
 /* TV claire, avec le lecteur vidéo noir conservé pour le contraste */

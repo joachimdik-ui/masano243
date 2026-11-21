@@ -718,6 +718,8 @@ export const mountResults = (root, competitionPage = null) => {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, " ")
       .trim();
+    if (/^(daring club motema pembe( de kinshasa)?|dc motema pembe|dcmp)$/.test(normalized)) return "dcmp";
+    if (/^(oc|olympique club) renaissance( du congo)?$/.test(normalized)) return "oc renaissance";
     return ["congo dr", "congo dem rep", "congo democratic republic", "democratic republic of congo", "democratic republic of the congo", "congo kinshasa", "drc", "zaire"].includes(normalized)
       ? "dr congo"
       : normalized;
@@ -734,12 +736,15 @@ export const mountResults = (root, competitionPage = null) => {
     "south korea": "KR", "spain": "ES", "tunisia": "TN", "united states": "US", "usa": "US",
     "uruguay": "UY", "zambia": "ZM", "zimbabwe": "ZW"
   }));
-  const historyTeamMark = (team) => {
+  const historyTeamMark = (team, logo = "") => {
     const normalized = normalizeHistoryTeam(team);
     const code = historyFlagCodes.get(normalized);
-    if (!code) return `<span class="match-history-team-mark" aria-hidden="true">${escapeHtml(String(team || "?").slice(0, 1).toUpperCase())}</span>`;
-    const flag = [...code].map((letter) => String.fromCodePoint(letter.charCodeAt(0) + 127397)).join("");
-    return `<span class="match-history-team-mark is-flag" role="img" aria-label="Drapeau ${escapeHtml(team)}">${flag}</span>`;
+    const safeLogo = safeHttpUrl(logo);
+    const fallback = code
+      ? [...code].map((letter) => String.fromCodePoint(letter.charCodeAt(0) + 127397)).join("")
+      : escapeHtml(String(team || "?").slice(0, 1).toUpperCase());
+    const flagClass = code && !safeLogo ? " is-flag" : "";
+    return `<span class="match-history-team-mark${flagClass}" aria-hidden="true"><span class="match-history-team-fallback"${safeLogo ? " hidden" : ""}>${fallback}</span>${safeLogo ? `<img class="club-logo match-detail-club-logo" src="${escapeHtml(safeLogo)}" alt="" loading="lazy">` : ""}</span>`;
   };
 
   const renderHistory = (history, match) => history.length
@@ -763,7 +768,7 @@ export const mountResults = (root, competitionPage = null) => {
       const away = item.away || "Équipe à confirmer";
       return `<li class="match-history-card ${resultClass}">
         <div class="match-history-meta"><time>${escapeHtml(date)}</time>${item.competition ? `<span>${escapeHtml(item.competition)}</span>` : ""}</div>
-        <div class="match-history-scoreline"><strong>${historyTeamMark(home)}<span>${escapeHtml(home)}</span></strong><span class="match-history-score">${hasScore ? `${escapeHtml(item.home_score)} <i>–</i> ${escapeHtml(item.away_score)}` : "– : –"}</span><strong><span>${escapeHtml(away)}</span>${historyTeamMark(away)}</strong></div>
+        <div class="match-history-scoreline"><strong><span class="match-history-team-name">${escapeHtml(home)}</span>${historyTeamMark(home, item.home_logo)}</strong><span class="match-history-score">${hasScore ? `${escapeHtml(item.home_score)} <i>–</i> ${escapeHtml(item.away_score)}` : "– : –"}</span><strong>${historyTeamMark(away, item.away_logo)}<span class="match-history-team-name">${escapeHtml(away)}</span></strong></div>
         <span class="match-history-outcome">${escapeHtml(resultLabel)}</span>
       </li>`;
     }).join("")
@@ -776,7 +781,9 @@ export const mountResults = (root, competitionPage = null) => {
       unverified: "non vérifié dans l’archive",
       conflict: "en conflit dans l’archive"
     };
-    const historySourceNote = `<small>Source : ${escapeHtml(details.history_source || "Open Football")}${details.history_verification_status ? ` · ${escapeHtml(verificationLabels[details.history_verification_status] || "statut non vérifié")}` : ""} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</small>${details.history_scope ? `<small>${escapeHtml(details.history_scope)}</small>` : ""}`;
+    const historySourceNote = details.history_source === "Base de données Historical Matches"
+      ? ""
+      : `<small>Source : ${escapeHtml(details.history_source || "Open Football")}${details.history_verification_status ? ` · ${escapeHtml(verificationLabels[details.history_verification_status] || "statut non vérifié")}` : ""} · données jusqu’au ${escapeHtml(details.history_updated_through || "date non renseignée")}.</small>${details.history_scope ? `<small>${escapeHtml(details.history_scope)}</small>` : ""}`;
     const played = Number(summary?.played);
     if (!Number.isFinite(played) || played <= 0) {
       return `<div class="match-history-overview is-empty">
@@ -803,9 +810,9 @@ export const mountResults = (root, competitionPage = null) => {
     return `<div class="match-history-overview">
       <div class="match-history-overview-heading"><div><span class="match-history-kicker">HISTORIQUE FACE-À-FACE</span><h4>Historique des matchs</h4><span class="match-history-total">${plural(played, "match", "matchs")}</span></div></div>
       <div class="match-history-score-summary">
-        <div><strong>${escapeHtml(match.equipe_domicile)}</strong><span>${homeWins} victoire${homeWins > 1 ? "s" : ""}</span></div>
+        <div><strong class="match-history-summary-team">${historyTeamMark(match.equipe_domicile, match.logo_domicile)}<span>${escapeHtml(match.equipe_domicile)}</span></strong><span>${homeWins} victoire${homeWins > 1 ? "s" : ""}</span></div>
         <div class="match-history-draw-count"><strong>${draws}</strong><span>Matchs nuls</span></div>
-        <div><strong>${escapeHtml(match.equipe_visiteur)}</strong><span>${awayWins} victoire${awayWins > 1 ? "s" : ""}</span></div>
+        <div><strong class="match-history-summary-team">${historyTeamMark(match.equipe_visiteur, match.logo_visiteur)}<span>${escapeHtml(match.equipe_visiteur)}</span></strong><span>${awayWins} victoire${awayWins > 1 ? "s" : ""}</span></div>
       </div>
       <div class="match-history-comparison" role="img" aria-label="${homeWins} victoire(s) ${match.equipe_domicile}, ${draws} match(s) nul(s), ${awayWins} victoire(s) ${match.equipe_visiteur}">
         <span class="is-home" style="flex-grow:${homeWins}"></span><span class="is-draw" style="flex-grow:${draws}"></span><span class="is-away" style="flex-grow:${awayWins}"></span>
