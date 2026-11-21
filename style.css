@@ -3690,7 +3690,7 @@ body.pwa-standalone .results-view.is-rencontres .pwa-match-team-score.is-pending
 .match-history-score-summary > div:last-child { text-align: right; }
 .match-history-score-summary strong { overflow-wrap: anywhere; color: #202124; font-size: .83rem; line-height: 1.25; }
 .match-history-score-summary .match-history-summary-team { display: flex; align-items: center; gap: 7px; }
-.match-history-score-summary > div:last-child .match-history-summary-team { justify-content: flex-end; }
+.match-history-score-summary > div:last-child .match-history-summary-team { justify-content: flex-end; flex-direction: row-reverse; }
 .match-history-summary-team > span:last-child { min-width: 0; overflow-wrap: anywhere; }
 .match-history-score-summary span { color: #5f6368; font-size: .76rem; }
 .match-history-score-summary .match-history-draw-count { justify-items: center; text-align: center; }
