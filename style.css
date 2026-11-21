@@ -65,12 +65,28 @@ body {
   white-space: nowrap;
 }
 
+.brand-mark {
+  display: grid;
+  width: 145px;
+  height: 145px;
+  flex: 0 0 145px;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6824d7, #a45cf5);
+  color: #fff;
+  font-size: 7rem;
+  font-weight: 800;
+  letter-spacing: -.09em;
+  line-height: 1;
+}
+.brand-wordmark { color: #6824d7; }
+.pwa-app-brand .brand-mark { width: 58px; height: 58px; flex-basis: 58px; font-size: 2.6rem; }
+
 .brand-strong { font-weight: 400; }
 .brand-accent { color: var(--accent); transition: color var(--transition); }
-.brand-logo { display: block; width: 145px; height: 145px; flex: 0 0 145px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
 @media (max-width: 600px) {
   .brand { gap: 3px; font-size: clamp(1rem, 5.5vw, 2rem); }
-  .brand-logo { width: clamp(36px, 12.5vw, 55px); height: clamp(36px, 12.5vw, 55px); flex-basis: clamp(36px, 12.5vw, 55px); }
+  .brand-mark { width: clamp(36px, 12.5vw, 55px); height: clamp(36px, 12.5vw, 55px); flex-basis: clamp(36px, 12.5vw, 55px); font-size: clamp(1.75rem, 8vw, 2.4rem); }
 }
 
 .social-search-row {
@@ -564,7 +580,6 @@ body {
 @media (max-width: 600px) {
   .page-shell { padding: 16px 14px 0; }
   .brand-search-row { gap: 16px; margin-bottom: 16px; }
-  .brand-logo { max-height: 128px; }
   .social-search-row { gap: 10px; }
   .social-links { flex: 0 0 auto; gap: 6px; }
   .social-link { width: 32px; height: 32px; box-shadow: none; }
@@ -1580,7 +1595,6 @@ body.has-player-modal { overflow: hidden; }
     color: #fff;
   }
   .pwa-app-brand { display: inline-flex; min-width: 0; align-items: center; gap: 3px; color: inherit; text-decoration: none; }
-  .pwa-app-logo { display: block; width: 58px; height: 58px; flex: 0 0 58px; border: 2px solid #fff; border-radius: 50%; background: #fff; object-fit: cover; }
   .pwa-app-wordmark { color: #fff; font: 700 1.3rem/1 var(--font-text); letter-spacing: -.035em; text-decoration: none; }
   .pwa-app-header-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; }
   .pwa-app-account-toggle { display: grid; width: 40px; height: 40px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer; }
