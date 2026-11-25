@@ -138,7 +138,7 @@ const IC={
   lineup:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'
 };
 const ic=n=>`<svg viewBox="0 0 24 24">${IC[n]}</svg>`;
-const CATS=["Football","Basket-ball","Judo","Omnisports"];
+const CATS=["Football","Basket-ball","Judo","Omnisports","Écho 242"];
 const GROUPS={L1:[["A","Groupe A"],["B","Groupe B"]],L2:[["A","Zone Est"],["B","Zone Ouest"],["C","Zone Centre-Sud"]]};
 const ST=[["upcoming","À venir"],["live","En direct"],["paused","Mi-temps"],["finished","Terminé"]];
 const LG=[["L1","Ligue 1"],["L2","Ligue 2"]],SR=[["A","Série A"],["B","Série B"],["C","Série C"]];
@@ -227,7 +227,8 @@ const R={
  f:[T("competition","Compétition (Léopards, Interclubs CAF, International…)"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteuse"),T("date_match","Date et heure","d"),T("stade","Stade"),T("resume_video_url","Lien du résumé vidéo","u"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
  bk:{t:"basket_matchs",n:"match de basket",o:["date_match",0],d:{statut:"upcoming"},req:["equipe_domicile","equipe_visiteur"],f:[T("competition","Compétition"),T("equipe_domicile","Équipe domicile"),T("equipe_visiteur","Équipe visiteur"),T("date_match","Date et heure","d"),T("lieu","Lieu"),T("score_domicile","Score domicile","n"),T("score_visiteur","Score visiteur","n"),T("statut","État du match","c",ST)]},
  ju:{t:"judo_evenements",n:"événement de judo",o:["date_evenement",0],req:["titre"],ti:r=>r.titre,su:r=>`${r.categorie||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("titre","Titre"),T("categorie","Catégorie / poids"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultats","x")]},
- om:{t:"omnisports_evenements",n:"événement omnisports",o:["date_evenement",0],req:["titre","discipline"],ti:r=>r.titre,su:r=>`${r.discipline||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("discipline","Discipline"),T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultat","x")]}
+ om:{t:"omnisports_evenements",n:"événement omnisports",o:["date_evenement",0],req:["titre","discipline"],ti:r=>r.titre,su:r=>`${r.discipline||""} · ${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("discipline","Discipline"),T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Résultat","x")]},
+ ec2:{t:"echo242_evenements",n:"événement Écho 242",o:["date_evenement",0],req:["titre"],ti:r=>r.titre,su:r=>`${fmt(r.date_evenement)} · ${r.lieu||""}`,f:[T("titre","Titre"),T("date_evenement","Date","d"),T("lieu","Lieu"),T("resultats","Détails / résultat","x")]}
 };
 
 function articleForm(a={}){
@@ -304,7 +305,7 @@ function tvContentForm(item={}){
     <label>Type</label><select id="tv_type"${isNew?"":" disabled"}>${TV_TYPES.map(([value,label])=>`<option value="${value}"${value===type?" selected":""}>${label}</option>`).join("")}</select>
     <div id="tv_source_group"${isNew&&type==="direct"?"":" hidden"}><label>Source du direct</label><select id="tv_source"><option value="obs">🎥 OBS — clé de flux générée par Masano</option><option value="youtube">▶ Lien YouTube Live</option></select></div>
     <label>Titre</label><input id="tv_title" maxlength="160" value="${esc(item.titre)}" placeholder="Ex. AS Vita Club – TP Mazembe" required>
-    <label>Sport</label><input id="tv_sport" list="tv_sports" value="${esc(item.sport)}" placeholder="Football, basketball…"><datalist id="tv_sports"><option value="Football"><option value="Basketball"><option value="Judo"><option value="Omnisports"></datalist>
+    <label>Sport</label><input id="tv_sport" list="tv_sports" value="${esc(item.sport)}" placeholder="Football, basketball…"><datalist id="tv_sports"><option value="Football"><option value="Basketball"><option value="Judo"><option value="Omnisports"><option value="Écho 242"></datalist>
     <label>Compétition</label><input id="tv_competition" value="${esc(item.competition)}" placeholder="Linafoot, EPF-KIN…">
     <label>Date et heure</label><input type="datetime-local" id="tv_start" value="${loc(item.debut||(isNew&&type==="direct"?new Date():null))}">
     <div id="tv_video_group"${type==="direct"&&(isNew||item.live_input_id)?" hidden":""}><label id="tv_video_label">Lien vidéo</label><input type="url" inputmode="url" id="tv_video" value="${esc(item.video_url)}" placeholder="Lien Drive public, YouTube, MP4 ou HLS">
@@ -571,7 +572,7 @@ async function epfEvents(m){
 
 const SECS={home:["Accueil","home"],news:["Actus","news",[["articles","Articles"],["flash","Flash infos"]]],match:["Matchs","ball",[["L1","Ligue 1"],["L2","Ligue 2"],["EPF","EPF-KIN"],["AUT","Autres matchs"]]],tv:["TV","tv"],
   team:["Équipes","shield",[["lc","Clubs Linafoot"],["lb","Buteurs Linafoot"],["lr","Classements"],["ec","Clubs EPF-KIN"],["es","Buteurs EPF-KIN"],["er","Classement EPF-KIN"]]],
-  sport:["Sports","grid",[["bk","Basketball"],["ju","Judo"],["om","Omnisports"]]]};
+  sport:["Sports","grid",[["bk","Basketball"],["ju","Judo"],["om","Omnisports"],["ec2","Écho 242"]]]};
 const cur=()=>sub[sec]||SECS[sec][2]?.[0][0];
 const gen=k=>({t:R[k].t,o:R[k].o,open:r=>R[k].ro?0:form(R[k],r),add:R[k].ro?null:()=>form(R[k]),row:R[k].mt?mRow:r=>rowWithLogo(r,k),raw:!R[k].mt});
 
