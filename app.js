@@ -23,6 +23,7 @@ const categoryLabels = {
   "basket-ball": "Basket-ball",
   judo: "Judo",
   omnisports: "Omnisports",
+  "echo-242": "Écho 242",
   resultats: "Résultats",
   "rendez-vous": "Rendez-vous",
   interview: "Interview",
@@ -35,21 +36,24 @@ const categoryAliases = {
   "linafoot-l2": ["linafoot-ligue-2", "linafoot-2"],
   interclubs: ["inter-clubs"],
   international: ["football-international"],
-  "basket-ball": ["basketball"]
+  "basket-ball": ["basketball"],
+  "echo-242": ["echo242"]
 };
 
 const categoryGroups = {
   football: new Set(["football", "linafoot", "linafoot-l1", "linafoot-l2", "leopards", "equipe-nationale", "interclubs", "inter-clubs", "international", "football-international"]),
   "basket-ball": new Set(["basket-ball", "basketball"]),
   judo: new Set(["judo"]),
-  omnisports: new Set(["omnisports"])
+  omnisports: new Set(["omnisports"]),
+  "echo-242": new Set(["echo-242", "echo242"])
 };
 
 const homeCategorySections = [
   { slug: "football", title: "Football" },
   { slug: "basket-ball", title: "Basketball" },
   { slug: "judo", title: "Judo" },
-  { slug: "omnisports", title: "Omnisports" }
+  { slug: "omnisports", title: "Omnisports" },
+  { slug: "echo-242", title: "Écho 242" }
 ];
 
 const footballCompetitionRoutes = {
@@ -62,7 +66,8 @@ const footballCompetitionRoutes = {
 const disciplineEventRoutes = {
   "basket-ball/evenements": { competition: "basketball", title: "Basketball · Événements", view: "matches", discipline: "basketball", layout: "events" },
   "judo/evenements": { competition: "judo", title: "Judo · Événements", view: "matches", discipline: "judo", layout: "events" },
-  "omnisports/evenements": { competition: "omnisports", title: "Omnisports · Événements", view: "matches", discipline: "omnisports", layout: "events" }
+  "omnisports/evenements": { competition: "omnisports", title: "Omnisports · Événements", view: "matches", discipline: "omnisports", layout: "events" },
+  "echo-242/evenements": { competition: "echo242", title: "Écho 242 · Événements", view: "matches", discipline: "echo242", layout: "events" }
 };
 
 // Interclubs et International sont désormais de simples pages d'événements (plus d'actualités).
@@ -79,7 +84,8 @@ const sectionNewsCategories = {
   "football/actualites": "football",
   "basket-ball/actualites": "basket-ball",
   "judo/actualites": "judo",
-  "omnisports/actualites": "omnisports"
+  "omnisports/actualites": "omnisports",
+  "echo-242/actualites": "echo-242"
 };
 
 const sectionNavigation = {
@@ -95,7 +101,8 @@ const sectionNavigation = {
   ],
   "basket-ball": [["Actualités", "#basket-ball/actualites"], ["Événements", "#basket-ball/evenements"]],
   judo: [["Actualités", "#judo/actualites"], ["Événements", "#judo/evenements"]],
-  omnisports: [["Actualités", "#omnisports/actualites"], ["Événements", "#omnisports/evenements"]]
+  omnisports: [["Actualités", "#omnisports/actualites"], ["Événements", "#omnisports/evenements"]],
+  "echo-242": [["Actualités", "#echo-242/actualites"], ["Événements", "#echo-242/evenements"]]
 };
 
 const normalizeCategory = (category) => String(category || "")
@@ -122,7 +129,7 @@ const articleMatchesCategory = (article, category) => categoryTokens(article.cat
 
 // Rubriques sportives principales : un article n'est affiché que dans UNE seule d'entre elles,
 // celle de sa première catégorie reconnue (« Judo, Football » → Judo uniquement).
-const sportRubriques = ["football", "basket-ball", "judo", "omnisports"];
+const sportRubriques = ["football", "basket-ball", "judo", "omnisports", "echo-242"];
 
 const primaryRubrique = (article) => {
   for (const token of categoryTokens(article.category)) {
@@ -756,7 +763,7 @@ const initializeIndex = () => {
 const initializeArticlePage = () => {
   const article = articles[0];
   const articleSection = article
-    ? ["football", "basket-ball", "judo", "omnisports"].find((section) => articleMatchesCategory(article, section)) || "football"
+    ? ["football", "basket-ball", "judo", "omnisports", "echo-242"].find((section) => articleMatchesCategory(article, section)) || "football"
     : "football";
   renderSectionNavigation(`${articleSection}/actualites`);
   const title = document.querySelector(".article-main-title");
