@@ -162,7 +162,8 @@ export const mountTvHomePreview = (root) => {
   const sportLabel = (category) => ({
     basketball: "Basketball",
     judo: "Judo",
-    omnisports: "Omnisports"
+    omnisports: "Omnisports",
+    echo242: "Écho 242"
   }[category] || "Football");
 
   // Un direct programmé n'apparaît que s'il est proche (ou sans date) : pas de direct fantôme dans 3 semaines.
