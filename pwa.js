@@ -79,7 +79,7 @@ const updateNavigation = () => {
   const hash = window.location.hash.slice(1).toLowerCase();
   const isResultsRoute = (window.location.pathname === "/resultats" && !hash) || hash === "resultats" || hash === "rencontres"
     || /^football\/(l1|l2|epf-kin|leopards|interclubs|international)(\/|$)/.test(hash)
-    || /^(basket-ball|judo|omnisports)\/evenements$/.test(hash);
+    || /^(basket-ball|judo|omnisports|echo-242)\/evenements$/.test(hash);
   const route = isResultsRoute
     ? "results"
     : hash === "tv"
@@ -106,14 +106,17 @@ const updateNavigation = () => {
         ? "judo"
         : hash.startsWith("omnisports/")
           ? "omnisports"
-          : "";
+          : hash.startsWith("echo-242/")
+            ? "echo-242"
+            : "";
   document.querySelectorAll(".pwa-sport-nav a").forEach((link) => {
     const href = link.getAttribute("href");
     const active = href === "/" ? route === "home" : href === "#articles" && route === "articles"
       || href.startsWith("#football") && activeSport === "football"
       || href.startsWith("#basket-ball") && activeSport === "basket-ball"
       || href.startsWith("#judo") && activeSport === "judo"
-      || href.startsWith("#omnisports") && activeSport === "omnisports";
+      || href.startsWith("#omnisports") && activeSport === "omnisports"
+      || href.startsWith("#echo-242") && activeSport === "echo-242";
     if (active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
